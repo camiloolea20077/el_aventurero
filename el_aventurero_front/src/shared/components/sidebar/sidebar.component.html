@@ -1,0 +1,156 @@
+<!-- Overlay para móviles -->
+<div
+  class="sidebar-overlay"
+  [class.active]="sidebarService.isVisible && isMobile"
+  (click)="closeSidebar()"
+></div>
+<!-- Botón menú móvil -->
+<button
+  class="mobile-menu-trigger"
+  *ngIf="isMobile && !sidebarService.isVisible"
+  pButton
+  type="button"
+  icon="pi pi-bars"
+  pRipple
+  aria-label="Abrir menú"
+  (click)="toggleSidebar()"
+></button>
+
+<!-- Sidebar -->
+<div
+  class="sidebar"
+  [class.visible]="sidebarService.isVisible"
+  [class.collapsed]="sidebarService.isCollapsed"
+>
+  <!-- Header del sidebar -->
+  <div class="sidebar-header">
+    <div class="logo" *ngIf="!sidebarService.isCollapsed">
+      <div class="logo-icon">
+        <img src="assets/logo.jpeg" alt="AgroSuit Logo" class="logo-image" />
+      </div>
+      <span>El Aventurero</span>
+    </div>
+    <button
+      class="collapse-btn"
+      (click)="toggleExpanded()"
+      pButton
+      pRipple
+      type="button"
+      class="p-button-text"
+      *ngIf="!isMobile"
+    >
+      <i
+        class="pi"
+        [ngClass]="
+          sidebarService.isCollapsed ? 'pi-angle-right' : 'pi-angle-left'
+        "
+      ></i>
+    </button>
+  </div>
+
+  <!-- Navegación -->
+  <nav class="sidebar-nav">
+    <!-- Renderizado recursivo -->
+    <ng-template #renderMenu let-menuItems>
+      <ul class="menu-list">
+        <li
+          *ngFor="let item of menuItems; trackBy: trackByFn"
+          class="menu-item-container"
+        >
+          <!-- Ítems sin hijos -->
+          <ng-container *ngIf="!item.children">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.exact || false }"
+              class="menu-item"
+              [pTooltip]="sidebarService.isCollapsed ? item.label : ''"
+              tooltipPosition="right"
+              [attr.aria-label]="item.label"
+              (click)="closeSidebar()"
+            >
+              <i class="menu-icon {{ item.icon }}"></i>
+              <span class="menu-label" *ngIf="!sidebarService.isCollapsed">{{
+                item.label
+              }}</span>
+            </a>
+          </ng-container>
+
+          <!-- Ítems con hijos -->
+          <ng-container *ngIf="item.children">
+            <div
+              class="menu-item expandable"
+              (click)="toggleItem(item.label)"
+              [class.expanded]="isItemExpanded(item.label)"
+              [pTooltip]="sidebarService.isCollapsed ? item.label : ''"
+              tooltipPosition="right"
+              [attr.aria-label]="item.label"
+              [attr.aria-expanded]="isItemExpanded(item.label)"
+            >
+              <i class="menu-icon {{ item.icon }}"></i>
+              <span class="menu-label" *ngIf="!sidebarService.isCollapsed">{{
+                item.label
+              }}</span>
+              <i
+                class="expand-icon pi"
+                *ngIf="!sidebarService.isCollapsed"
+                [ngClass]="
+                  isItemExpanded(item.label)
+                    ? 'pi-chevron-down'
+                    : 'pi-chevron-right'
+                "
+              >
+              </i>
+            </div>
+
+            <!-- Submenú (recursivo) -->
+            <ul
+              class="submenu-list"
+              *ngIf="isItemExpanded(item.label) && !sidebarService.isCollapsed"
+              [@slideDown]
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  renderMenu;
+                  context: { $implicit: item.children }
+                "
+              ></ng-container>
+            </ul>
+          </ng-container>
+        </li>
+      </ul>
+    </ng-template>
+
+    <!-- Llamada inicial -->
+    <ng-container
+      *ngTemplateOutlet="renderMenu; context: { $implicit: items }"
+    ></ng-container>
+  </nav>
+
+  <!-- Footer del sidebar -->
+  <div class="sidebar-footer" *ngIf="!sidebarService.isCollapsed">
+    <div class="user-info">
+      <div class="user-profile">
+        <div class="user-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ userName || "Usuario" }}</span>
+          <span class="user-role">{{ userRole || "Administrador" }}</span>
+        </div>
+      </div>
+      <button
+        class="logout-btn"
+        pButton
+        type="button"
+        icon="pi pi-sign-out"
+        severity="secondary"
+        size="small"
+        pTooltip="Cerrar sesión"
+        tooltipPosition="top"
+        (click)="logout()"
+      ></button>
+    </div>
+  </div>
+</div>
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,20 @@
+  <div class="main-layout">
+      <!-- Sidebar fijo -->
+      <app-sidebar></app-sidebar>
+      
+      <!-- Contenido principal -->
+      <div class="content-wrapper" 
+           [class.sidebar-visible]="sidebarService.isVisible" 
+           [class.sidebar-collapsed]="sidebarService.isCollapsed">
+        
+        <!-- Header con breadcrumb -->
+        <div class="content-header">
+          <p-breadcrumb [model]="breadcrumbItems" [home]="home"></p-breadcrumb>
+        </div>
+        
+        <!-- Contenido de la página -->
+        <div class="content-container">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>

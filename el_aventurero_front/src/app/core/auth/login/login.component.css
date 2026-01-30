@@ -1,0 +1,136 @@
+/* Variables de color */
+:root {
+  --gold: #d4af37;
+  --gold-soft: #f3d98b;
+  --bronze: #cd7f32;
+  --text: #c9cdd3;
+  --muted: rgba(201, 205, 211, 0.75);
+  --bg-0: #0f1012;
+  --bg-1: #1a1c1f;
+}
+
+/* Fondo con gradiente dorado */
+:host ::ng-deep .bg-gray-100 {
+  background: none !important;
+  background-image: 
+    radial-gradient(900px 400px at 50% 0%, rgba(212, 175, 55, .18), transparent 60%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1)) !important;
+}
+
+/* Card principal con efecto glassmorphism */
+:host ::ng-deep .card {
+  background: rgba(26, 28, 31, 0.72) !important;
+  border: 1px solid rgba(212, 175, 55, 0.22) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Branding */
+.title {
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--gold-soft);
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+.subtitle {
+  margin-top: 2px;
+  font-style: italic;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.logo-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  border: 1px solid rgba(243, 217, 139, 0.45);
+  box-shadow:
+    0 0 0 6px rgba(212, 175, 55, 0.08),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+  background: radial-gradient(circle at 30% 25%, rgba(243, 217, 139, 0.35), transparent 55%);
+}
+
+/* Labels de los campos */
+.form-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Campos de input */
+:host ::ng-deep .p-inputtext {
+  background: rgba(15, 16, 18, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-inputtext:enabled:hover {
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* Password input */
+:host ::ng-deep .p-password input {
+  background: rgba(15, 16, 18, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-password input:enabled:hover {
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+:host ::ng-deep .p-password input:enabled:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* Botón dorado */
+:host ::ng-deep .btn-gold .p-button {
+  background: linear-gradient(90deg, var(--bronze), var(--gold), var(--gold-soft)) !important;
+  border: 0 !important;
+  color: #1a1c1f !important;
+  font-weight: 800;
+}
+
+:host ::ng-deep .btn-gold .p-button:hover {
+  opacity: 0.9;
+}
+
+/* Botón ghost */
+:host ::ng-deep .btn-ghost .p-button {
+  background: transparent !important;
+  border: 1px solid rgba(243, 217, 139, 0.25) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .btn-ghost .p-button:hover {
+  background: rgba(243, 217, 139, 0.05) !important;
+  border-color: rgba(243, 217, 139, 0.4) !important;
+}
+
+/* Footer */
+.footer {
+  color: rgba(201, 205, 211, 0.75);
+}
+
+/* Mensajes de error */
+.err {
+  color: #ffb4b4;
+}
+/* Logo grande */
+.logo-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid rgba(243, 217, 139, 0.45);
+  box-shadow:
+    0 0 0 6px rgba(212, 175, 55, 0.08),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+  background: rgba(26, 28, 31, 0.5);
+}

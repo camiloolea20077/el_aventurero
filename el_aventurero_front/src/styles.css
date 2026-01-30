@@ -1,0 +1,254 @@
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+@import "./shared/styles/_tokens.css";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(
+      900px 400px at 50% 0%,
+      rgba(212, 175, 55, 0.18),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1));
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+}
+/* Variables globales - Paleta El Aventurero */
+:root {
+  --gold: #d4af37;
+  --gold-soft: #f3d98b;
+  --bronze: #cd7f32;
+  --text: #c9cdd3;
+  --muted: rgba(201, 205, 211, 0.75);
+  --bg-0: #0f1012;
+  --bg-1: #1a1c1f;
+  --bg-card: rgba(26, 28, 31, 0.72);
+  --border-gold: rgba(212, 175, 55, 0.22);
+}
+
+/* Fondo principal */
+.page-container {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      900px 400px at 50% 0%,
+      rgba(212, 175, 55, 0.18),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1));
+  padding: 2rem;
+}
+
+/* Cards con glassmorphism */
+.gold-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-gold) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Títulos */
+.page-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold-soft);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+/* Labels */
+.field-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Inputs personalizados */
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-dropdown,
+:host ::ng-deep .p-inputnumber-input {
+  background: rgba(15, 16, 18, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-inputtext:enabled:hover,
+:host ::ng-deep .p-dropdown:not(.p-disabled):hover,
+:host ::ng-deep .p-inputnumber:not(.p-disabled):hover .p-inputnumber-input {
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+:host ::ng-deep .p-inputtext:enabled:focus,
+:host ::ng-deep .p-dropdown:not(.p-disabled).p-focus,
+:host
+  ::ng-deep
+  .p-inputnumber:not(.p-disabled).p-inputnumber-focus
+  .p-inputnumber-input {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* Dropdown panel */
+:host ::ng-deep .p-dropdown-panel {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--border-gold) !important;
+}
+
+:host ::ng-deep .p-dropdown-item {
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-dropdown-item:not(.p-disabled):hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+}
+
+:host ::ng-deep .p-dropdown-item.p-highlight {
+  background: rgba(212, 175, 55, 0.25) !important;
+  color: var(--gold-soft) !important;
+}
+
+/* Tablas */
+:host ::ng-deep .p-datatable {
+  background: transparent !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background: rgba(15, 16, 18, 0.7) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--gold-soft) !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  background: rgba(26, 28, 31, 0.5) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  border: 1px solid rgba(212, 175, 55, 0.1) !important;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+}
+
+/* Paginador */
+:host ::ng-deep .p-paginator {
+  background: rgba(15, 16, 18, 0.7) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page.p-highlight {
+  background: var(--gold) !important;
+  color: var(--bg-0) !important;
+}
+
+/* Botones */
+:host ::ng-deep .btn-gold .p-button {
+  background: linear-gradient(
+    90deg,
+    var(--bronze),
+    var(--gold),
+    var(--gold-soft)
+  ) !important;
+  border: 0 !important;
+  color: #1a1c1f !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .btn-gold .p-button:hover {
+  opacity: 0.9;
+}
+
+:host ::ng-deep .btn-ghost .p-button {
+  background: transparent !important;
+  border: 1px solid rgba(243, 217, 139, 0.3) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .btn-ghost .p-button:hover {
+  background: rgba(243, 217, 139, 0.1) !important;
+  border-color: rgba(243, 217, 139, 0.5) !important;
+}
+
+:host ::ng-deep .btn-danger .p-button {
+  background: linear-gradient(90deg, #8b0000, #dc143c) !important;
+  border: 0 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+:host ::ng-deep .btn-success .p-button {
+  background: linear-gradient(90deg, #006400, #228b22) !important;
+  border: 0 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Badges de estado */
+.badge-libre {
+  background: #228b22;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge-ocupada {
+  background: #dc143c;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Dialog */
+:host ::ng-deep .p-dialog {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-gold) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7) !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-header {
+  background: rgba(15, 16, 18, 0.8) !important;
+  color: var(--gold-soft) !important;
+  border-bottom: 1px solid var(--border-gold) !important;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+/* Toast */
+:host ::ng-deep .p-toast .p-toast-message {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-gold) !important;
+  backdrop-filter: blur(8px);
+}
+
+:host ::ng-deep .p-toast .p-toast-message .p-toast-message-content {
+  color: var(--text) !important;
+}

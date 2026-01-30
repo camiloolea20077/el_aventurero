@@ -1,0 +1,63 @@
+<div
+  class="min-h-screen flex align-items-center justify-content-center bg-gray-100"
+>
+  <div
+    class="card p-4 shadow-2 text-center"
+    style="width: 450px; border-radius: 10px"
+  >
+    <!-- Logo y branding -->
+    <div class="mb-4">
+      <img
+        src="assets/logo.jpeg"
+        alt="El Aventurero Logo"
+        class="logo-img mb-3"
+      />
+      <div class="title">EL AVENTURERO</div>
+      <div class="subtitle">Licores Bar</div>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Campo Usuario -->
+      <div class="mb-3 text-left">
+        <label for="username" class="form-label">Usuario</label>
+        <input
+          pInputText
+          formControlName="email"
+          id="email"
+          type="text"
+          placeholder="Tu email"
+          class="w-full mt-2"
+        />
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="mb-3 text-left">
+        <label for="password" class="form-label">Contraseña</label>
+        <div class="w-full">
+          <p-password
+            [style]="{ width: '100%' }"
+            formControlName="password"
+            id="password"
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder="••••••••"
+            inputStyleClass="w-full mt-2"
+          ></p-password>
+        </div>
+      </div>
+
+      <!-- Botón de login -->
+      <p-button
+        label="Ingresar"
+        type="submit"
+        class="w-full btn-gold"
+      ></p-button>
+    </form>
+
+    <!-- Footer -->
+    <div class="footer mt-3">
+      <small>© El Aventurero Jy</small>
+    </div>
+  </div>
+</div>

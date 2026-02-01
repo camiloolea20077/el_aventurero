@@ -99,7 +99,7 @@ public class InventarioQueryRepository {
             sql, params, new ColumnMapRowMapper()
         );
         
-        return MapperRepository.mapListToDtoList(resultList, InventarioDto.class);
+        return MapperRepository.mapListToDtoListNull(resultList, InventarioDto.class);
     }
 
     public PageImpl<InventarioTableDto> listInventario(PageableDto<Object> pageableDto) {

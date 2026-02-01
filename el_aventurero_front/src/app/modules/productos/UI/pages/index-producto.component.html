@@ -11,7 +11,7 @@
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
           <p-button
-            severity="success"
+            severity="warn"
             label="Agregar Producto"
             icon="pi pi-plus"
             (click)="openCreateModal()"
@@ -47,15 +47,17 @@
           <div class="table-header">
             <div class="search-container">
               <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input
-                  pInputText
-                  type="text"
-                  [(ngModel)]="globalFilter"
-                  (input)="filterGlobal($event)"
-                  placeholder="Buscar productos..."
-                  class="search-input"
-                />
+                <p-iconfield>
+                  <p-inputicon styleClass="pi pi-search" />
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="globalFilter"
+                    (input)="filterGlobal($event)"
+                    placeholder="Buscar productos..."
+                    class="search-input"
+                  />
+                </p-iconfield>
               </span>
             </div>
           </div>

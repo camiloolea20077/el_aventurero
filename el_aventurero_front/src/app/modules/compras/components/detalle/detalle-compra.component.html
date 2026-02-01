@@ -1,0 +1,205 @@
+<p-dialog
+  header="Detalle de Compra"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1000px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-spinner"></i>
+    <span>Cargando información...</span>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!loading && compra" class="detalle-container">
+    <!-- Información General -->
+    <div class="info-general">
+      <div class="info-card">
+        <div class="info-item">
+          <i class="pi pi-hashtag icon"></i>
+          <div class="info-content">
+            <span class="label">ID Compra</span>
+            <span class="value">#{{ compra.id }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-calendar icon"></i>
+          <div class="info-content">
+            <span class="label">Fecha</span>
+            <span class="value">{{ formatDate(compra.created_at!) }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-credit-card icon"></i>
+          <div class="info-content">
+            <span class="label">Método de Pago</span>
+            <p-tag
+              [value]="compra.metodo_pago || 'N/A'"
+              [severity]="getMetodoPagoSeverity(compra.metodo_pago || '')"
+              [icon]="getMetodoPagoIcon(compra.metodo_pago || '')"
+            ></p-tag>
+          </div>
+        </div>
+
+        <div class="info-item total">
+          <i class="pi pi-dollar icon"></i>
+          <div class="info-content">
+            <span class="label">Total Compra</span>
+            <span class="value total-value">
+              ${{ compra.total_compra | number: "1.0-0" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Detalles de Productos -->
+    <div class="productos-section">
+      <h5 class="section-title">
+        <i class="pi pi-box mr-2"></i>
+        Productos de la Compra
+      </h5>
+
+      <p-table
+        [value]="compra.detalles || []"
+        styleClass="detalle-productos-table"
+        [scrollable]="true"
+        scrollHeight="400px"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 200px">Producto</th>
+            <th class="text-center" style="width: 100px">Cajas</th>
+            <th class="text-center" style="width: 120px">Unid/Caja</th>
+            <th class="text-center" style="width: 120px">Total Unid.</th>
+            <th class="text-right" style="width: 150px">Costo Total</th>
+            <th class="text-right" style="width: 130px">Costo Unit.</th>
+            <th class="text-right" style="width: 150px">Precio Venta</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-detalle>
+          <tr>
+            <!-- Producto -->
+            <td>
+              <div class="producto-cell">
+                <i class="pi pi-tag"></i>
+                <span class="nombre">{{ detalle.producto_nombre }}</span>
+              </div>
+            </td>
+
+            <!-- Cajas -->
+            <td class="text-center">
+              <span class="badge-number">{{ detalle.cajas }}</span>
+            </td>
+
+            <!-- Unidades por Caja -->
+            <td class="text-center">
+              <span class="badge-number">{{ detalle.unidades_por_caja }}</span>
+            </td>
+
+            <!-- Total Unidades -->
+            <td class="text-center">
+              <p-tag
+                [value]="detalle.total_unidades.toString()"
+                severity="info"
+                icon="pi pi-box"
+              ></p-tag>
+            </td>
+
+            <!-- Costo Total -->
+            <td class="text-right">
+              <span class="currency-value">
+                ${{ detalle.costo_total | number: "1.0-0" }}
+              </span>
+            </td>
+
+            <!-- Costo Unitario -->
+            <td class="text-right">
+              <span class="currency-small">
+                ${{ detalle.costo_unitario | number: "1.2-2" }}
+              </span>
+            </td>
+
+            <!-- Precio Venta -->
+            <td class="text-right">
+              <span class="currency-venta">
+                ${{ detalle.precio_venta | number: "1.0-0" }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center empty-message">
+              <i class="pi pi-inbox"></i>
+              <p>No hay productos en esta compra</p>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Footer con totales -->
+        <ng-template pTemplate="footer">
+          <tr class="footer-row">
+            <td colspan="4" class="text-right footer-label">
+              <strong>Total de la Compra:</strong>
+            </td>
+            <td colspan="3" class="text-right footer-total">
+              <strong>${{ compra.total_compra | number: "1.0-0" }}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Resumen -->
+    <div class="resumen-section">
+      <div class="resumen-card">
+        <div class="resumen-item">
+          <i class="pi pi-box"></i>
+          <div class="resumen-content">
+            <span class="label">Total de Productos</span>
+            <span class="value">{{ compra.detalles?.length || 0 }}</span>
+          </div>
+        </div>
+        <div class="resumen-item">
+          <i class="pi pi-shopping-cart"></i>
+          <div class="resumen-content">
+            <span class="label">Unidades Totales</span>
+            <span class="value">{{ getTotalUnidades() }}</span>
+          </div>
+        </div>
+        <div class="resumen-item highlight">
+          <i class="pi pi-dollar"></i>
+          <div class="resumen-content">
+            <span class="label">Total Invertido</span>
+            <span class="value">
+              ${{ compra.total_compra | number: "1.0-0" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="info"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

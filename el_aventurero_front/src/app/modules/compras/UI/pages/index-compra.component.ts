@@ -17,13 +17,18 @@ import { ColsModel } from '../../../../../shared/models/cols.model';
 import { HelpersService } from '../../../../../shared/pipes/helper.service';
 import { CompraService } from '../../../../core/services/compra.service';
 import { CompraModel } from '../../../../core/models/compra/compra.model';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { FormCompraComponent } from '../../components/form/form-compra.component';
+import { AlertService } from '../../../../../shared/pipes/alert.service';
+import { DetalleCompraComponent } from '../../components/detalle/detalle-compra.component';
 
 @Component({
   selector: 'app-index-compra',
   standalone: true,
   templateUrl: './index-compra.component.html',
   styleUrls: ['./index-compra.component.scss'],
-  providers: [MessageService, ConfirmationService],
+  providers: [MessageService, ConfirmationService, AlertService],
   imports: [
     FormsModule,
     RouterModule,
@@ -36,8 +41,10 @@ import { CompraModel } from '../../../../core/models/compra/compra.model';
     TableModule,
     CommonModule,
     ToastModule,
-    // FormCompraComponent,
-    // DetalleCompraComponent,
+    IconFieldModule,
+    InputIconModule,
+    FormCompraComponent,
+    DetalleCompraComponent,
   ],
 })
 export class IndexCompraComponent {

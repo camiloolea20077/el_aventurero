@@ -1,0 +1,374 @@
+.loading-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-0);
+
+  .loading-spinner {
+    font-size: 3rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  span {
+    display: block;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+}
+
+.detalle-container {
+  padding: 1rem 0;
+  color: var(--text);
+}
+
+// Información General
+.info-general {
+  margin-bottom: 1.5rem;
+}
+::ng-deep .modern-dialog {
+  .p-dialog-header {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+    border-radius: 10px 10px 0 0;
+
+    .p-dialog-title {
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .p-dialog-header-icon {
+      color: #111;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+    background: var(--bg-0);
+    color: var(--text);
+  }
+
+  .p-dialog-footer {
+    background: var(--bg-0);
+    border-top: 1px solid var(--border-gold);
+  }
+}
+.info-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-gold);
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-1);
+    border-radius: 6px;
+    border-left: 3px solid var(--gold);
+
+    &.total {
+      border-left-color: var(--gold-soft);
+      background: linear-gradient(
+        135deg,
+        rgba(212, 175, 55, 0.15) 0%,
+        rgba(205, 127, 50, 0.25) 100%
+      );
+    }
+
+    .icon {
+      font-size: 1.75rem;
+      color: var(--gold);
+    }
+
+    .info-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .label {
+        font-size: 0.8rem;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+
+        &.total-value {
+          font-size: 1.5rem;
+          color: var(--gold);
+          font-family: "Courier New", monospace;
+        }
+      }
+    }
+  }
+}
+
+// Sección de Productos
+.productos-section {
+  .section-title {
+    color: var(--gold-soft);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+  }
+}
+
+::ng-deep .detalle-productos-table {
+  background: #0b0c0e !important;
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  overflow: hidden;
+
+  .p-datatable-wrapper {
+    background: #0b0c0e !important;
+  }
+
+  /* Header */
+  .p-datatable-thead > tr > th {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+    font-weight: 800;
+    border: none;
+  }
+
+  /* Body rows */
+  .p-datatable-tbody > tr {
+    background: #0b0c0e !important;
+
+    &:nth-child(even) {
+      background: #0f1012 !important;
+    }
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.08) !important;
+    }
+
+    > td {
+      background: transparent !important;
+      color: var(--text) !important;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+    }
+  }
+
+  /* Footer */
+  .p-datatable-tfoot > tr.footer-row {
+    background: #0b0c0e !important;
+    border-top: 2px solid var(--gold);
+
+    td {
+      background: transparent !important;
+
+      &.footer-label {
+        color: var(--muted);
+      }
+
+      &.footer-total {
+        color: var(--gold);
+        font-size: 1.3rem;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
+.producto-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    color: var(--gold-soft);
+    font-size: 1.1rem;
+  }
+
+  .nombre {
+    font-weight: 600;
+    color: var(--text);
+  }
+}
+
+.badge-number {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold-soft);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid var(--border-gold);
+}
+
+.currency-value {
+  font-weight: 700;
+  color: var(--text);
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+}
+
+.currency-small {
+  font-weight: 500;
+  color: var(--muted);
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.currency-venta {
+  font-weight: 800;
+  color: var(--gold);
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+}
+
+.empty-message {
+  padding: 3rem 2rem !important;
+  color: var(--muted);
+
+  i {
+    font-size: 3rem;
+    color: var(--gold-soft);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+// Resumen
+.resumen-section {
+  margin-top: 1.5rem;
+}
+
+.resumen-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-gold);
+
+  .resumen-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-1);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+
+    &.highlight {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--bronze) 100%);
+      color: #111;
+
+      i {
+        color: #111;
+      }
+
+      .resumen-content {
+        .label {
+          color: rgba(0, 0, 0, 0.75);
+        }
+
+        .value {
+          color: #111;
+        }
+      }
+    }
+
+    i {
+      font-size: 2rem;
+      color: var(--gold);
+    }
+
+    .resumen-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .label {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .value {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: var(--gold-soft);
+        font-family: "Courier New", monospace;
+      }
+    }
+  }
+}
+
+// Footer
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+// Dialog
+::ng-deep .detalle-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--bronze) 100%);
+    color: #111;
+
+    .p-dialog-title {
+      font-weight: 800;
+      font-size: 1.5rem;
+    }
+
+    .p-dialog-header-icon {
+      color: #111;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: var(--bg-0);
+    color: var(--text);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .info-card {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-card {
+    grid-template-columns: 1fr;
+  }
+}

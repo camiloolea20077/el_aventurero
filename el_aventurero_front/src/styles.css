@@ -199,10 +199,76 @@ body {
 }
 
 :host ::ng-deep .btn-success .p-button {
-  background: linear-gradient(90deg, #006400, #228b22) !important;
+  background: linear-gradient(
+    90deg,
+    var(--bronze),
+    var(--gold),
+    var(--gold-soft)
+  ) !important;
   border: 0 !important;
-  color: white !important;
-  font-weight: 600;
+  color: var(--bg-0) !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .btn-success .p-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4) !important;
+}
+
+/* Estilos globales para botones success (dorados) */
+::ng-deep .p-button-success {
+  background: linear-gradient(
+    90deg,
+    var(--bronze),
+    var(--gold),
+    var(--gold-soft)
+  ) !important;
+  border: 0 !important;
+  color: var(--bg-0) !important;
+  font-weight: 700;
+}
+
+::ng-deep .p-button-success:enabled:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4) !important;
+}
+
+::ng-deep .p-button-success:disabled {
+  opacity: 0.5;
+  background: linear-gradient(
+    90deg,
+    rgba(205, 127, 50, 0.5),
+    rgba(212, 175, 55, 0.5),
+    rgba(243, 217, 139, 0.5)
+  ) !important;
+}
+
+/* Estilos para botones secondary outlined */
+::ng-deep .p-button-secondary.p-button-outlined {
+  background: transparent !important;
+  border: 1px solid rgba(243, 217, 139, 0.3) !important;
+  color: var(--text) !important;
+}
+
+::ng-deep .p-button-secondary.p-button-outlined:enabled:hover {
+  background: rgba(243, 217, 139, 0.1) !important;
+  border-color: rgba(243, 217, 139, 0.5) !important;
+}
+
+/* Estilos para botones danger (eliminar) */
+::ng-deep .p-button-danger.p-button-text,
+::ng-deep .p-button-danger.p-button-rounded {
+  background: transparent !important;
+  border: 0 !important;
+  color: #ef4444 !important;
+}
+
+::ng-deep .p-button-danger.p-button-text:enabled:hover,
+::ng-deep .p-button-danger.p-button-rounded:enabled:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #fca5a5 !important;
 }
 
 /* Badges de estado */

@@ -7,26 +7,25 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { lastValueFrom } from 'rxjs';
+
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
-import { FormProductoComponent } from '../../components/form/form-producto.component';
-import { ProductoTableModel } from '../../../../core/models/producto/producto-table.model';
-import { ColsModel } from '../../../../../shared/models/cols.model';
+import { VentaTableModel } from '../../../../core/models/venta/venta-table.model';
 import { IFilterTable } from '../../../../../shared/models/filter-table';
+import { ColsModel } from '../../../../../shared/models/cols.model';
 import { HelpersService } from '../../../../../shared/pipes/helper.service';
-import { ProductoService } from '../../../../core/services/producto.service';
-import { ProductoModel } from '../../../../core/models/producto/producto.model';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
+import { VentaService } from '../../../../core/services/venta.service';
+import { DetalleVentaComponent } from '../../components/detalle/detalle-venta.component';
+import { AlertService } from '../../../../../shared/pipes/alert.service';
 
 @Component({
-  selector: 'app-index-producto',
+  selector: 'app-index-venta',
   standalone: true,
-  templateUrl: './index-producto.component.html',
-  styleUrls: ['./index-producto.component.scss'],
-  providers: [MessageService, ConfirmationService],
+  templateUrl: './index-venta.component.html',
+  styleUrls: ['./index-venta.component.scss'],
+  providers: [MessageService, ConfirmationService, AlertService],
   imports: [
     FormsModule,
     RouterModule,
@@ -39,52 +38,61 @@ import { InputIconModule } from 'primeng/inputicon';
     TableModule,
     CommonModule,
     ToastModule,
-    FormProductoComponent,
-    IconFieldModule,
-    InputIconModule,
+    DetalleVentaComponent,
   ],
 })
-export class IndexProductoComponent {
-  // Variables para el modal
-  showProductoModal = false;
-  selectedProductoId: number | null = null;
-  modalSlug: string = 'create';
+export class IndexVentaComponent {
+  // Variables para ver detalles
+  showDetalleModal = false;
+  selectedVentaId: number | null = null;
 
   public rowSize = 10;
   public totalRecords = 0;
   public loadingTable = true;
-  productos: ProductoTableModel[] = [];
+  ventas: VentaTableModel[] = [];
   filtersTable!: IFilterTable<any>;
 
   cols: ColsModel[] = [
     {
-      field: 'nombre',
-      header: 'Nombre',
-      type: 'string',
+      field: 'created_at',
+      header: 'Fecha',
+      type: 'date',
       nameClass: 'text-left',
     },
     {
-      field: 'tipo_venta',
-      header: 'Tipo de Venta',
+      field: 'mesa_numero',
+      header: 'Mesa',
+      type: 'number',
+      nameClass: 'text-center',
+    },
+    {
+      field: 'total',
+      header: 'Total',
+      type: 'currency',
+      nameClass: 'text-right',
+    },
+    {
+      field: 'metodo_pago',
+      header: 'Método de Pago',
       type: 'string',
       nameClass: 'text-center',
     },
     {
-      field: 'activo',
-      header: 'Estado',
-      type: 'icon',
+      field: 'cantidad_productos',
+      header: 'Productos',
+      type: 'number',
       nameClass: 'text-center',
     },
   ];
 
   globalFilter: string = '';
-  selectedProducto: any = null;
+  selectedItem: any = null;
 
   constructor(
     private fb: FormBuilder,
     readonly _helperService: HelpersService,
     private readonly _confirmationService: ConfirmationService,
-    private productoService: ProductoService,
+    private ventaService: VentaService,
     private router: Router,
     private messageService: MessageService,
   ) {}
@@ -100,13 +108,13 @@ export class IndexProductoComponent {
 
     try {
       const response = await lastValueFrom(
-        this.productoService.pageProducto(this.filtersTable),
+        this.ventaService.pageVenta(this.filtersTable),
       );
-      this.productos = response.data?.content ?? [];
+      this.ventas = response.data?.content ?? [];
       this.totalRecords = response.data?.totalElements ?? 0;
       this.loadingTable = false;
     } catch (error) {
-      this.productos = [];
+      this.ventas = [];
       this.totalRecords = 0;
       this.loadingTable = false;
     }
@@ -133,21 +141,21 @@ export class IndexProductoComponent {
     }
   }
 
-  async deleteProducto(id: number): Promise<void> {
+  async deleteVenta(id: number): Promise<void> {
     this._confirmationService.confirm({
-      message: '¿Estás seguro de eliminar este producto?',
+      message: '¿Estás seguro de eliminar esta venta?',
       header: 'Eliminar Registro',
       icon: 'pi pi-exclamation-triangle',
       accept: async () => {
         try {
           const response = await lastValueFrom(
-            this.productoService.deleteProducto(id),
+            this.ventaService.deleteVenta(id),
           );
           if (response.status === 200) {
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Producto eliminado correctamente',
+              detail: 'Venta eliminada correctamente',
             });
             this.loadTable({ first: 0, rows: this.rowSize });
           }
@@ -155,7 +163,7 @@ export class IndexProductoComponent {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo eliminar el producto',
+            detail: 'No se pudo eliminar la venta',
           });
         }
       },
@@ -168,10 +176,6 @@ export class IndexProductoComponent {
       .map((col) => col.field);
   }
 
-  onGlobalFilter(event: any): void {
-    this.globalFilter = event.target.value;
-  }
-
   clearFilter(): void {
     this.globalFilter = '';
     this.loadTable({ first: 0, rows: this.rowSize });
@@ -179,27 +183,54 @@ export class IndexProductoComponent {
 
   getColumnIcon(field: string): string {
     const iconMap: { [key: string]: string } = {
-      nombre: 'pi pi-tag',
-      tipo_venta: 'pi pi-shopping-cart',
+      created_at: 'pi pi-calendar',
+      mesa_numero: 'pi pi-table',
+      total: 'pi pi-dollar',
+      metodo_pago: 'pi pi-credit-card',
+      cantidad_productos: 'pi pi-box',
       activo: 'pi pi-power-off',
     };
     return iconMap[field] || 'pi pi-circle';
   }
 
   getEstadoLabel(activo: number): string {
-    return activo === 1 ? 'Activo' : 'Inactivo';
+    return activo === 1 ? 'Activo' : 'Eliminado';
   }
 
-  getEstadoSeverity(activo: number): 'success' | 'danger' {
+  getEstadoSeverity(
+    activo: number,
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     return activo === 1 ? 'success' : 'danger';
   }
 
-  getTipoVentaSeverity(tipoVenta: string): 'info' | 'warn' {
-    return tipoVenta === 'UNIDAD' ? 'info' : 'warn';
+  getMetodoPagoSeverity(
+    metodo: string,
+  ): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+    const severityMap: {
+      [key: string]:
+        | 'success'
+        | 'info'
+        | 'warn'
+        | 'danger'
+        | 'secondary'
+        | 'contrast';
+    } = {
+      EFECTIVO: 'success',
+      TARJETA: 'info',
+      TRANSFERENCIA: 'warn',
+      DIGITAL: 'secondary',
+    };
+    return severityMap[metodo] || 'secondary';
   }
 
-  getTipoVentaIcon(tipoVenta: string): string {
-    return tipoVenta === 'UNIDAD' ? 'pi pi-box' : 'pi pi-inbox';
+  getMetodoPagoIcon(metodo: string): string {
+    const iconMap: { [key: string]: string } = {
+      EFECTIVO: 'pi pi-money-bill',
+      TARJETA: 'pi pi-credit-card',
+      TRANSFERENCIA: 'pi pi-send',
+      DIGITAL: 'pi pi-mobile',
+    };
+    return iconMap[metodo] || 'pi pi-wallet';
   }
 
   filterGlobal(event: Event) {
@@ -210,26 +241,25 @@ export class IndexProductoComponent {
     });
   }
 
-  // Métodos para el modal
-  openCreateModal(): void {
-    this.modalSlug = 'create';
-    this.selectedProductoId = null;
-    this.showProductoModal = true;
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
-  openEditModal(producto: ProductoTableModel): void {
-    this.modalSlug = 'edit';
-    this.selectedProductoId = producto.id;
-    this.showProductoModal = true;
+  // Ver detalles
+  verDetalle(venta: VentaTableModel): void {
+    this.selectedVentaId = venta.id;
+    this.showDetalleModal = true;
   }
 
-  onModalClosed(): void {
-    this.showProductoModal = false;
-    this.selectedProductoId = null;
-  }
-
-  onProductoSaved(producto: ProductoModel): void {
-    this.loadTable({ first: 0, rows: this.rowSize });
-    this.showProductoModal = false;
+  onDetalleClosed(): void {
+    this.showDetalleModal = false;
+    this.selectedVentaId = null;
   }
 }

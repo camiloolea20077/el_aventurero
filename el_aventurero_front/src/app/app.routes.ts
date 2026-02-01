@@ -21,6 +21,13 @@ export const routes: Routes = [
       ),
     children: [
       {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./modules/dashboard/UI/index/index-dashboard.component').then(
+            (c) => c.IndexDashboardComponent,
+          ),
+      },
+      {
         path: 'mesas',
         loadComponent: () =>
           import('./modules/mesas/UI/pages/index-mesas/index-mesas.component').then(
@@ -46,6 +53,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./modules/compras/UI/pages/index-compra.component').then(
             (m) => m.IndexCompraComponent,
+          ),
+      },
+      {
+        path: 'sales',
+        loadComponent: () =>
+          import('./modules/ventas/UI/index/index-venta.component').then(
+            (m) => m.IndexVentaComponent,
           ),
       },
     ],

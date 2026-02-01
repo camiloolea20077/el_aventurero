@@ -22,6 +22,7 @@
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.21",
     "@primeuix/themes": "^2.0.3",
+    "chart.js": "^4.5.1",
     "express": "^4.18.2",
     "localforage": "^1.10.0",
     "primeflex": "^4.0.0",

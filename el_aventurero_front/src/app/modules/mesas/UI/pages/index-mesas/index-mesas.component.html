@@ -16,7 +16,7 @@
       </div>
 
       <!-- Grid de Mesas -->
-      <div *ngIf="!loading" class="mesas-grid">
+      <div *ngIf="!loading" class="mesas-grid flex flex-wrap gap-3">
         <div
           *ngFor="let mesa of mesas"
           class="mesa-card"
@@ -110,7 +110,7 @@
               label="Agregar"
               icon="pi pi-plus"
               (onClick)="agregarProducto()"
-              severity="success"
+              severity="warn"
               styleClass="add-button"
             ></p-button>
           </div>
@@ -177,7 +177,7 @@
   <!-- Footer con acciones -->
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
-      <div class="metodo-pago">
+      <div class="metodo-pago gap-3 flex">
         <label>Método de Pago:</label>
         <p-dropdown
           [(ngModel)]="metodoPagoSeleccionado"
@@ -188,19 +188,19 @@
         ></p-dropdown>
       </div>
 
-      <div class="footer-actions">
+      <div class="footer-actions mt-3 gap-3 flex">
         <p-button
           label="Cancelar"
           icon="pi pi-times"
           (onClick)="cerrarDialog()"
-          severity="secondary"
+          severity="danger"
           [outlined]="true"
         ></p-button>
         <p-button
           label="Cerrar Cuenta"
           icon="pi pi-check"
           (onClick)="cerrarCuenta()"
-          severity="success"
+          severity="warn"
           [disabled]="consumos.length === 0"
         ></p-button>
       </div>

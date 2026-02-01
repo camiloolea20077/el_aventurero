@@ -1,9 +1,10 @@
 .form-container {
   padding: 1rem 0;
+  color: var(--text);
 }
 
 .form-field {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 
   &:last-child {
     margin-bottom: 0;
@@ -13,13 +14,14 @@
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #495057;
+  font-weight: 800;
+  color: var(--gold-soft);
   font-size: 0.95rem;
 
   &.required::after {
     content: " *";
-    color: #e74c3c;
+    color: var(--bronze);
+    font-weight: 900;
   }
 }
 
@@ -27,25 +29,28 @@
   width: 100%;
 }
 
+/* mensajes */
 .error-message {
   display: block;
-  margin-top: 0.25rem;
-  color: #e74c3c;
+  margin-top: 0.35rem;
+  color: rgba(255, 90, 90, 0.95);
   font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .help-text {
   display: block;
   margin-top: 0.5rem;
-  color: #6c757d;
+  color: var(--muted);
   font-size: 0.875rem;
 }
 
 .status-text {
-  font-weight: 500;
-  color: #495057;
+  font-weight: 700;
+  color: var(--text);
 }
 
+/* Footer */
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
@@ -53,46 +58,159 @@
   padding-top: 1rem;
 }
 
+/* ========= DIALOG (paleta) ========= */
 ::ng-deep .modern-dialog {
   .p-dialog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 8px 8px 0 0;
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+    border-radius: 10px 10px 0 0;
 
     .p-dialog-title {
-      font-weight: 600;
+      font-weight: 900;
+      letter-spacing: 0.2px;
     }
 
     .p-dialog-header-icon {
-      color: white;
+      color: #111;
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(0, 0, 0, 0.12);
       }
     }
   }
 
   .p-dialog-content {
     padding: 1.5rem;
+    background: var(--bg-0);
+    color: var(--text);
+  }
+
+  .p-dialog-footer {
+    background: var(--bg-0);
+    border-top: 1px solid var(--border-gold);
   }
 }
 
+/* ========= CONTROLES PrimeNG ========= */
+::ng-deep {
+  /* Inputs / Dropdown */
+  .p-dropdown,
+  .p-inputnumber,
+  .p-inputtext {
+    background: transparent;
+  }
+
+  .p-dropdown,
+  .p-inputnumber .p-inputtext,
+  .p-inputtext {
+    background: var(--bg-1) !important;
+    border: 1px solid rgba(212, 175, 55, 0.22) !important;
+    color: var(--text) !important;
+    border-radius: 10px;
+  }
+
+  .p-dropdown-label {
+    color: var(--text) !important;
+  }
+
+  .p-dropdown:not(.p-disabled):hover,
+  .p-inputnumber:not(.p-disabled) .p-inputtext:hover,
+  .p-inputtext:hover {
+    border-color: rgba(212, 175, 55, 0.38) !important;
+  }
+
+  .p-dropdown:not(.p-disabled).p-focus,
+  .p-inputnumber:not(.p-disabled) .p-inputtext:focus,
+  .p-inputtext:focus {
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12) !important;
+    border-color: rgba(212, 175, 55, 0.55) !important;
+  }
+
+  /* Botones + / - del stock (si los mantienes) */
+  .p-inputnumber-button {
+    background: rgba(212, 175, 55, 0.12) !important;
+    border: 1px solid rgba(212, 175, 55, 0.22) !important;
+    color: var(--gold-soft) !important;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.2) !important;
+    }
+  }
+
+  /* Divider */
+  .p-divider.p-divider-horizontal:before {
+    border-top: 1px solid rgba(212, 175, 55, 0.22) !important;
+  }
+
+  /* Switch */
+  .p-inputswitch {
+    &.p-inputswitch-checked .p-inputswitch-slider {
+      background: linear-gradient(
+        135deg,
+        var(--gold) 0%,
+        var(--bronze) 100%
+      ) !important;
+    }
+
+    .p-inputswitch-slider {
+      background: rgba(201, 205, 211, 0.2) !important;
+    }
+  }
+
+  /* Botones Prime */
+  .p-button.p-button-success {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    border: none !important;
+    color: #111 !important;
+    font-weight: 900;
+
+    &:hover {
+      filter: brightness(1.05);
+    }
+  }
+
+  .p-button.p-button-secondary.p-button-outlined {
+    border: 1px solid rgba(212, 175, 55, 0.25) !important;
+    color: var(--gold-soft) !important;
+    background: transparent !important;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.08) !important;
+    }
+  }
+}
+
+/* ========= Dropdown items de producto ========= */
 .producto-option {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  gap: 0.75rem;
 
   .nombre {
-    font-weight: 600;
-    color: #495057;
+    font-weight: 800;
   }
 
   .tipo {
-    font-size: 0.85rem;
-    color: #6c757d;
-    background: #e9ecef;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    font-size: 0.8rem;
+    background: rgba(255, 196, 3, 0.918);
+    border: 1px solid rgba(255, 196, 4, 0.822);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
   }
 }
+
+// /* Opcional: el selectedItem se vea pro */
+// ::ng-deep .p-dropdown .p-dropdown-label .pi {
+//   color: var(--gold);
+// }

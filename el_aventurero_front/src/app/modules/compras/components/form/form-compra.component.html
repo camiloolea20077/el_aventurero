@@ -1,0 +1,227 @@
+<p-dialog
+  header="Registrar Compra"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog compra-dialog"
+>
+  <form [formGroup]="frmCompra" class="form-container">
+    <!-- Método de Pago -->
+    <div class="form-header">
+      <div class="form-field">
+        <label for="metodo_pago" class="form-label">
+          <i class="pi pi-credit-card mr-2"></i>
+          Método de Pago
+        </label>
+        <p-dropdown
+          id="metodo_pago"
+          [options]="metodosPago"
+          formControlName="metodo_pago"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="metodo-dropdown"
+        ></p-dropdown>
+      </div>
+
+      <div class="total-compra">
+        <span class="label">Total Compra:</span>
+        <span class="value">${{ totalCompra | number: "1.0-0" }}</span>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Tabla de Detalles -->
+    <div class="detalles-section">
+      <div class="section-header">
+        <h5>
+          <i class="pi pi-list mr-2"></i>
+          Productos de la Compra
+        </h5>
+        <p-button
+          label="Agregar Producto"
+          icon="pi pi-plus"
+          (onClick)="agregarDetalle()"
+          severity="success"
+          size="small"
+        ></p-button>
+      </div>
+
+      <div class="detalles-table-container" formArrayName="detalles">
+        <p-table
+          [value]="detalles.controls"
+          styleClass="detalles-table"
+          [scrollable]="true"
+          scrollHeight="400px"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 250px">Producto *</th>
+              <th style="width: 100px">Cajas *</th>
+              <th style="width: 120px">Unid/Caja *</th>
+              <th style="width: 120px">Total Unid.</th>
+              <th style="width: 150px">Costo Total *</th>
+              <th style="width: 120px">Costo Unit.</th>
+              <th style="width: 150px">Precio Venta *</th>
+              <th style="width: 80px">Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-detalle let-i="rowIndex">
+            <tr [formGroupName]="i">
+              <!-- Producto -->
+              <td>
+                <p-dropdown
+                  appendTo="body"
+                  [options]="productos"
+                  formControlName="producto_id"
+                  optionLabel="nombre"
+                  optionValue="id"
+                  placeholder="Seleccione"
+                  [filter]="true"
+                  styleClass="w-full"
+                  [class.invalid]="
+                    detalle.get('producto_id')?.invalid &&
+                    detalle.get('producto_id')?.touched
+                  "
+                >
+                  <ng-template let-producto pTemplate="item">
+                    <div class="producto-option">
+                      <span>{{ producto.nombre }}</span>
+                      <small>{{ producto.tipo_venta }}</small>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </td>
+
+              <!-- Cajas (digitado, compacto, sin spinner) -->
+              <td class="td-qty">
+                <p-inputNumber
+                  formControlName="cajas"
+                  [min]="1"
+                  [showButtons]="false"
+                  inputmode="numeric"
+                  styleClass="qty-field w-full"
+                  inputStyleClass="qty-input text-center"
+                ></p-inputNumber>
+              </td>
+
+              <!-- Unidades por Caja (digitado, compacto, sin spinner) -->
+              <td class="td-qty">
+                <p-inputNumber
+                  formControlName="unidades_por_caja"
+                  [min]="1"
+                  [showButtons]="false"
+                  inputmode="numeric"
+                  styleClass="qty-field w-full"
+                  inputStyleClass="qty-input text-center"
+                ></p-inputNumber>
+              </td>
+
+              <!-- Total Unidades (calculado) -->
+              <td>
+                <input
+                  pInputText
+                  formControlName="total_unidades"
+                  class="readonly-input text-center"
+                  readonly
+                />
+              </td>
+
+              <!-- Costo Total -->
+              <td>
+                <p-inputNumber
+                  formControlName="costo_total"
+                  mode="currency"
+                  currency="COP"
+                  locale="es-CO"
+                  [min]="0"
+                  styleClass="w-full"
+                ></p-inputNumber>
+              </td>
+
+              <!-- Costo Unitario (calculado) -->
+              <td>
+                <p-inputNumber
+                  formControlName="costo_unitario"
+                  mode="currency"
+                  currency="COP"
+                  locale="es-CO"
+                  styleClass="w-full readonly-input"
+                  [disabled]="true"
+                ></p-inputNumber>
+              </td>
+
+              <!-- Precio Venta -->
+              <td>
+                <p-inputNumber
+                  formControlName="precio_venta"
+                  mode="currency"
+                  currency="COP"
+                  locale="es-CO"
+                  [min]="0"
+                  styleClass="w-full"
+                ></p-inputNumber>
+              </td>
+
+              <!-- Acciones -->
+              <td class="text-center">
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  size="small"
+                  (onClick)="eliminarDetalle(i)"
+                  pTooltip="Eliminar"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="8" class="text-center">
+                No hay productos agregados
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <small class="help-text mt-2">
+        <i class="pi pi-info-circle mr-1"></i>
+        Los campos marcados con (*) son obligatorios. El Total de Unidades y
+        Costo Unitario se calculan automáticamente.
+      </small>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer gap-4">
+      <div class="footer-total">
+        <span class="label">Total de la Compra:</span>
+        <span class="value">${{ totalCompra | number: "1.0-0" }}</span>
+      </div>
+      <div class="footer-actions">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          (onClick)="closeModal()"
+          severity="secondary"
+          [outlined]="true"
+          [disabled]="isSubmitting"
+        ></p-button>
+        <p-button
+          label="Guardar Compra"
+          icon="pi pi-check"
+          (onClick)="buildSaveCompra()"
+          severity="success"
+          [loading]="isSubmitting"
+          [disabled]="isSubmitting"
+        ></p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

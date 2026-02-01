@@ -21,6 +21,8 @@ import { InventarioService } from '../../../../core/services/inventario.service'
 import { InventarioModel } from '../../../../core/models/inventario/inventario.model';
 import { FormInventarioComponent } from '../../components/form/form-inventario.component';
 import { AjusteStockComponent } from '../../components/ajuste-stock/ajuste-stock.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-index-inventario',
@@ -43,6 +45,8 @@ import { AjusteStockComponent } from '../../components/ajuste-stock/ajuste-stock
     FormInventarioComponent,
     DialogModule,
     AjusteStockComponent,
+    IconFieldModule,
+    InputIconModule,
   ],
 })
 export class IndexInventarioComponent {

@@ -1,0 +1,199 @@
+<p-dialog
+  header="Detalle de Venta"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1000px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-spinner"></i>
+    <span>Cargando información...</span>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!loading && venta" class="detalle-container">
+    <!-- Información General -->
+    <div class="info-general">
+      <div class="info-card">
+        <div class="info-item">
+          <i class="pi pi-hashtag icon"></i>
+          <div class="info-content">
+            <span class="label">ID Venta</span>
+            <span class="value">#{{ venta.id }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-table icon"></i>
+          <div class="info-content">
+            <span class="label">Mesa</span>
+            <span class="value">Mesa {{ venta.mesa_numero }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-calendar icon"></i>
+          <div class="info-content">
+            <span class="label">Fecha</span>
+            <span class="value">{{ formatDate(venta.created_at!) }}</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="pi pi-credit-card icon"></i>
+          <div class="info-content">
+            <span class="label">Método de Pago</span>
+            <p-tag
+              [value]="venta.metodo_pago || 'N/A'"
+              [severity]="getMetodoPagoSeverity(venta.metodo_pago || '')"
+              [icon]="getMetodoPagoIcon(venta.metodo_pago || '')"
+            ></p-tag>
+          </div>
+        </div>
+
+        <div class="info-item total">
+          <i class="pi pi-dollar icon"></i>
+          <div class="info-content">
+            <span class="label">Total Venta</span>
+            <span class="value total-value">
+              ${{ venta.total | number: "1.0-0" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Detalles de Productos -->
+    <div class="productos-section">
+      <h5 class="section-title">
+        <i class="pi pi-shopping-cart mr-2"></i>
+        Productos Vendidos
+      </h5>
+
+      <p-table
+        [value]="venta.detalles || []"
+        styleClass="detalle-productos-table"
+        [scrollable]="true"
+        scrollHeight="400px"
+        responsiveLayout="scroll"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 250px">Producto</th>
+            <th class="text-center" style="width: 120px">Cantidad</th>
+            <th class="text-right" style="width: 150px">Precio Unit.</th>
+            <th class="text-right" style="width: 150px">Subtotal</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-detalle>
+          <tr>
+            <!-- Producto -->
+            <td>
+              <div class="producto-cell">
+                <i class="pi pi-tag"></i>
+                <span class="nombre">{{ detalle.producto_nombre }}</span>
+              </div>
+            </td>
+
+            <!-- Cantidad -->
+            <td class="text-center">
+              <p-tag
+                [value]="detalle.cantidad.toString()"
+                severity="info"
+                icon="pi pi-box"
+                styleClass="cantidad-tag"
+              ></p-tag>
+            </td>
+
+            <!-- Precio Unitario -->
+            <td class="text-right">
+              <span class="currency-value">
+                ${{ detalle.precio_unitario | number: "1.0-0" }}
+              </span>
+            </td>
+
+            <!-- Subtotal -->
+            <td class="text-right">
+              <span class="currency-subtotal">
+                ${{ detalle.subtotal | number: "1.0-0" }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center empty-message">
+              <i class="pi pi-inbox"></i>
+              <p>No hay productos en esta venta</p>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Footer con totales -->
+        <ng-template pTemplate="footer">
+          <tr class="footer-row">
+            <td colspan="3" class="text-right footer-label">
+              <strong>Total de la Venta:</strong>
+            </td>
+            <td class="text-right footer-total">
+              <strong>${{ venta.total | number: "1.0-0" }}</strong>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Resumen -->
+    <div class="resumen-section">
+      <div class="resumen-card">
+        <div class="resumen-item">
+          <i class="pi pi-table"></i>
+          <div class="resumen-content">
+            <span class="label">Mesa Atendida</span>
+            <span class="value">Mesa {{ venta.mesa_numero }}</span>
+          </div>
+        </div>
+        <div class="resumen-item">
+          <i class="pi pi-box"></i>
+          <div class="resumen-content">
+            <span class="label">Productos Vendidos</span>
+            <span class="value">{{ venta.detalles?.length || 0 }}</span>
+          </div>
+        </div>
+        <div class="resumen-item">
+          <i class="pi pi-shopping-cart"></i>
+          <div class="resumen-content">
+            <span class="label">Unidades Totales</span>
+            <span class="value">{{ getTotalCantidad() }}</span>
+          </div>
+        </div>
+        <div class="resumen-item highlight">
+          <i class="pi pi-dollar"></i>
+          <div class="resumen-content">
+            <span class="label">Total Recaudado</span>
+            <span class="value"> ${{ venta.total | number: "1.0-0" }} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="info"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

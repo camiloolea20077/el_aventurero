@@ -11,7 +11,7 @@
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
           <p-button
-            severity="success"
+            severity="warn"
             label="Registrar Compra"
             icon="pi pi-plus"
             (click)="openCreateModal()"
@@ -29,6 +29,7 @@
         [paginator]="true"
         [rows]="rowSize"
         [rowsPerPageOptions]="[10, 25, 50, 100]"
+        appendTo="body"
         [globalFilterFields]="getFilterFields()"
         responsiveLayout="scroll"
         [showCurrentPageReport]="true"
@@ -47,15 +48,17 @@
           <div class="table-header">
             <div class="search-container">
               <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input
-                  pInputText
-                  type="text"
-                  [(ngModel)]="globalFilter"
-                  (input)="filterGlobal($event)"
-                  placeholder="Buscar compras..."
-                  class="search-input"
-                />
+                <p-iconfield>
+                  <p-inputicon styleClass="pi pi-search" />
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="globalFilter"
+                    (input)="filterGlobal($event)"
+                    placeholder="Buscar compras..."
+                    class="search-input"
+                  />
+                </p-iconfield>
               </span>
             </div>
           </div>
@@ -211,20 +214,20 @@
 </div>
 
 <!-- Modal de Formulario -->
-<!-- <app-form-compra
-    [displayModal]="showCompraModal"
-    (modalClosed)="onModalClosed()"
-    (compraSaved)="onCompraSaved($event)"
+<app-form-compra
+  [displayModal]="showCompraModal"
+  (modalClosed)="onModalClosed()"
+  (compraSaved)="onCompraSaved($event)"
 >
-</app-form-compra> -->
+</app-form-compra>
 
 <!-- Modal de Detalle -->
-<!-- <app-detalle-compra
-    [displayModal]="showDetalleModal"
-    [compraId]="selectedCompraId"
-    (modalClosed)="onDetalleClosed()"
+<app-detalle-compra
+  [displayModal]="showDetalleModal"
+  [compraId]="selectedCompraId"
+  (modalClosed)="onDetalleClosed()"
 >
-</app-detalle-compra> -->
+</app-detalle-compra>
 
 <p-toast></p-toast>
 <p-confirmDialog styleClass="modern-confirm-dialog"></p-confirmDialog>

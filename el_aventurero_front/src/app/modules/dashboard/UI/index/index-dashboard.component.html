@@ -1,0 +1,182 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h2>
+      <i class="pi pi-chart-line"></i>
+      Dashboard - El Aventurero
+    </h2>
+    <p-button
+      icon="pi pi-refresh"
+      label="Actualizar"
+      severity="secondary"
+      [outlined]="true"
+      (click)="cargarDatos()"
+      [loading]="loading"
+    ></p-button>
+  </div>
+
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading" class="loading-skeleton">
+    <div class="stats-grid">
+      <p-skeleton height="150px" *ngFor="let i of [1, 2, 3, 4]"></p-skeleton>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <div *ngIf="!loading" class="dashboard-content">
+    <!-- Cards de Estadísticas -->
+    <div class="stats-grid">
+      <div
+        *ngFor="let stat of estadisticas"
+        class="stat-card"
+        [style.border-left-color]="stat.color"
+      >
+        <div class="stat-icon" [style.background-color]="stat.color">
+          <i [class]="stat.icono"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-header">
+            <span class="stat-titulo">{{ stat.titulo }}</span>
+          </div>
+          <div class="stat-valor">{{ stat.valor }}</div>
+          <div class="stat-descripcion" *ngIf="stat.descripcion">
+            {{ stat.descripcion }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficas -->
+    <div class="charts-grid">
+      <!-- Ventas de la Semana -->
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <i class="pi pi-chart-line"></i>
+          Ventas de la Semana
+        </h3>
+        <p-chart
+          type="line"
+          [data]="ventasChart"
+          [options]="ventasChartOptions"
+          height="300px"
+        ></p-chart>
+      </div>
+
+      <!-- Métodos de Pago -->
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <i class="pi pi-credit-card"></i>
+          Métodos de Pago
+        </h3>
+        <p-chart
+          type="doughnut"
+          [data]="metodosPagoChart"
+          [options]="metodosPagoChartOptions"
+          height="300px"
+        ></p-chart>
+      </div>
+    </div>
+
+    <!-- Stock de Productos -->
+    <div class="full-width-chart">
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <i class="pi pi-box"></i>
+          Top 5 Productos por Stock
+        </h3>
+        <p-chart
+          type="bar"
+          [data]="stockChart"
+          [options]="stockChartOptions"
+          height="250px"
+        ></p-chart>
+      </div>
+    </div>
+
+    <!-- Tablas de Información -->
+    <div class="tables-grid">
+      <!-- Productos con Stock Bajo -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <i class="pi pi-exclamation-triangle"></i>
+          Productos con Stock Bajo
+        </h3>
+        <p-table
+          [value]="productosConStockBajo"
+          styleClass="stock-table"
+          [scrollable]="true"
+          scrollHeight="300px"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Producto</th>
+              <th class="text-center">Stock</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>
+                <div class="producto-info">
+                  <i class="pi pi-tag"></i>
+                  <span>{{ item.producto_nombre }}</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <p-tag
+                  [value]="item.stock.toString()"
+                  [severity]="getStockSeverity(item.stock)"
+                  icon="pi pi-box"
+                ></p-tag>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="2" class="text-center empty-message">
+                <i class="pi pi-check-circle"></i>
+                <p>Todos los productos tienen stock suficiente</p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Estado de Mesas -->
+      <div class="info-card">
+        <h3 class="card-title">
+          <i class="pi pi-table"></i>
+          Estado de Mesas
+        </h3>
+        <div class="mesas-overview">
+          <div class="mesa-resumen">
+            <div class="mesa-stat libre">
+              <i class="pi pi-check-circle"></i>
+              <div class="mesa-stat-content">
+                <span class="label">Mesas Libres</span>
+                <span class="value">{{ mesasLibres }}</span>
+              </div>
+            </div>
+            <div class="mesa-stat ocupada">
+              <i class="pi pi-users"></i>
+              <div class="mesa-stat-content">
+                <span class="label">Mesas Ocupadas</span>
+                <span class="value">{{ mesasOcupadas }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mesas-grid-mini">
+            <div
+              *ngFor="let mesa of mesas.slice(0, 12)"
+              class="mesa-mini"
+              [ngClass]="getMesaClass(mesa)"
+            >
+              <div class="mesa-numero-mini">{{ mesa.numero }}</div>
+              <div class="mesa-estado-mini">{{ mesa.estado }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

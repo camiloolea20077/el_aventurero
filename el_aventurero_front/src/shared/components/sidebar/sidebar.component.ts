@@ -132,22 +132,22 @@ export class SidebarComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Mesas',
-        icon: 'pi pi-users',
+        icon: 'pi pi-table',
         route: '/mesas',
       },
       {
         label: 'Productos',
-        icon: 'pi pi-heart-fill',
+        icon: 'pi pi-barcode',
         route: '/products',
       },
       {
         label: 'Inventario',
-        icon: 'pi pi-truck',
+        icon: 'pi pi-box',
         route: '/inventory',
       },
       {
         label: 'Compras',
-        icon: 'pi pi-trash',
+        icon: 'pi pi-shopping-cart',
         route: '/shopping',
       },
       {

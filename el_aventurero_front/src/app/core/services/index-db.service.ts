@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { AuthResponse } from '../../modules/mesas/interfaces/auth.model';
 
 @Injectable({ providedIn: 'root' })
@@ -7,38 +8,48 @@ export class IndexDBService {
   private localForage: any = null;
   private initPromise: Promise<void>;
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
     this.initPromise = this.initLocalForage();
   }
 
-  private async initLocalForage(): Promise<void> {
-    if (typeof window !== 'undefined') {
-      try {
-        const module = await import('localforage');
-        this.localForage = module.default || module;
+  private get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
-        this.localForage.config({
-          name: 'app-db',
-          version: 1.0,
-          storeName: 'authData',
-          description: 'Datos de sesión del usuario autenticado',
-        });
-      } catch (error) {
-        console.error('Error inicializando localForage:', error);
-      }
+  private async initLocalForage(): Promise<void> {
+    // SSR: no intentamos inicializar nada
+    if (!this.isBrowser) return;
+
+    try {
+      const module = await import('localforage');
+      this.localForage = module.default || module;
+
+      this.localForage.config({
+        name: 'app-db',
+        version: 1.0,
+        storeName: 'authData',
+        description: 'Datos de sesión del usuario autenticado',
+      });
+    } catch (error) {
+      // En navegador sí reportamos
+      console.error('Error inicializando localForage:', error);
+      this.localForage = null;
     }
   }
 
-  private async ensureInitialized(): Promise<void> {
+  private async ensureInitialized(): Promise<boolean> {
+    // SSR: simplemente no hay storage
+    if (!this.isBrowser) return false;
+
     await this.initPromise;
-    if (!this.localForage) {
-      throw new Error('LocalForage no está disponible');
-    }
+    return !!this.localForage;
   }
 
   async saveAuthData(data: AuthResponse): Promise<void> {
     try {
-      await this.ensureInitialized();
+      const ok = await this.ensureInitialized();
+      if (!ok) return;
+
       await this.localForage.setItem(this.AUTH_KEY, data);
     } catch (error) {
       console.error('Error guardando datos en IndexedDB:', error);
@@ -47,9 +58,11 @@ export class IndexDBService {
 
   async loadDataAuthDB(): Promise<AuthResponse | null> {
     try {
-      await this.ensureInitialized();
+      const ok = await this.ensureInitialized();
+      if (!ok) return null;
+
       const data = await this.localForage.getItem(this.AUTH_KEY);
-      return data ?? null;
+      return (data ?? null) as AuthResponse | null;
     } catch (error) {
       console.error('Error cargando datos de IndexedDB:', error);
       return null;
@@ -58,7 +71,9 @@ export class IndexDBService {
 
   async deleteDataAuthDB(): Promise<void> {
     try {
-      await this.ensureInitialized();
+      const ok = await this.ensureInitialized();
+      if (!ok) return;
+
       await this.localForage.removeItem(this.AUTH_KEY);
     } catch (error) {
       console.error('Error eliminando datos de IndexedDB:', error);
@@ -66,16 +81,23 @@ export class IndexDBService {
   }
 
   async isAuthenticated(): Promise<boolean> {
+    // SSR-safe: devolver false
+    if (!this.isBrowser) return false;
+
     const data = await this.loadDataAuthDB();
     return !!data?.token;
   }
 
   async getToken(): Promise<string | null> {
+    if (!this.isBrowser) return null;
+
     const data = await this.loadDataAuthDB();
     return data?.token ?? null;
   }
 
   async getUserId(): Promise<number | null> {
+    if (!this.isBrowser) return null;
+
     const data = await this.loadDataAuthDB();
     return data?.user?.id ?? null;
   }

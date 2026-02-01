@@ -46,8 +46,8 @@ public class InventarioQueryRepository {
                 p.nombre AS producto_nombre,
                 p.tipo_venta,
                 i.stock,
-                CAST(i.costo_unitario AS NUMERIC) AS costo_unitario,
-                CAST(i.precio_venta AS NUMERIC) AS precio_venta,
+                i.costo_unitario,
+                i.precio_venta,
                 i.activo,
                 i.created_at,
                 i.updated_at
@@ -70,7 +70,7 @@ public class InventarioQueryRepository {
             return null;
         }
         
-        List<InventarioDto> result = MapperRepository.mapListToDtoList(resultList, InventarioDto.class);
+        List<InventarioDto> result = MapperRepository.mapListToDtoListNull(resultList, InventarioDto.class);
         return result.get(0);
     }
 

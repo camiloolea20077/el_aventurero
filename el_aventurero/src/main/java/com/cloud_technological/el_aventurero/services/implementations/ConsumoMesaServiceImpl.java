@@ -56,7 +56,6 @@ public class ConsumoMesaServiceImpl implements ConsumoMesaService {
     @Override
     @Transactional
     public ConsumoMesaDto create(CreateConsumoMesaDto createDto) {
-        System.out.println("========== CREATE CONSUMO MESA - INICIO ==========");
         
         // Validar que la mesa existe
         MesaEntity mesa = mesaJPARepository.findById(createDto.getMesa_id())
@@ -99,7 +98,6 @@ public class ConsumoMesaServiceImpl implements ConsumoMesaService {
 
             // *** RESTAR STOCK DEL INVENTARIO ***
             inventarioService.restarStock(createDto.getProducto_id(), createDto.getCantidad());
-            System.out.println("Stock restado: " + createDto.getCantidad() + " unidades");
 
             // Actualizar estado de la mesa a OCUPADA si está LIBRE
             if (mesa.getEstado().equals("LIBRE")) {
@@ -166,11 +164,9 @@ public class ConsumoMesaServiceImpl implements ConsumoMesaService {
             if (diferencia > 0) {
                 // Aumentó cantidad → restar más stock
                 inventarioService.restarStock(entity.getProducto_id(), diferencia);
-                System.out.println("Stock restado adicional: " + diferencia);
             } else if (diferencia < 0) {
                 // Disminuyó cantidad → devolver stock
                 inventarioService.sumarStock(entity.getProducto_id(), Math.abs(diferencia));
-                System.out.println("Stock devuelto: " + Math.abs(diferencia));
             }
 
             // Actualizar total acumulado de la mesa
@@ -205,7 +201,6 @@ public class ConsumoMesaServiceImpl implements ConsumoMesaService {
 
             // *** DEVOLVER STOCK AL INVENTARIO ***
             inventarioService.sumarStock(entity.getProducto_id(), entity.getCantidad());
-            System.out.println("Stock devuelto: " + entity.getCantidad() + " unidades");
 
             // Actualizar total acumulado de la mesa
             MesaEntity mesa = mesaJPARepository.findById(entity.getMesa_id())

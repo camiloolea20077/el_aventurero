@@ -33,8 +33,8 @@ public class ConsumoMesaQueryRepository {
                 p.nombre AS producto_nombre,
                 p.tipo_venta,
                 c.cantidad,
-                c.precio_unitario AS precio_unitario,
-                c.subtotal AS subtotal,
+                c.precio_unitario,
+                c.subtotal,
                 c.activo
             FROM consumo_mesa c
             INNER JOIN mesas m ON m.id = c.mesa_id
@@ -52,7 +52,7 @@ public class ConsumoMesaQueryRepository {
             sql, params, new ColumnMapRowMapper()
         );
         
-        return MapperRepository.mapListToDtoList(resultList, ConsumoMesaDto.class);
+        return MapperRepository.mapListToDtoListNull(resultList, ConsumoMesaDto.class);
     }
 
     public TotalMesaDto getTotalByMesaId(Long mesaId) {

@@ -1,18 +1,17 @@
-package com.cloud_technological.el_aventurero.dto.consumo_mesa;
+package com.cloud_technological.el_aventurero.dto.detalle_venta;
+
+import java.math.BigDecimal;
 
 import lombok.Getter;
 import lombok.Setter;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class ConsumoMesaDto {
+public class DetalleVentaDto {
     private Long id;
-    private Long mesa_id;
-    private Integer mesa_numero;
+    private Long venta_id;
     private Long producto_id;
     private String producto_nombre;
-    private String tipo_venta;
     private Integer cantidad;
     private BigDecimal precio_unitario;
     private BigDecimal subtotal;

@@ -27,6 +27,27 @@ export const routes: Routes = [
             (m) => m.IndexMesasComponent,
           ),
       },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./modules/productos/UI/pages/index-producto.component').then(
+            (m) => m.IndexProductoComponent,
+          ),
+      },
+      {
+        path: 'inventory',
+        loadComponent: () =>
+          import('./modules/inventario/UI/index/index-inventario.component').then(
+            (m) => m.IndexInventarioComponent,
+          ),
+      },
+      {
+        path: 'shopping',
+        loadComponent: () =>
+          import('./modules/compras/UI/pages/index-compra.component').then(
+            (m) => m.IndexCompraComponent,
+          ),
+      },
     ],
   },
   {

@@ -75,7 +75,7 @@ public class MesaQueryRepository {
             sql, params, new ColumnMapRowMapper()
         );
         
-        return MapperRepository.mapListToDtoList(resultList, MesaDto.class);
+        return MapperRepository.mapListToDtoListNull(resultList, MesaDto.class);
     }
 
     public List<MesaDto> findByEstado(String estado) {

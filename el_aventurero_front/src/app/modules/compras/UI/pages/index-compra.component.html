@@ -1,0 +1,230 @@
+<div class="main-container">
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h4>Gestión de Compras</h4>
+    </div>
+
+    <div class="card-content">
+      <!-- Toolbar -->
+      <div class="p-toolbar mb-4">
+        <div class="toolbar-left"></div>
+        <div class="toolbar-right">
+          <p-button
+            severity="success"
+            label="Registrar Compra"
+            icon="pi pi-plus"
+            (click)="openCreateModal()"
+            class="create-button"
+          ></p-button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <p-table
+        #dt
+        [value]="compras"
+        [loading]="loadingTable"
+        styleClass="p-datatable-gridlines modern-table"
+        [paginator]="true"
+        [rows]="rowSize"
+        [rowsPerPageOptions]="[10, 25, 50, 100]"
+        [globalFilterFields]="getFilterFields()"
+        responsiveLayout="scroll"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="loadTable($event)"
+        selectionMode="single"
+        [(selection)]="selectedItem"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [scrollable]="true"
+        scrollHeight="600px"
+      >
+        <!-- Búsqueda -->
+        <ng-template pTemplate="caption">
+          <div class="table-header">
+            <div class="search-container">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input
+                  pInputText
+                  type="text"
+                  [(ngModel)]="globalFilter"
+                  (input)="filterGlobal($event)"
+                  placeholder="Buscar compras..."
+                  class="search-input"
+                />
+              </span>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Headers -->
+        <ng-template pTemplate="header">
+          <tr>
+            <ng-container *ngFor="let col of cols">
+              <th
+                *ngIf="col.field !== 'actions'"
+                [pSortableColumn]="col.field"
+                [style]="col.minWidth"
+                [class]="col.nameClass"
+              >
+                <div class="flex justify-content-between align-items-center">
+                  <span class="header-text">
+                    <i [class]="getColumnIcon(col.field)" class="mr-2"></i>
+                    {{ col.header }}
+                  </span>
+                  <p-sortIcon [field]="col.field"></p-sortIcon>
+                </div>
+              </th>
+              <th
+                *ngIf="col.field === 'actions'"
+                [class]="col.nameClass"
+                [style]="col.minWidth"
+              >
+                <span class="header-text">
+                  <i class="pi pi-cog mr-2"></i>
+                  {{ col.header }}
+                </span>
+              </th>
+            </ng-container>
+          </tr>
+        </ng-template>
+
+        <!-- Filas -->
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+          <tr class="table-row" [attr.data-index]="rowIndex">
+            <td
+              *ngFor="let col of cols"
+              [class]="col.nameClass + ' table-cell'"
+              [attr.data-field]="col.field"
+            >
+              <!-- Fecha -->
+              <div *ngIf="col.field === 'created_at'" class="text-cell">
+                <div class="text-info">
+                  <i class="pi pi-calendar date-icon"></i>
+                  <span class="text-value">
+                    {{ formatDate(item.created_at) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Total -->
+              <div *ngIf="col.type === 'currency'" class="currency-cell">
+                <span class="currency-value">
+                  ${{ item[col.field] | number: "1.0-0" }}
+                </span>
+              </div>
+
+              <!-- Método de Pago -->
+              <div *ngIf="col.field === 'metodo_pago'" class="text-cell">
+                <p-tag
+                  [value]="item.metodo_pago || 'N/A'"
+                  [severity]="getMetodoPagoSeverity(item.metodo_pago)"
+                  [icon]="getMetodoPagoIcon(item.metodo_pago)"
+                ></p-tag>
+              </div>
+
+              <!-- Cantidad de productos -->
+              <div
+                *ngIf="col.field === 'cantidad_productos'"
+                class="number-cell"
+              >
+                <p-tag
+                  [value]="item.cantidad_productos.toString()"
+                  severity="info"
+                  icon="pi pi-box"
+                ></p-tag>
+              </div>
+
+              <!-- Estado -->
+              <div *ngIf="col.type === 'icon'" class="status-cell">
+                <p-tag
+                  [value]="getEstadoLabel(item.activo)"
+                  [severity]="getEstadoSeverity(item.activo)"
+                  class="status-tag"
+                ></p-tag>
+              </div>
+
+              <!-- Acciones -->
+              <div *ngIf="col.field === 'actions'" class="action-buttons">
+                <p-button
+                  icon="pi pi-eye"
+                  severity="help"
+                  size="small"
+                  (click)="verDetalle(item)"
+                  pTooltip="Ver Detalles"
+                  tooltipPosition="top"
+                  class="view-button"
+                ></p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  (onClick)="deleteCompra(item.id)"
+                  pTooltip="Eliminar"
+                  tooltipPosition="top"
+                  class="delete-button"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Mensaje vacío -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="cols.length" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-inbox empty-icon"></i>
+                <h3>No hay compras registradas</h3>
+                <p>
+                  No se encontraron registros que coincidan con tu búsqueda.
+                </p>
+                <p-button
+                  label="Registrar la primera"
+                  icon="pi pi-plus"
+                  (click)="openCreateModal()"
+                  class="mt-3"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Loading -->
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td [attr.colspan]="cols.length">
+              <div class="loading-state">
+                <i class="pi pi-spin pi-spinner loading-spinner"></i>
+                <span>Cargando compras...</span>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Formulario -->
+<!-- <app-form-compra
+    [displayModal]="showCompraModal"
+    (modalClosed)="onModalClosed()"
+    (compraSaved)="onCompraSaved($event)"
+>
+</app-form-compra> -->
+
+<!-- Modal de Detalle -->
+<!-- <app-detalle-compra
+    [displayModal]="showDetalleModal"
+    [compraId]="selectedCompraId"
+    (modalClosed)="onDetalleClosed()"
+>
+</app-detalle-compra> -->
+
+<p-toast></p-toast>
+<p-confirmDialog styleClass="modern-confirm-dialog"></p-confirmDialog>

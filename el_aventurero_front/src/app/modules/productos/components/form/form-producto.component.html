@@ -1,0 +1,136 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Producto' : 'Crear Producto'"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <form [formGroup]="frmProducto" class="form-container">
+    <!-- Nombre del Producto -->
+    <div class="form-field">
+      <label for="nombre" class="form-label required">
+        <i class="pi pi-tag mr-2"></i>
+        Nombre del Producto
+      </label>
+      <input
+        id="nombre"
+        type="text"
+        pInputText
+        formControlName="nombre"
+        placeholder="Ej: Cerveza Corona, Aguardiente Antioqueño..."
+        class="form-input"
+        [class.invalid]="
+          frmProducto.get('nombre')?.invalid &&
+          frmProducto.get('nombre')?.touched
+        "
+      />
+      <small
+        class="error-message"
+        *ngIf="
+          frmProducto.get('nombre')?.invalid &&
+          frmProducto.get('nombre')?.touched
+        "
+      >
+        El nombre es requerido (mínimo 3 caracteres)
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Tipo de Venta -->
+    <div class="form-field">
+      <label for="tipo_venta" class="form-label required">
+        <i class="pi pi-shopping-cart mr-2"></i>
+        Tipo de Venta
+      </label>
+      <p-dropdown
+        id="tipo_venta"
+        [options]="tipoVentaOptions"
+        formControlName="tipo_venta"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Seleccione tipo de venta"
+        styleClass="form-dropdown"
+        [showClear]="false"
+      >
+        <ng-template pTemplate="selectedItem" let-option>
+          <div class="flex align-items-center" *ngIf="option">
+            <i
+              [class]="
+                option.value === 'UNIDAD'
+                  ? 'pi pi-box mr-2'
+                  : 'pi pi-inbox mr-2'
+              "
+            ></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center">
+            <i
+              [class]="
+                option.value === 'UNIDAD'
+                  ? 'pi pi-box mr-2'
+                  : 'pi pi-inbox mr-2'
+              "
+            ></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small class="help-text">
+        <i class="pi pi-info-circle mr-1"></i>
+        <span *ngIf="frmProducto.get('tipo_venta')?.value === 'UNIDAD'">
+          Se vende por unidades (latas, vasos, etc.)
+        </span>
+        <span *ngIf="frmProducto.get('tipo_venta')?.value === 'BOTELLA'">
+          Se vende por botellas completas
+        </span>
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Estado Activo -->
+    <div class="form-field">
+      <label for="activo" class="form-label">
+        <i class="pi pi-power-off mr-2"></i>
+        Estado
+      </label>
+      <div class="flex align-items-center">
+        <p-inputSwitch
+          id="activo"
+          formControlName="activo"
+          styleClass="form-switch"
+        ></p-inputSwitch>
+        <span class="ml-3 status-text">
+          {{ frmProducto.get("activo")?.value ? "Activo" : "Inactivo" }}
+        </span>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+      <p-button
+        [label]="isEditMode ? 'Actualizar' : 'Guardar'"
+        icon="pi pi-check"
+        (onClick)="buildSaveProducto()"
+        severity="success"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

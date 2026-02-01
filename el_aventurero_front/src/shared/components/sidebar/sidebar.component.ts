@@ -136,11 +136,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
         route: '/mesas',
       },
       {
-        label: 'Ventas',
-        icon: 'pi pi-shopping-cart',
-        route: '/pedidos',
-      },
-      {
         label: 'Productos',
         icon: 'pi pi-heart-fill',
         route: '/products',
@@ -153,7 +148,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       {
         label: 'Compras',
         icon: 'pi pi-trash',
-        route: '/purchases',
+        route: '/shopping',
       },
       {
         label: 'ventas',

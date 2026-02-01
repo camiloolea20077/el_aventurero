@@ -1,297 +1,212 @@
-<div class="page-container">
-  <div class="flex justify-content-between align-items-center mb-4">
-    <h1 class="page-title">MESAS - EL AVENTURERO</h1>
-    <div class="flex gap-2">
-      <p-button
-        label="Administrar Mesas"
-        icon="pi pi-cog"
-        class="btn-ghost"
-        (onClick)="showAdminDialog()"
-      >
-      </p-button>
+<div class="main-container">
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h4>
+        <i class="pi pi-table"></i>
+        Gestión de Mesas
+      </h4>
     </div>
-  </div>
 
-  <!-- Vista de Mesas en Grid -->
-  <div class="mesas-grid">
-    <div
-      *ngFor="let mesa of mesas"
-      class="mesa-card"
-      [ngClass]="{
-        'mesa-libre': mesa.estado === 'LIBRE',
-        'mesa-ocupada': mesa.estado === 'OCUPADA',
-      }"
-      (click)="abrirMesa(mesa)"
-    >
-      <div class="mesa-numero">{{ mesa.numero }}</div>
-      <div class="mesa-estado">
-        <i
-          [class]="
-            mesa.estado === 'LIBRE' ? 'pi pi-check-circle' : 'pi pi-clock'
-          "
-        ></i>
-        {{ mesa.estado }}
+    <div class="card-content">
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-state">
+        <i class="pi pi-spin pi-spinner"></i>
+        <span>Cargando mesas...</span>
       </div>
-      <div class="mesa-total" *ngIf="mesa.estado === 'OCUPADA'">
-        {{ mesa.total_acumulado | currency: "COP" : "symbol-narrow" : "1.0-0" }}
+
+      <!-- Grid de Mesas -->
+      <div *ngIf="!loading" class="mesas-grid">
+        <div
+          *ngFor="let mesa of mesas"
+          class="mesa-card"
+          [ngClass]="getMesaClass(mesa)"
+          (click)="abrirMesa(mesa)"
+        >
+          <div class="mesa-numero">{{ mesa.numero }}</div>
+          <div class="mesa-estado">
+            <i [class]="getMesaIcon(mesa)"></i>
+            {{ mesa.estado }}
+          </div>
+          <div class="mesa-total">
+            ${{
+              mesa.total_acumulado ? mesa.total_acumulado.toLocaleString() : "0"
+            }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado vacío -->
+      <div *ngIf="!loading && mesas.length === 0" class="empty-state">
+        <i class="pi pi-inbox empty-icon"></i>
+        <h3>No hay mesas registradas</h3>
+        <p>Cree mesas para comenzar a gestionar pedidos</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Dialog de Consumo de Mesa -->
+<!-- Dialog de Consumo -->
 <p-dialog
-  [header]="'Mesa ' + mesaSeleccionada?.numero"
   [(visible)]="displayConsumoDialog"
+  [header]="'Mesa ' + mesaSeleccionada?.numero"
   [modal]="true"
-  [style]="{ width: '800px', maxWidth: '95vw' }"
-  [maximizable]="true"
+  [style]="{ width: '700px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="cerrarDialog()"
+  styleClass="consumo-dialog"
 >
   <div class="consumo-container" *ngIf="mesaSeleccionada">
-    <!-- Header con estado -->
-    <div class="flex justify-content-between align-items-center mb-4">
-      <div>
-        <span
-          [class]="
-            mesaSeleccionada.estado === 'LIBRE'
-              ? 'badge-libre'
-              : 'badge-ocupada'
-          "
-        >
-          {{ mesaSeleccionada.estado }}
-        </span>
-      </div>
-      <div class="total-mesa">
-        Total:
-        <strong>{{
-          calcularTotal() | currency: "COP" : "symbol-narrow" : "1.0-0"
-        }}</strong>
-      </div>
-    </div>
+    <!-- Agregar Producto -->
+    <div class="add-producto-section">
+      <h5>
+        <i class="pi pi-plus-circle"></i>
+        Agregar Producto
+      </h5>
 
-    <!-- Formulario para agregar productos -->
-    <p-card
-      styleClass="gold-card mb-3"
-      *ngIf="mesaSeleccionada.estado === 'OCUPADA' || consumos.length === 0"
-    >
-      <div class="section-title">Agregar Producto</div>
-      <form
-        [formGroup]="consumoForm"
-        (ngSubmit)="agregarProducto()"
-        class="flex flex-column gap-3"
-      >
-        <div class="grid">
-          <div class="col-12 md:col-6">
-            <label class="field-label">Producto</label>
+      <div class="add-producto-form">
+        <div class="form-row">
+          <div class="form-field flex-1">
+            <label>Producto</label>
             <p-dropdown
-              appendTo="body"
-              formControlName="producto_id"
+              [(ngModel)]="productoSeleccionado"
               [options]="productos"
               optionLabel="nombre"
-              optionValue="id"
-              placeholder="Selecciona producto"
-              styleClass="w-full"
+              placeholder="Seleccione un producto"
               [filter]="true"
+              filterPlaceholder="Buscar producto..."
+              [showClear]="true"
+              styleClass="w-full"
             >
+              <ng-template let-producto pTemplate="item">
+                <div class="producto-option">
+                  <span class="nombre">{{ producto.nombre }}</span>
+                  <span class="tipo">{{ producto.tipo_venta }}</span>
+                </div>
+              </ng-template>
             </p-dropdown>
           </div>
 
-          <div class="col-12 md:col-3">
-            <label class="field-label">Cantidad</label>
+          <div class="form-field">
+            <label>Cantidad</label>
             <p-inputNumber
-              formControlName="cantidad"
+              [(ngModel)]="cantidad"
               [min]="1"
               [showButtons]="true"
-              styleClass="w-full"
-            >
-            </p-inputNumber>
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              decrementButtonClass="p-button-secondary"
+              incrementButtonClass="p-button-secondary"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              styleClass="cantidad-input"
+            ></p-inputNumber>
           </div>
 
-          <div class="col-12 md:col-3 flex align-items-end">
+          <div class="form-field">
+            <label>&nbsp;</label>
             <p-button
               label="Agregar"
               icon="pi pi-plus"
-              class="btn-gold w-full"
-              type="submit"
-              [disabled]="consumoForm.invalid"
-            >
-            </p-button>
-          </div>
-        </div>
-      </form>
-    </p-card>
-
-    <!-- Lista de consumos -->
-    <p-card styleClass="gold-card">
-      <div class="section-title">Productos Consumidos</div>
-
-      <div class="consumos-list" *ngIf="consumos.length > 0; else noConsumos">
-        <div
-          class="consumo-item"
-          *ngFor="let consumo of consumos; let i = index"
-        >
-          <div class="flex justify-content-between align-items-center">
-            <div class="flex-1">
-              <div class="producto-nombre">
-                {{
-                  consumo.producto?.nombre || "Producto " + consumo.producto_id
-                }}
-              </div>
-              <div class="producto-detalle">
-                {{ consumo.cantidad }} x
-                {{
-                  consumo.precio_unitario
-                    | currency: "COP" : "symbol-narrow" : "1.0-0"
-                }}
-              </div>
-            </div>
-            <div class="flex align-items-center gap-3">
-              <div class="subtotal">
-                {{
-                  consumo.subtotal | currency: "COP" : "symbol-narrow" : "1.0-0"
-                }}
-              </div>
-              <p-button
-                icon="pi pi-trash"
-                class="btn-danger"
-                [rounded]="true"
-                [text]="true"
-                severity="danger"
-                (onClick)="eliminarConsumo(i)"
-              >
-              </p-button>
-            </div>
+              (onClick)="agregarProducto()"
+              severity="success"
+              styleClass="add-button"
+            ></p-button>
           </div>
         </div>
       </div>
-
-      <ng-template #noConsumos>
-        <div class="text-center p-4" style="color: var(--muted)">
-          <i class="pi pi-inbox" style="font-size: 2rem; opacity: 0.5"></i>
-          <p class="mt-2">No hay productos consumidos aún</p>
-        </div>
-      </ng-template>
-    </p-card>
-
-    <!-- Acciones -->
-    <div
-      class="flex gap-2 justify-content-end mt-4"
-      *ngIf="consumos.length > 0"
-    >
-      <p-button
-        label="Cerrar Cuenta"
-        icon="pi pi-check"
-        class="btn-success"
-        (onClick)="cerrarCuenta()"
-      >
-      </p-button>
     </div>
-  </div>
-</p-dialog>
 
-<!-- Dialog Administrar Mesas -->
-<p-dialog
-  header="Administrar Mesas"
-  [(visible)]="displayAdminDialog"
-  [modal]="true"
-  [style]="{ width: '600px' }"
->
-  <div class="flex justify-content-end mb-3">
-    <p-button
-      label="Nueva Mesa"
-      icon="pi pi-plus"
-      class="btn-gold"
-      (onClick)="showMesaForm()"
-    >
-    </p-button>
-  </div>
+    <div class="divider"></div>
 
-  <p-table [value]="mesas" styleClass="p-datatable-sm">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Número</th>
-        <th>Estado</th>
-        <th>Total</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-mesa>
-      <tr>
-        <td>Mesa {{ mesa.numero }}</td>
-        <td>
-          <span
-            [class]="mesa.estado === 'LIBRE' ? 'badge-libre' : 'badge-ocupada'"
-          >
-            {{ mesa.estado }}
-          </span>
-        </td>
-        <td>
-          {{
-            mesa.total_acumulado | currency: "COP" : "symbol-narrow" : "1.0-0"
-          }}
-        </td>
-        <td>
-          <div class="flex gap-2">
-            <p-button
-              icon="pi pi-pencil"
-              class="btn-ghost"
-              [rounded]="true"
-              [text]="true"
-              (onClick)="editMesa(mesa)"
-            >
-            </p-button>
+    <!-- Lista de Consumos -->
+    <div class="consumos-section">
+      <div class="section-header">
+        <h5>
+          <i class="pi pi-list"></i>
+          Productos en la Mesa
+        </h5>
+        <div class="total-mesa">
+          Total: <strong>${{ totalMesa.toLocaleString() }}</strong>
+        </div>
+      </div>
+
+      <!-- Loading consumos -->
+      <div *ngIf="loadingConsumo" class="loading-small">
+        <i class="pi pi-spin pi-spinner"></i>
+        Cargando...
+      </div>
+
+      <!-- Lista de consumos -->
+      <div *ngIf="!loadingConsumo" class="consumos-list">
+        <div *ngFor="let consumo of consumos" class="consumo-item">
+          <div class="consumo-info">
+            <div class="producto-nombre">
+              {{ consumo.producto_nombre }}
+            </div>
+            <div class="producto-detalle">
+              {{ consumo.cantidad }} x ${{
+                consumo.precio_unitario.toLocaleString()
+              }}
+            </div>
+          </div>
+          <div class="consumo-actions">
+            <div class="subtotal">${{ consumo.subtotal.toLocaleString() }}</div>
             <p-button
               icon="pi pi-trash"
-              class="btn-danger"
-              [rounded]="true"
+              severity="danger"
               [text]="true"
-              (onClick)="deleteMesa(mesa.id)"
-            >
-            </p-button>
+              [rounded]="true"
+              size="small"
+              (onClick)="eliminarConsumo(consumo)"
+              pTooltip="Eliminar"
+            ></p-button>
           </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</p-dialog>
+        </div>
 
-<!-- Dialog Crear/Editar Mesa -->
-<p-dialog
-  [header]="editModeMesa ? 'Editar Mesa' : 'Nueva Mesa'"
-  [(visible)]="displayMesaFormDialog"
-  [modal]="true"
-  [style]="{ width: '400px' }"
->
-  <form [formGroup]="mesaForm" (ngSubmit)="saveMesa()">
-    <div class="flex flex-column gap-3">
-      <div class="flex flex-column gap-2">
-        <label class="field-label">Número de Mesa</label>
-        <input
-          pInputText
-          formControlName="numero"
-          type="number"
-          placeholder="Ej: 1"
-        />
-      </div>
-
-      <div class="flex gap-2 justify-content-end mt-3">
-        <p-button
-          label="Cancelar"
-          class="btn-ghost"
-          type="button"
-          (onClick)="displayMesaFormDialog = false"
-        >
-        </p-button>
-        <p-button
-          label="Guardar"
-          class="btn-gold"
-          type="submit"
-          [disabled]="mesaForm.invalid"
-        >
-        </p-button>
+        <!-- Sin consumos -->
+        <div *ngIf="consumos.length === 0" class="sin-consumos">
+          <i class="pi pi-inbox"></i>
+          <p>No hay productos en esta mesa</p>
+        </div>
       </div>
     </div>
-  </form>
+  </div>
+
+  <!-- Footer con acciones -->
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="metodo-pago">
+        <label>Método de Pago:</label>
+        <p-dropdown
+          [(ngModel)]="metodoPagoSeleccionado"
+          [options]="metodosPago"
+          optionLabel="label"
+          optionValue="value"
+          styleClass="metodo-dropdown"
+        ></p-dropdown>
+      </div>
+
+      <div class="footer-actions">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          (onClick)="cerrarDialog()"
+          severity="secondary"
+          [outlined]="true"
+        ></p-button>
+        <p-button
+          label="Cerrar Cuenta"
+          icon="pi pi-check"
+          (onClick)="cerrarCuenta()"
+          severity="success"
+          [disabled]="consumos.length === 0"
+        ></p-button>
+      </div>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

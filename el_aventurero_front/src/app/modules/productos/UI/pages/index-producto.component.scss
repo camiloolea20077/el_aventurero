@@ -1,0 +1,187 @@
+.main-container {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+
+  h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.card-content {
+  padding: 2rem;
+}
+
+.p-toolbar {
+  background: transparent;
+  border: none;
+  padding: 0 0 1.5rem 0;
+
+  .toolbar-left {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .toolbar-right {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .search-container {
+    flex: 1;
+    max-width: 400px;
+
+    .search-input {
+      width: 100%;
+    }
+  }
+}
+
+// Estilos de la tabla
+::ng-deep .modern-table {
+  .p-datatable-header {
+    background: white;
+    border: none;
+    padding: 1rem;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+
+    .header-text {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .p-datatable-tbody > tr {
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    > td {
+      padding: 1rem;
+      border: none;
+      border-bottom: 1px solid #e9ecef;
+    }
+  }
+}
+
+.table-cell {
+  vertical-align: middle;
+}
+
+.text-cell {
+  .text-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .product-icon {
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .text-value {
+      color: #495057;
+    }
+  }
+}
+
+.status-cell {
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+
+  ::ng-deep .p-button {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+// Estado vacío
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Loading
+.loading-state {
+  text-align: center;
+  padding: 2rem;
+
+  .loading-spinner {
+    font-size: 2rem;
+    color: #667eea;
+    margin-right: 1rem;
+  }
+
+  span {
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+}
+
+// Tags personalizados
+::ng-deep .tipo-venta-tag {
+  font-weight: 500;
+}
+
+::ng-deep .status-tag {
+  font-weight: 500;
+  min-width: 80px;
+}
+
+// Confirm Dialog
+::ng-deep .modern-confirm-dialog {
+  .p-confirm-dialog-icon {
+    font-size: 3rem;
+    color: #f59e0b;
+  }
+}

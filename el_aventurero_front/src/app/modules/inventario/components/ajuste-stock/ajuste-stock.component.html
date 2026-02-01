@@ -1,0 +1,158 @@
+<p-dialog
+  header="Ajustar Stock"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <div class="ajuste-container" *ngIf="inventario">
+    <!-- Información del Producto -->
+    <div class="producto-info">
+      <div class="info-row">
+        <span class="label">Producto:</span>
+        <span class="value">{{ inventario.producto_nombre }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Stock Actual:</span>
+        <span class="value stock-actual">{{ inventario.stock }}</span>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Formulario de Ajuste -->
+    <form [formGroup]="frmAjuste" class="form-container">
+      <!-- Tipo de Ajuste -->
+      <div class="form-field">
+        <label class="form-label">
+          <i class="pi pi-arrows-v mr-2"></i>
+          Tipo de Ajuste
+        </label>
+        <div class="tipo-ajuste-options">
+          <div class="radio-option suma">
+            <p-radioButton
+              name="tipoAjuste"
+              value="SUMA"
+              [(ngModel)]="tipoAjuste"
+              [ngModelOptions]="{ standalone: true }"
+              (onClick)="onTipoAjusteChange()"
+              inputId="suma"
+            ></p-radioButton>
+            <label for="suma" class="radio-label">
+              <i class="pi pi-plus-circle"></i>
+              Sumar Stock
+            </label>
+          </div>
+          <div class="radio-option resta">
+            <p-radioButton
+              name="tipoAjuste"
+              value="RESTA"
+              [(ngModel)]="tipoAjuste"
+              [ngModelOptions]="{ standalone: true }"
+              (onClick)="onTipoAjusteChange()"
+              inputId="resta"
+            ></p-radioButton>
+            <label for="resta" class="radio-label">
+              <i class="pi pi-minus-circle"></i>
+              Restar Stock
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Cantidad -->
+      <div class="form-field">
+        <label for="cantidad" class="form-label required">
+          <i class="pi pi-hashtag mr-2"></i>
+          Cantidad
+        </label>
+        <p-inputNumber
+          id="cantidad"
+          formControlName="cantidad"
+          [min]="1"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          decrementButtonClass="p-button-secondary"
+          incrementButtonClass="p-button-secondary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          styleClass="w-full cantidad-input"
+        ></p-inputNumber>
+        <small
+          class="error-message"
+          *ngIf="
+            frmAjuste.get('cantidad')?.invalid &&
+            frmAjuste.get('cantidad')?.touched
+          "
+        >
+          Ingrese una cantidad válida (mínimo 1)
+        </small>
+      </div>
+    </form>
+
+    <p-divider></p-divider>
+
+    <!-- Resumen -->
+    <div class="resumen">
+      <div class="resumen-row">
+        <span class="label">Stock Actual:</span>
+        <span class="value">{{ inventario.stock }}</span>
+      </div>
+      <div class="resumen-row operacion">
+        <span class="label">
+          {{ tipoAjuste === "SUMA" ? "Sumar:" : "Restar:" }}
+        </span>
+        <span
+          class="value"
+          [class.suma]="tipoAjuste === 'SUMA'"
+          [class.resta]="tipoAjuste === 'RESTA'"
+        >
+          {{ tipoAjuste === "SUMA" ? "+" : "-" }}
+          {{ frmAjuste.get("cantidad")?.value || 0 }}
+        </span>
+      </div>
+      <div class="resumen-row total">
+        <span class="label">Nuevo Stock:</span>
+        <span
+          class="value nuevo-stock"
+          [class]="'severity-' + getStockSeverity(nuevoStock)"
+        >
+          {{ nuevoStock }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Alerta si queda negativo -->
+    <div class="alerta-negativo" *ngIf="nuevoStock < 0">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>El stock no puede quedar en negativo</span>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+      <p-button
+        label="Ajustar Stock"
+        icon="pi pi-check"
+        (onClick)="buildAjusteStock()"
+        [severity]="tipoAjuste === 'SUMA' ? 'success' : 'warn'"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || nuevoStock < 0"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

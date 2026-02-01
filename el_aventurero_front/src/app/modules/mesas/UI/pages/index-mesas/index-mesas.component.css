@@ -1,43 +1,98 @@
+.main-container {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+
+  h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+.card-content {
+  padding: 2rem;
+}
+
+// Loading state
+.loading-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  i {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+
+  span {
+    display: block;
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+}
+
+// Grid de Mesas
 .mesas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1.5rem;
   padding: 1rem 0;
 }
 
 .mesa-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border-gold);
+  background: white;
+  border: 2px solid #e9ecef;
   border-radius: 12px;
   padding: 2rem 1.5rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(212, 175, 55, 0.3);
-    border-color: var(--gold);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   }
 
   .mesa-numero {
     font-size: 2.5rem;
     font-weight: 900;
-    color: var(--gold-soft);
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    color: #495057;
     margin-bottom: 0.5rem;
   }
 
   .mesa-estado {
     font-size: 0.9rem;
-    color: var(--muted);
+    font-weight: 600;
+    color: #6c757d;
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 
     i {
       font-size: 1.1rem;
@@ -45,91 +100,415 @@
   }
 
   .mesa-total {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    color: var(--gold);
+    color: #495057;
     margin-top: 0.5rem;
   }
 }
 
+// Mesa Libre
 .mesa-libre {
-  border-color: rgba(34, 139, 34, 0.5);
+  border-color: #28a745;
+  background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
 
   &:hover {
-    border-color: #228b22;
-    box-shadow: 0 12px 32px rgba(34, 139, 34, 0.3);
+    border-color: #218838;
+    box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+  }
+
+  .mesa-numero {
+    color: #155724;
   }
 
   .mesa-estado {
-    color: #90ee90;
+    color: #28a745;
 
     i {
-      color: #228b22;
+      color: #28a745;
     }
+  }
+
+  .mesa-total {
+    color: #155724;
   }
 }
 
+// Mesa Ocupada
 .mesa-ocupada {
-  border-color: rgba(220, 20, 60, 0.5);
+  border-color: #dc3545;
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
 
   &:hover {
-    border-color: #dc143c;
-    box-shadow: 0 12px 32px rgba(220, 20, 60, 0.3);
+    border-color: #c82333;
+    box-shadow: 0 8px 16px rgba(220, 53, 69, 0.3);
+  }
+
+  .mesa-numero {
+    color: #721c24;
   }
 
   .mesa-estado {
-    color: #ffb4b4;
+    color: #dc3545;
 
     i {
-      color: #dc143c;
+      color: #dc3545;
     }
+  }
+
+  .mesa-total {
+    color: #721c24;
+  }
+}
+
+// Estado vacío
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #6c757d;
+  }
+}
+
+// Dialog de Consumo
+::ng-deep .consumo-dialog {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+
+    .p-dialog-title {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 0;
+  }
+
+  .p-dialog-footer {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
   }
 }
 
 .consumo-container {
-  .total-mesa {
-    font-size: 1.3rem;
-    color: var(--gold-soft);
+  padding: 2rem;
+}
 
-    strong {
-      color: var(--gold);
-      font-size: 1.5rem;
+// Sección agregar producto
+.add-producto-section {
+  h5 {
+    color: #495057;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: #667eea;
     }
   }
+}
 
-  .consumos-list {
+.add-producto-form {
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .form-field {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-  }
+    gap: 0.5rem;
 
-  .consumo-item {
-    background: rgba(15, 16, 18, 0.5);
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    border-radius: 8px;
-    padding: 1rem;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: rgba(212, 175, 55, 0.08);
-      border-color: rgba(212, 175, 55, 0.3);
+    &.flex-1 {
+      flex: 1;
     }
 
-    .producto-nombre {
+    label {
       font-weight: 600;
-      color: var(--text);
+      color: #495057;
+      font-size: 0.9rem;
+    }
+  }
+}
+
+::ng-deep .cantidad-input {
+  .p-inputnumber {
+    width: 140px;
+  }
+}
+
+::ng-deep .add-button {
+  width: 100%;
+}
+
+.producto-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .nombre {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .tipo {
+    font-size: 0.85rem;
+    color: #6c757d;
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+}
+
+.divider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 2rem 0;
+}
+
+// Sección consumos
+.consumos-section {
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h5 {
+      color: #495057;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        color: #667eea;
+      }
+    }
+
+    .total-mesa {
+      font-size: 1.3rem;
+      color: #495057;
+
+      strong {
+        color: #667eea;
+        font-size: 1.5rem;
+        font-weight: 900;
+      }
+    }
+  }
+}
+
+.loading-small {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+
+  i {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+  }
+}
+
+.consumos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+
+  // Scrollbar personalizado
+    &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+
+    &:hover {
+      background: #764ba2;
+    }
+  }
+}
+
+.consumo-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .consumo-info {
+    flex: 1;
+
+    .producto-nombre {
+      font-weight: 700;
+      color: #495057;
       margin-bottom: 0.25rem;
+      font-size: 1rem;
     }
 
     .producto-detalle {
-      font-size: 0.85rem;
-      color: var(--muted);
+      font-size: 0.875rem;
+      color: #6c757d;
     }
+  }
+
+  .consumo-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 
     .subtotal {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--gold);
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #667eea;
+    }
+
+    ::ng-deep .p-button {
+      &:hover {
+        background: rgba(220, 53, 69, 0.1);
+      }
+    }
+  }
+}
+
+.sin-consumos {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #6c757d;
+
+  i {
+    font-size: 3rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+// Footer del dialog
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .metodo-pago {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    label {
+      font-weight: 600;
+      color: #495057;
+    }
+
+    ::ng-deep .metodo-dropdown {
+      .p-dropdown {
+        min-width: 200px;
+      }
+    }
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .mesas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .mesa-card {
+    padding: 1.5rem 1rem;
+
+    .mesa-numero {
+      font-size: 2rem;
+    }
+
+    .mesa-total {
+      font-size: 1rem;
+    }
+  }
+
+  .add-producto-form {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+
+    .metodo-pago {
+      width: 100%;
+
+      ::ng-deep .metodo-dropdown {
+        .p-dropdown {
+          width: 100%;
+        }
+      }
+    }
+
+    .footer-actions {
+      width: 100%;
+
+      ::ng-deep .p-button {
+        flex: 1;
+      }
     }
   }
 }

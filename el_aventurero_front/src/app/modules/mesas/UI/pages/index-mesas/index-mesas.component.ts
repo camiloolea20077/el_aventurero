@@ -1,342 +1,280 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { CardModule } from 'primeng/card';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
-import {
-  ConsumoMesa,
-  Mesa,
-  Producto,
-} from '../../../../../../shared/interfaces/interfaces';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { lastValueFrom } from 'rxjs';
+import { MesaModel } from '../../../../../core/models/mesa/mesa.model';
+import { ConsumoMesaModel } from '../../../../../core/models/consumo-mesa/consumo-mesa.model';
+import { ProductoListDto } from '../../../../../core/models/producto/producto-list.dto';
+import { MesaService } from '../../../../../core/services/mesa.service';
+import { ConsumoMesaService } from '../../../../../core/services/consumo-mesa.service';
+import { ProductoService } from '../../../../../core/services/producto.service';
+import { VentaService } from '../../../../../core/services/venta.service';
+import { CreateConsumoMesaDto } from '../../../../../core/models/consumo-mesa/create-consumo-mesa.dto';
+import { CreateVentaDto } from '../../../../../core/models/venta/create-venta.dto';
 
 @Component({
-  selector: 'app-mesas',
+  selector: 'app-index-mesa',
   standalone: true,
+  templateUrl: './index-mesas.component.html',
+  styleUrls: ['./index-mesas.component.scss'],
+  providers: [MessageService, ConfirmationService],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    TableModule,
-    CardModule,
+    FormsModule,
     ButtonModule,
     DialogModule,
-    InputTextModule,
     DropdownModule,
     InputNumberModule,
     ToastModule,
+    ConfirmDialogModule,
   ],
-  providers: [MessageService],
-  templateUrl: './index-mesas.component.html',
-  styleUrls: ['./index-mesas.component.css'],
 })
 export class IndexMesasComponent implements OnInit {
-  mesas: Mesa[] = [];
-  productos: Producto[] = [];
-  consumos: ConsumoMesa[] = [];
+  // Mesas
+  mesas: MesaModel[] = [];
+  loading: boolean = true;
 
-  displayConsumoDialog = false;
-  displayAdminDialog = false;
-  displayMesaFormDialog = false;
-  editModeMesa = false;
+  // Dialog de consumo
+  displayConsumoDialog: boolean = false;
+  mesaSeleccionada: MesaModel | null = null;
+  consumos: ConsumoMesaModel[] = [];
+  totalMesa: number = 0;
 
-  mesaSeleccionada: Mesa | null = null;
-  consumoForm!: FormGroup;
-  mesaForm!: FormGroup;
+  // Productos para el dropdown
+  productos: ProductoListDto[] = [];
+  productoSeleccionado: ProductoListDto | null = null;
+  cantidad: number = 1;
+  loadingConsumo: boolean = false;
+
+  // Métodos de pago
+  metodosPago = [
+    { label: 'Efectivo', value: 'EFECTIVO' },
+    { label: 'Tarjeta', value: 'TARJETA' },
+    { label: 'Transferencia', value: 'TRANSFERENCIA' },
+    { label: 'Nequi/Daviplata', value: 'DIGITAL' },
+  ];
+  metodoPagoSeleccionado: string = 'EFECTIVO';
 
   constructor(
-    private fb: FormBuilder,
+    private mesaService: MesaService,
+    private consumoMesaService: ConsumoMesaService,
+    private productoService: ProductoService,
+    private ventaService: VentaService,
     private messageService: MessageService,
+    private confirmationService: ConfirmationService,
   ) {}
 
-  ngOnInit() {
-    this.initForms();
-    this.loadMesas();
-    this.loadProductos();
+  ngOnInit(): void {
+    this.cargarMesas();
+    this.cargarProductos();
   }
 
-  initForms() {
-    this.consumoForm = this.fb.group({
-      producto_id: ['', Validators.required],
-      cantidad: [1, [Validators.required, Validators.min(1)]],
-    });
-
-    this.mesaForm = this.fb.group({
-      numero: ['', [Validators.required, Validators.min(1)]],
-    });
-  }
-
-  loadMesas() {
-    // Datos de ejemplo - aquí conectarías con tu servicio
-    this.mesas = [
-      {
-        id: 1,
-        numero: 1,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 2,
-        numero: 2,
-        estado: 'OCUPADA',
-        total_acumulado: 45000,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 3,
-        numero: 3,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 4,
-        numero: 4,
-        estado: 'OCUPADA',
-        total_acumulado: 78000,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 5,
-        numero: 5,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 6,
-        numero: 6,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 7,
-        numero: 7,
-        estado: 'OCUPADA',
-        total_acumulado: 32000,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 8,
-        numero: 8,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 9,
-        numero: 9,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-      {
-        id: 10,
-        numero: 10,
-        estado: 'LIBRE',
-        total_acumulado: 0,
-        activo: 1,
-        created_at: new Date(),
-      },
-    ];
-  }
-
-  loadProductos() {
-    // Datos de ejemplo
-    this.productos = [
-      { id: 1, nombre: 'Cerveza Corona', tipo_venta: 'UNIDAD', activo: 1 },
-      {
-        id: 2,
-        nombre: 'Aguardiente Antioqueño',
-        tipo_venta: 'BOTELLA',
-        activo: 1,
-      },
-      { id: 3, nombre: 'Ron Medellín', tipo_venta: 'BOTELLA', activo: 1 },
-      { id: 4, nombre: 'Coca Cola', tipo_venta: 'UNIDAD', activo: 1 },
-      { id: 5, nombre: "Whisky Buchanan's", tipo_venta: 'BOTELLA', activo: 1 },
-    ];
-  }
-
-  abrirMesa(mesa: Mesa) {
-    this.mesaSeleccionada = mesa;
-    this.consumos = this.loadConsumosMesa(mesa.id!);
-    this.consumoForm.reset({ cantidad: 1 });
-    this.displayConsumoDialog = true;
-  }
-
-  loadConsumosMesa(mesaId: number): ConsumoMesa[] {
-    // Aquí cargarías los consumos desde tu servicio
-    // Datos de ejemplo para mesas ocupadas
-    if (mesaId === 2) {
-      return [
-        {
-          id: 1,
-          mesa_id: 2,
-          producto_id: 1,
-          producto: {
-            id: 1,
-            nombre: 'Cerveza Corona',
-            tipo_venta: 'UNIDAD',
-            activo: 1,
-          },
-          cantidad: 3,
-          precio_unitario: 5000,
-          subtotal: 15000,
-          activo: 1,
-        },
-        {
-          id: 2,
-          mesa_id: 2,
-          producto_id: 2,
-          producto: {
-            id: 2,
-            nombre: 'Aguardiente Antioqueño',
-            tipo_venta: 'BOTELLA',
-            activo: 1,
-          },
-          cantidad: 1,
-          precio_unitario: 30000,
-          subtotal: 30000,
-          activo: 1,
-        },
-      ];
-    }
-    return [];
-  }
-
-  agregarProducto() {
-    if (this.consumoForm.valid && this.mesaSeleccionada) {
-      const formValue = this.consumoForm.value;
-      const producto = this.productos.find(
-        (p) => p.id === formValue.producto_id,
-      );
-
-      if (producto) {
-        // Precio de ejemplo - aquí lo obtendrías del inventario
-        const precioUnitario = 5000;
-        const subtotal = formValue.cantidad * precioUnitario;
-
-        const nuevoConsumo: ConsumoMesa = {
-          mesa_id: this.mesaSeleccionada.id!,
-          producto_id: formValue.producto_id,
-          producto: producto,
-          cantidad: formValue.cantidad,
-          precio_unitario: precioUnitario,
-          subtotal: subtotal,
-          activo: 1,
-        };
-
-        this.consumos.push(nuevoConsumo);
-
-        // Actualizar estado de la mesa
-        if (this.mesaSeleccionada.estado === 'LIBRE') {
-          this.mesaSeleccionada.estado = 'OCUPADA';
-        }
-
-        this.consumoForm.reset({ cantidad: 1 });
-
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Producto agregado',
-          detail: `${producto.nombre} agregado a la cuenta`,
-        });
-      }
-    }
-  }
-
-  eliminarConsumo(index: number) {
-    this.consumos.splice(index, 1);
-
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Producto eliminado',
-      detail: 'Producto removido de la cuenta',
-    });
-  }
-
-  calcularTotal(): number {
-    return this.consumos.reduce((sum, consumo) => sum + consumo.subtotal, 0);
-  }
-
-  cerrarCuenta() {
-    if (
-      this.mesaSeleccionada &&
-      confirm('¿Desea cerrar la cuenta de esta mesa?')
-    ) {
-      const total = this.calcularTotal();
-
-      // Aquí guardarías la venta en la BD
-
+  async cargarMesas(): Promise<void> {
+    this.loading = true;
+    try {
+      const response = await lastValueFrom(this.mesaService.getAllMesas());
+      this.mesas = response.data || [];
+    } catch (error) {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Cuenta cerrada',
-        detail: `Total: ${total.toLocaleString('es-CO', { style: 'currency', currency: 'COP' })}`,
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudieron cargar las mesas',
       });
-
-      // Limpiar mesa
-      this.mesaSeleccionada.estado = 'LIBRE';
-      this.mesaSeleccionada.total_acumulado = 0;
-      this.consumos = [];
-      this.displayConsumoDialog = false;
+    } finally {
+      this.loading = false;
     }
   }
 
-  showAdminDialog() {
-    this.displayAdminDialog = true;
+  async cargarProductos(): Promise<void> {
+    try {
+      const response = await lastValueFrom(
+        this.productoService.getAllProductos(),
+      );
+      this.productos = response.data || [];
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+    }
   }
 
-  showMesaForm() {
-    this.editModeMesa = false;
-    this.mesaForm.reset();
-    this.displayMesaFormDialog = true;
+  async abrirMesa(mesa: MesaModel): Promise<void> {
+    this.mesaSeleccionada = mesa;
+    this.displayConsumoDialog = true;
+    this.productoSeleccionado = null;
+    this.cantidad = 1;
+    await this.cargarConsumosMesa(mesa.id);
   }
 
-  editMesa(mesa: Mesa) {
-    this.editModeMesa = true;
-    this.mesaForm.patchValue({ numero: mesa.numero });
-    this.displayMesaFormDialog = true;
+  async cargarConsumosMesa(mesaId: number): Promise<void> {
+    this.loadingConsumo = true;
+    try {
+      const response = await lastValueFrom(
+        this.consumoMesaService.getConsumosByMesaId(mesaId),
+      );
+      this.consumos = response.data || [];
+      this.calcularTotal();
+    } catch (error) {
+      this.consumos = [];
+      this.totalMesa = 0;
+    } finally {
+      this.loadingConsumo = false;
+    }
   }
 
-  saveMesa() {
-    if (this.mesaForm.valid) {
+  calcularTotal(): void {
+    this.totalMesa = this.consumos.reduce(
+      (sum, consumo) => sum + (consumo.subtotal || 0),
+      0,
+    );
+  }
+
+  async agregarProducto(): Promise<void> {
+    if (!this.productoSeleccionado || !this.mesaSeleccionada) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'Seleccione un producto',
+      });
+      return;
+    }
+
+    if (this.cantidad <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'La cantidad debe ser mayor a 0',
+      });
+      return;
+    }
+
+    const createDto: CreateConsumoMesaDto = {
+      mesa_id: this.mesaSeleccionada.id,
+      producto_id: this.productoSeleccionado.id,
+      cantidad: this.cantidad,
+    };
+
+    try {
+      await lastValueFrom(this.consumoMesaService.createConsumoMesa(createDto));
+
       this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
-        detail: this.editModeMesa ? 'Mesa actualizada' : 'Mesa creada',
+        detail: 'Producto agregado correctamente',
       });
-      this.displayMesaFormDialog = false;
-      this.loadMesas();
+
+      // Recargar consumos y mesas
+      await this.cargarConsumosMesa(this.mesaSeleccionada.id);
+      await this.cargarMesas();
+
+      // Limpiar formulario
+      this.productoSeleccionado = null;
+      this.cantidad = 1;
+    } catch (error: any) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.error?.message || 'No se pudo agregar el producto',
+      });
     }
   }
 
-  deleteMesa(id: number | undefined) {
-    if (confirm('¿Eliminar esta mesa?')) {
+  async eliminarConsumo(consumo: ConsumoMesaModel): Promise<void> {
+    this.confirmationService.confirm({
+      message: '¿Está seguro de eliminar este producto?',
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: async () => {
+        try {
+          await lastValueFrom(
+            this.consumoMesaService.deleteConsumoMesa(consumo.id),
+          );
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Producto eliminado correctamente',
+          });
+
+          if (this.mesaSeleccionada) {
+            await this.cargarConsumosMesa(this.mesaSeleccionada.id);
+            await this.cargarMesas();
+          }
+        } catch (error) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo eliminar el producto',
+          });
+        }
+      },
+    });
+  }
+
+  async cerrarCuenta(): Promise<void> {
+    if (!this.mesaSeleccionada) return;
+
+    if (this.consumos.length === 0) {
       this.messageService.add({
-        severity: 'success',
-        summary: 'Mesa eliminada',
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay consumos para cerrar',
       });
-      this.loadMesas();
+      return;
     }
+
+    this.confirmationService.confirm({
+      message: `¿Cerrar cuenta de Mesa ${this.mesaSeleccionada.numero}?<br>Total: $${this.totalMesa.toLocaleString()}`,
+      header: 'Cerrar Cuenta',
+      icon: 'pi pi-check-circle',
+      accept: async () => {
+        const createVenta: CreateVentaDto = {
+          mesa_id: this.mesaSeleccionada!.id,
+          metodo_pago: this.metodoPagoSeleccionado,
+        };
+
+        try {
+          await lastValueFrom(this.ventaService.createVenta(createVenta));
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Cuenta cerrada correctamente',
+            life: 5000,
+          });
+
+          this.displayConsumoDialog = false;
+          await this.cargarMesas();
+        } catch (error) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo cerrar la cuenta',
+          });
+        }
+      },
+    });
+  }
+
+  cerrarDialog(): void {
+    this.displayConsumoDialog = false;
+    this.mesaSeleccionada = null;
+    this.consumos = [];
+    this.totalMesa = 0;
+    this.productoSeleccionado = null;
+    this.cantidad = 1;
+  }
+
+  getMesaClass(mesa: MesaModel): string {
+    return mesa.estado === 'LIBRE' ? 'mesa-libre' : 'mesa-ocupada';
+  }
+
+  getMesaIcon(mesa: MesaModel): string {
+    return mesa.estado === 'LIBRE' ? 'pi pi-check-circle' : 'pi pi-users';
   }
 }

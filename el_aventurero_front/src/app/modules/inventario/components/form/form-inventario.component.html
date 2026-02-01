@@ -1,0 +1,206 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Inventario' : 'Crear Inventario'"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <form [formGroup]="frmInventario" class="form-container">
+    <!-- Producto -->
+    <div class="form-field">
+      <label for="producto_id" class="form-label required">
+        <i class="pi pi-tag mr-2"></i>
+        Producto
+      </label>
+      <p-dropdown
+        id="producto_id"
+        [options]="productos"
+        formControlName="producto_id"
+        optionLabel="nombre"
+        optionValue="id"
+        placeholder="Seleccione un producto"
+        [filter]="true"
+        filterPlaceholder="Buscar producto..."
+        styleClass="form-dropdown"
+        [showClear]="true"
+        [disabled]="isEditMode"
+      >
+        <ng-template pTemplate="selectedItem" let-option>
+          <div class="flex align-items-center" *ngIf="option">
+            <i class="pi pi-tag mr-2"></i>
+            <span>{{ option.nombre }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="producto-option">
+            <span class="nombre">{{ option.nombre }}</span>
+            <span class="tipo">{{ option.tipo_venta }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small
+        class="error-message"
+        *ngIf="
+          frmInventario.get('producto_id')?.invalid &&
+          frmInventario.get('producto_id')?.touched
+        "
+      >
+        El producto es requerido
+      </small>
+      <small class="help-text" *ngIf="isEditMode">
+        <i class="pi pi-info-circle mr-1"></i>
+        No se puede cambiar el producto en modo edición
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Stock -->
+    <div class="form-field">
+      <label for="stock" class="form-label required">
+        <i class="pi pi-box mr-2"></i>
+        Stock Inicial
+      </label>
+      <p-inputNumber
+        id="stock"
+        formControlName="stock"
+        [min]="0"
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        spinnerMode="horizontal"
+        decrementButtonClass="p-button-secondary"
+        incrementButtonClass="p-button-secondary"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        styleClass="w-full"
+      ></p-inputNumber>
+      <small
+        class="error-message"
+        *ngIf="
+          frmInventario.get('stock')?.invalid &&
+          frmInventario.get('stock')?.touched
+        "
+      >
+        El stock es requerido y debe ser mayor o igual a 0
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Costo Unitario -->
+    <div class="form-field">
+      <label for="costo_unitario" class="form-label required">
+        <i class="pi pi-dollar mr-2"></i>
+        Costo Unitario
+      </label>
+      <p-inputNumber
+        id="costo_unitario"
+        formControlName="costo_unitario"
+        mode="currency"
+        currency="COP"
+        locale="es-CO"
+        [min]="0"
+        styleClass="w-full"
+      ></p-inputNumber>
+      <small
+        class="error-message"
+        *ngIf="
+          frmInventario.get('costo_unitario')?.invalid &&
+          frmInventario.get('costo_unitario')?.touched
+        "
+      >
+        El costo unitario es requerido
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Precio Venta -->
+    <div class="form-field">
+      <label for="precio_venta" class="form-label required">
+        <i class="pi pi-money-bill mr-2"></i>
+        Precio de Venta
+      </label>
+      <p-inputNumber
+        id="precio_venta"
+        formControlName="precio_venta"
+        mode="currency"
+        currency="COP"
+        locale="es-CO"
+        [min]="0"
+        styleClass="w-full"
+      ></p-inputNumber>
+      <small
+        class="error-message"
+        *ngIf="
+          frmInventario.get('precio_venta')?.invalid &&
+          frmInventario.get('precio_venta')?.touched
+        "
+      >
+        El precio de venta es requerido
+      </small>
+      <small
+        class="help-text"
+        *ngIf="
+          frmInventario.get('costo_unitario')?.value &&
+          frmInventario.get('precio_venta')?.value
+        "
+      >
+        <i class="pi pi-chart-line mr-1"></i>
+        Margen:
+        {{
+          (
+            ((frmInventario.get("precio_venta")?.value -
+              frmInventario.get("costo_unitario")?.value) /
+              frmInventario.get("costo_unitario")?.value) *
+            100
+          ).toFixed(2)
+        }}%
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Estado Activo -->
+    <div class="form-field">
+      <label for="activo" class="form-label">
+        <i class="pi pi-power-off mr-2"></i>
+        Estado
+      </label>
+      <div class="flex align-items-center">
+        <p-inputSwitch
+          id="activo"
+          formControlName="activo"
+          styleClass="form-switch"
+        ></p-inputSwitch>
+        <span class="ml-3 status-text">
+          {{ frmInventario.get("activo")?.value ? "Activo" : "Inactivo" }}
+        </span>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+      <p-button
+        [label]="isEditMode ? 'Actualizar' : 'Guardar'"
+        icon="pi pi-check"
+        (onClick)="buildSaveInventario()"
+        severity="success"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

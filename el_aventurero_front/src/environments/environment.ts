@@ -1,8 +1,11 @@
 export const environment = {
-    production: false,
-    apiUrl: 'http://localhost:9001/',
-    birthsUrl: 'http://localhost:9001/births',
-    usersUrl: 'http://localhost:9001/users',
-    authUrl: 'http://localhost:9001/auth',
-    cattleUrl: 'http://localhost:9001/cattle',
+  production: false,
+  apiUrl: 'http://localhost:9001/',
+  // URLs específicas
+  productoUrl: 'http://localhost:9001/api/productos',
+  inventarioUrl: 'http://localhost:9001/api/inventario',
+  mesaUrl: 'http://localhost:9001/api/mesas',
+  consumoMesaUrl: 'http://localhost:9001/api/consumo-mesa',
+  compraUrl: 'http://localhost:9001/api/compras',
+  ventaUrl: 'http://localhost:9001/api/ventas',
 };

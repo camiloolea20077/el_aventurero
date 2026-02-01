@@ -36,7 +36,7 @@ public class ProductoController {
         this.productoService = productoService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<ProductoDto>> create(@Valid @RequestBody CreateProductoDto createDto) {
         try {
             ProductoDto result = productoService.create(createDto);

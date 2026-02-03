@@ -1,0 +1,307 @@
+<div class="main-container">
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <h4>Flujo de Caja</h4>
+    </div>
+
+    <div class="card-content">
+      <!-- Toolbar con botones de acción -->
+      <div class="p-toolbar mb-4">
+        <div class="toolbar-left"></div>
+        <div class="toolbar-right">
+          <p-button
+            label="Registrar Movimiento"
+            icon="pi pi-plus"
+            severity="success"
+            (click)="openRegistroModal()"
+            class="mr-2"
+          ></p-button>
+          <p-button
+            label="Cierre Semanal"
+            icon="pi pi-calendar"
+            severity="info"
+            (click)="openCierreModal()"
+          ></p-button>
+        </div>
+      </div>
+
+      <!-- Filtros de Fecha -->
+      <div class="filtros-fecha">
+        <div class="fecha-inputs">
+          <div class="campo-fecha">
+            <label>Fecha Inicio</label>
+            <p-calendar
+              [(ngModel)]="fechaInicio"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+            ></p-calendar>
+          </div>
+          <div class="campo-fecha">
+            <label>Fecha Fin</label>
+            <p-calendar
+              [(ngModel)]="fechaFin"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+            ></p-calendar>
+          </div>
+          <p-button
+            label="Filtrar"
+            icon="pi pi-search"
+            (click)="cargarDatos()"
+          ></p-button>
+        </div>
+        <div class="fecha-rapida">
+          <p-button
+            label="Hoy"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (click)="setFechasHoy(); cargarDatos()"
+          ></p-button>
+          <p-button
+            label="Esta Semana"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (click)="setFechasSemana()"
+          ></p-button>
+        </div>
+      </div>
+
+      <!-- Resumen de Caja -->
+      <div class="resumen-caja" *ngIf="resumen">
+        <div class="resumen-card ingreso">
+          <i class="pi pi-arrow-up"></i>
+          <div class="resumen-content">
+            <span class="label">Total Ingresos</span>
+            <span class="valor"
+              >${{ resumen.total_ingresos | number: "1.0-0" }}</span
+            >
+            <span class="detalle"
+              >{{ resumen.movimientos_ingreso }} movimientos</span
+            >
+          </div>
+        </div>
+
+        <div class="resumen-card egreso">
+          <i class="pi pi-arrow-down"></i>
+          <div class="resumen-content">
+            <span class="label">Total Egresos</span>
+            <span class="valor"
+              >${{ resumen.total_egresos | number: "1.0-0" }}</span
+            >
+            <span class="detalle"
+              >{{ resumen.movimientos_egreso }} movimientos</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="resumen-card balance"
+          [class.negativo]="resumen.balance < 0"
+        >
+          <i class="pi pi-dollar"></i>
+          <div class="resumen-content">
+            <span class="label">Balance</span>
+            <span class="valor">${{ resumen.balance | number: "1.0-0" }}</span>
+            <span class="detalle">
+              {{ resumen.balance >= 0 ? "Positivo" : "Negativo" }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <p-tabView [(activeIndex)]="activeIndex">
+        <p-tabPanel header="Todos los Movimientos" leftIcon="pi pi-list">
+          <p-table
+            [value]="movimientos"
+            [loading]="loading"
+            styleClass="movimientos-table"
+            [scrollable]="true"
+            scrollHeight="500px"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Categoría</th>
+                <th>Concepto</th>
+                <th class="text-right">Monto</th>
+                <th>Método Pago</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-movimiento>
+              <tr>
+                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>
+                  <p-tag
+                    [value]="movimiento.tipo"
+                    [severity]="getTipoSeverity(movimiento.tipo)"
+                    [icon]="getTipoIcon(movimiento.tipo)"
+                  ></p-tag>
+                </td>
+                <td>
+                  <p-tag
+                    [value]="movimiento.categoria"
+                    [severity]="getCategoriaSeverity(movimiento.categoria)"
+                  ></p-tag>
+                </td>
+                <td>{{ movimiento.concepto }}</td>
+                <td class="text-right">
+                  <span
+                    class="monto"
+                    [class.ingreso]="movimiento.tipo === 'INGRESO'"
+                    [class.egreso]="movimiento.tipo === 'EGRESO'"
+                  >
+                    {{ movimiento.tipo === "INGRESO" ? "+" : "-" }}
+                    ${{ movimiento.monto | number: "1.0-0" }}
+                  </span>
+                </td>
+                <td>{{ movimiento.metodo_pago || "N/A" }}</td>
+                <td class="text-center">
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    size="small"
+                    (click)="deleteMovimiento(movimiento.id)"
+                    pTooltip="Eliminar"
+                  ></p-button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="7" class="text-center empty-message">
+                  <div class="empty-state">
+                    <i class="pi pi-inbox empty-icon"></i>
+                    <h3>No hay movimientos en este período</h3>
+                    <p>Registra tu primer movimiento de caja.</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel header="Ingresos" leftIcon="pi pi-arrow-up">
+          <p-table
+            [value]="getMovimientosIngresos()"
+            styleClass="movimientos-table"
+            [scrollable]="true"
+            scrollHeight="500px"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Concepto</th>
+                <th class="text-right">Monto</th>
+                <th>Método Pago</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-movimiento>
+              <tr>
+                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>
+                  <p-tag
+                    [value]="movimiento.categoria"
+                    [severity]="getCategoriaSeverity(movimiento.categoria)"
+                  ></p-tag>
+                </td>
+                <td>{{ movimiento.concepto }}</td>
+                <td class="text-right">
+                  <span class="monto ingreso">
+                    +${{ movimiento.monto | number: "1.0-0" }}
+                  </span>
+                </td>
+                <td>{{ movimiento.metodo_pago || "N/A" }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center empty-message">
+                  <div class="empty-state">
+                    <i class="pi pi-inbox empty-icon"></i>
+                    <p>No hay ingresos en este período</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+
+        <p-tabPanel header="Egresos" leftIcon="pi pi-arrow-down">
+          <p-table
+            [value]="getMovimientosEgresos()"
+            styleClass="movimientos-table"
+            [scrollable]="true"
+            scrollHeight="500px"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Concepto</th>
+                <th class="text-right">Monto</th>
+                <th>Método Pago</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-movimiento>
+              <tr>
+                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>
+                  <p-tag
+                    [value]="movimiento.categoria"
+                    [severity]="getCategoriaSeverity(movimiento.categoria)"
+                  ></p-tag>
+                </td>
+                <td>{{ movimiento.concepto }}</td>
+                <td class="text-right">
+                  <span class="monto egreso">
+                    -${{ movimiento.monto | number: "1.0-0" }}
+                  </span>
+                </td>
+                <td>{{ movimiento.metodo_pago || "N/A" }}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" class="text-center empty-message">
+                  <div class="empty-state">
+                    <i class="pi pi-inbox empty-icon"></i>
+                    <p>No hay egresos en este período</p>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Registro -->
+<app-registro-movimiento
+  [displayModal]="showRegistroModal"
+  (modalClosed)="onRegistroModalClosed()"
+  (movimientoRegistrado)="onMovimientoRegistrado()"
+>
+</app-registro-movimiento>
+
+<!-- Modal de Cierre Semanal -->
+<app-cierre-semanal
+  [displayModal]="showCierreModal"
+  (modalClosed)="onCierreModalClosed()"
+>
+</app-cierre-semanal>
+
+<p-toast></p-toast>
+<p-confirmDialog styleClass="modern-confirm-dialog"></p-confirmDialog>

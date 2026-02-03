@@ -1,0 +1,204 @@
+<p-dialog
+  header="Registrar Movimiento"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog"
+>
+  <form [formGroup]="frmMovimiento" class="form-container">
+    <!-- Tipo de Movimiento -->
+    <div class="form-field">
+      <label class="form-label">
+        <i class="pi pi-arrows-v mr-2"></i>
+        Tipo de Movimiento
+      </label>
+      <div class="tipo-movimiento-options">
+        <div class="radio-option ingreso">
+          <p-radioButton
+            name="tipo"
+            value="INGRESO"
+            [(ngModel)]="tipoMovimiento"
+            [ngModelOptions]="{ standalone: true }"
+            (onClick)="onTipoChange()"
+            inputId="ingreso"
+          ></p-radioButton>
+          <label for="ingreso" class="radio-label">
+            <i class="pi pi-arrow-up"></i>
+            Ingreso
+          </label>
+        </div>
+        <div class="radio-option egreso">
+          <p-radioButton
+            name="tipo"
+            value="EGRESO"
+            [(ngModel)]="tipoMovimiento"
+            [ngModelOptions]="{ standalone: true }"
+            (onClick)="onTipoChange()"
+            inputId="egreso"
+          ></p-radioButton>
+          <label for="egreso" class="radio-label">
+            <i class="pi pi-arrow-down"></i>
+            Egreso
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Concepto -->
+    <div class="form-field">
+      <label for="concepto" class="form-label required">
+        <i class="pi pi-bookmark mr-2"></i>
+        Concepto
+      </label>
+      <input
+        id="concepto"
+        type="text"
+        pInputText
+        formControlName="concepto"
+        placeholder="Ej: Venta de cerveza, Pago de luz, etc."
+        class="form-input"
+      />
+      <small
+        class="error-message"
+        *ngIf="
+          frmMovimiento.get('concepto')?.invalid &&
+          frmMovimiento.get('concepto')?.touched
+        "
+      >
+        El concepto es requerido (mínimo 3 caracteres)
+      </small>
+    </div>
+
+    <!-- Categoría -->
+    <div class="form-field">
+      <label for="categoria" class="form-label required">
+        <i class="pi pi-tag mr-2"></i>
+        Categoría
+      </label>
+      <p-dropdown
+        id="categoria"
+        [options]="getCategorias()"
+        formControlName="categoria"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Seleccione una categoría"
+        styleClass="w-full"
+      ></p-dropdown>
+      <small
+        class="error-message"
+        *ngIf="
+          frmMovimiento.get('categoria')?.invalid &&
+          frmMovimiento.get('categoria')?.touched
+        "
+      >
+        La categoría es requerida
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Monto -->
+    <div class="form-field">
+      <label for="monto" class="form-label required">
+        <i class="pi pi-dollar mr-2"></i>
+        Monto
+      </label>
+      <p-inputNumber
+        id="monto"
+        formControlName="monto"
+        mode="currency"
+        currency="COP"
+        locale="es-CO"
+        [min]="0"
+        styleClass="w-full"
+      ></p-inputNumber>
+      <small
+        class="error-message"
+        *ngIf="
+          frmMovimiento.get('monto')?.invalid &&
+          frmMovimiento.get('monto')?.touched
+        "
+      >
+        El monto debe ser mayor a 0
+      </small>
+    </div>
+
+    <!-- Método de Pago -->
+    <div class="form-field">
+      <label for="metodo_pago" class="form-label">
+        <i class="pi pi-credit-card mr-2"></i>
+        Método de Pago
+      </label>
+      <p-dropdown
+        id="metodo_pago"
+        [options]="metodosPago"
+        formControlName="metodo_pago"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Seleccione método"
+        styleClass="w-full"
+      ></p-dropdown>
+    </div>
+
+    <!-- Fecha -->
+    <div class="form-field">
+      <label for="fecha" class="form-label required">
+        <i class="pi pi-calendar mr-2"></i>
+        Fecha
+      </label>
+      <p-calendar
+        id="fecha"
+        formControlName="fecha"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        styleClass="w-full"
+      ></p-calendar>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Descripción -->
+    <div class="form-field">
+      <label for="descripcion" class="form-label">
+        <i class="pi pi-align-left mr-2"></i>
+        Descripción (Opcional)
+      </label>
+      <textarea
+        id="descripcion"
+        pInputTextarea
+        formControlName="descripcion"
+        rows="3"
+        placeholder="Detalles adicionales..."
+        class="w-full"
+      ></textarea>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+      <p-button
+        label="Registrar"
+        icon="pi pi-check"
+        (onClick)="buildSaveMovimiento()"
+        [severity]="tipoMovimiento === 'INGRESO' ? 'success' : 'danger'"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

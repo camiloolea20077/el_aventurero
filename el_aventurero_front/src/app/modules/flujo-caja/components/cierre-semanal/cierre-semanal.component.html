@@ -1,0 +1,298 @@
+<p-dialog
+  header="Cierre Semanal"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog cierre-dialog"
+  [maximizable]="true"
+>
+  <!-- Selector de Fecha -->
+  <div class="filtro-semana">
+    <div class="fecha-inputs">
+      <div class="campo-fecha">
+        <label>Fecha Inicio</label>
+        <p-calendar
+          [(ngModel)]="fechaInicio"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+        ></p-calendar>
+      </div>
+      <div class="campo-fecha">
+        <label>Fecha Fin</label>
+        <p-calendar
+          [(ngModel)]="fechaFin"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+        ></p-calendar>
+      </div>
+      <p-button
+        label="Generar"
+        icon="pi pi-refresh"
+        (click)="cargarCierre()"
+        [loading]="loading"
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-spinner"></i>
+    <span>Generando cierre semanal...</span>
+  </div>
+
+  <!-- Contenido del Cierre -->
+  <div *ngIf="!loading && cierre" class="cierre-container">
+    <!-- Encabezado del Cierre -->
+    <div class="cierre-header">
+      <div class="header-info">
+        <h3>Cierre Semanal - Semana {{ cierre.semana }}</h3>
+        <p class="periodo">
+          {{ formatDateDisplay(cierre.fecha_inicio) }} -
+          {{ formatDateDisplay(cierre.fecha_fin) }}
+        </p>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Resumen Financiero -->
+    <div class="resumen-financiero">
+      <h4 class="section-title">
+        <i class="pi pi-dollar"></i>
+        Resumen Financiero
+      </h4>
+
+      <div class="stats-grid">
+        <div class="stat-card ventas">
+          <i class="pi pi-shopping-cart"></i>
+          <div class="stat-content">
+            <span class="label">Ventas Totales</span>
+            <span class="valor"
+              >${{ cierre.ventas_totales | number: "1.0-0" }}</span
+            >
+            <span class="detalle"
+              >{{ cierre.cantidad_ventas }} ventas realizadas</span
+            >
+          </div>
+        </div>
+
+        <div class="stat-card ingresos">
+          <i class="pi pi-arrow-up"></i>
+          <div class="stat-content">
+            <span class="label">Total Ingresos</span>
+            <span class="valor"
+              >${{ cierre.total_ingresos | number: "1.0-0" }}</span
+            >
+            <span class="detalle">Incluye ventas y otros ingresos</span>
+          </div>
+        </div>
+
+        <div class="stat-card egresos">
+          <i class="pi pi-arrow-down"></i>
+          <div class="stat-content">
+            <span class="label">Total Egresos</span>
+            <span class="valor"
+              >${{ cierre.total_egresos | number: "1.0-0" }}</span
+            >
+            <span class="detalle">Gastos operativos</span>
+          </div>
+        </div>
+
+        <div
+          class="stat-card balance"
+          [class.negativo]="cierre.balance_neto < 0"
+        >
+          <i class="pi pi-chart-line"></i>
+          <div class="stat-content">
+            <span class="label">Balance Neto</span>
+            <span class="valor"
+              >${{ cierre.balance_neto | number: "1.0-0" }}</span
+            >
+            <span class="detalle">
+              {{ cierre.balance_neto >= 0 ? "Ganancia" : "Pérdida" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="stat-card ticket">
+          <i class="pi pi-ticket"></i>
+          <div class="stat-content">
+            <span class="label">Ticket Promedio</span>
+            <span class="valor"
+              >${{ cierre.ticket_promedio | number: "1.0-0" }}</span
+            >
+            <span class="detalle">Por venta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Gráficas -->
+    <div class="charts-section">
+      <!-- Métodos de Pago -->
+      <div class="chart-container">
+        <h4 class="section-title">
+          <i class="pi pi-credit-card"></i>
+          Distribución por Método de Pago
+        </h4>
+        <p-chart
+          type="doughnut"
+          [data]="metodosPagoChart"
+          [options]="metodosPagoChartOptions"
+          height="300px"
+        ></p-chart>
+
+        <!-- Tabla de Métodos de Pago -->
+        <p-table [value]="cierre.metodos_pago" styleClass="metodos-table mt-3">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Método</th>
+              <th class="text-center">Cantidad</th>
+              <th class="text-right">Total</th>
+              <th class="text-center">Porcentaje</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-metodo>
+            <tr>
+              <td>
+                <p-tag [value]="metodo.metodo" severity="info"></p-tag>
+              </td>
+              <td class="text-center">{{ metodo.cantidad }}</td>
+              <td class="text-right currency">
+                ${{ metodo.total | number: "1.0-0" }}
+              </td>
+              <td class="text-center">
+                <strong>{{ metodo.porcentaje }}%</strong>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Top Productos -->
+      <div class="chart-container">
+        <h4 class="section-title">
+          <i class="pi pi-star"></i>
+          Top 5 Productos Más Vendidos
+        </h4>
+        <p-chart
+          type="bar"
+          [data]="productosChart"
+          [options]="productosChartOptions"
+          height="300px"
+        ></p-chart>
+
+        <!-- Tabla de Productos -->
+        <p-table
+          [value]="cierre.productos_top"
+          styleClass="productos-table mt-3"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Producto</th>
+              <th class="text-center">Cantidad</th>
+              <th class="text-right">Total Vendido</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-producto let-rowIndex="rowIndex">
+            <tr>
+              <td>
+                <div class="producto-info">
+                  <span class="ranking">#{{ rowIndex + 1 }}</span>
+                  <span class="nombre">{{ producto.producto_nombre }}</span>
+                </div>
+              </td>
+              <td class="text-center">
+                <p-tag
+                  [value]="producto.cantidad_vendida.toString()"
+                  severity="success"
+                ></p-tag>
+              </td>
+              <td class="text-right currency">
+                ${{ producto.total_vendido | number: "1.0-0" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <!-- Conclusiones -->
+    <div class="conclusiones">
+      <h4 class="section-title">
+        <i class="pi pi-check-circle"></i>
+        Conclusiones
+      </h4>
+      <div class="conclusiones-content">
+        <div class="conclusion-item">
+          <i class="pi pi-info-circle"></i>
+          <p>
+            El balance neto de la semana es de
+            <strong>${{ cierre.balance_neto | number: "1.0-0" }}</strong
+            >, con una rentabilidad del
+            <strong>
+              {{
+                ((cierre.balance_neto / cierre.total_ingresos) * 100).toFixed(
+                  1
+                )
+              }}%
+            </strong>
+          </p>
+        </div>
+        <div class="conclusion-item">
+          <i class="pi pi-chart-bar"></i>
+          <p>
+            El método de pago más utilizado fue
+            <strong>{{ cierre.metodos_pago[0]?.metodo }}</strong>
+            con
+            <strong
+              >{{ cierre.metodos_pago[0]?.cantidad }} transacciones</strong
+            >
+          </p>
+        </div>
+        <div class="conclusion-item">
+          <i class="pi pi-star-fill"></i>
+          <p>
+            El producto más vendido fue
+            <strong>{{ cierre.productos_top[0]?.producto_nombre }}</strong>
+            con
+            <strong>
+              {{ cierre.productos_top[0]?.cantidad_vendida }} unidades
+            </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+      ></p-button>
+      <p-button
+        label="Imprimir"
+        icon="pi pi-print"
+        (onClick)="imprimirCierre()"
+        severity="info"
+        [disabled]="!cierre"
+      ></p-button>
+      <p-button
+        label="Exportar PDF"
+        icon="pi pi-file-pdf"
+        (onClick)="exportarPDF()"
+        severity="danger"
+        [disabled]="!cierre"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

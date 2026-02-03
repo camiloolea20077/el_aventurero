@@ -75,7 +75,7 @@ SELECT column_name
 FROM information_schema.columns
 WHERE table_name = 'productos'
 ORDER BY column_name;
-
+select * from mesas
 
 CREATE TABLE compras (
     id SERIAL PRIMARY KEY,
@@ -154,17 +154,30 @@ CREATE TABLE detalle_venta (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
-CREATE TABLE flujo_caja (
-    id SERIAL PRIMARY KEY,
-    tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('INGRESO','EGRESO')),
-    referencia VARCHAR(50),
-    descripcion VARCHAR(150),
-    monto NUMERIC(12,2) NOT NULL,
-    activo INT DEFAULT 1 CHECK (activo IN (1,2)),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS movimiento_caja (
+    id BIGSERIAL PRIMARY KEY,
+    tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('INGRESO', 'EGRESO')),
+    concepto VARCHAR(100) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    monto DECIMAL(15, 2) NOT NULL CHECK (monto > 0),
+    metodo_pago VARCHAR(50),
+    descripcion TEXT,
+    fecha DATE NOT NULL,
+    venta_id BIGINT,
+    compra_id BIGINT,
+    activo BIGINT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP
+    deleted_at TIMESTAMP,
+    CONSTRAINT fk_venta FOREIGN KEY (venta_id) REFERENCES ventas(id) ON DELETE SET NULL,
+    CONSTRAINT fk_compra FOREIGN KEY (compra_id) REFERENCES compras(id) ON DELETE SET NULL
 );
+
+-- Crear índices para mejorar rendimiento
+CREATE INDEX idx_movimiento_caja_fecha ON movimiento_caja(fecha);
+CREATE INDEX idx_movimiento_caja_tipo ON movimiento_caja(tipo);
+CREATE INDEX idx_movimiento_caja_categoria ON movimiento_caja(categoria);
+CREATE INDEX idx_movimiento_caja_deleted_at ON movimiento_caja(deleted_at);
 
             SELECT 
                 u.id AS id,

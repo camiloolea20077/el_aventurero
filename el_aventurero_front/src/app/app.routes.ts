@@ -62,6 +62,13 @@ export const routes: Routes = [
             (m) => m.IndexVentaComponent,
           ),
       },
+      {
+        path: 'caja',
+        loadComponent: () =>
+          import('./modules/flujo-caja/UI/pages/index-flujo-caja.component').then(
+            (m) => m.IndexFlujoCajaComponent,
+          ),
+      },
     ],
   },
   {

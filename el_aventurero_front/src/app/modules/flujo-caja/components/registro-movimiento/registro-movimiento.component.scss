@@ -1,0 +1,291 @@
+/* =========================
+   PALETA NEGRO + DORADO
+   ========================= */
+:host {
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.88);
+  --bronze: #cd7f32;
+
+  --bg-0: #0b0c0e;
+  --bg-1: #0f1012;
+  --bg-2: #15171a;
+
+  --text: rgba(212, 175, 55, 0.92);
+  --muted: rgba(212, 175, 55, 0.65);
+
+  --border-gold: rgba(212, 175, 55, 0.22);
+  --shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+
+  --success: #28a745;
+  --danger: #dc3545;
+}
+
+/* =========================
+   FORM
+   ========================= */
+.form-container {
+  padding: 1rem 0;
+  color: var(--text);
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 900;
+  color: var(--gold-soft);
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+
+  &.required::after {
+    content: " *";
+    color: rgba(220, 53, 69, 0.95);
+    font-weight: 900;
+  }
+}
+
+.form-input {
+  width: 100%;
+}
+
+.error-message {
+  display: block;
+  margin-top: 0.25rem;
+  color: rgba(220, 53, 69, 0.95);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* =========================
+   INPUTS PRIME (dark + gold)
+   ========================= */
+::ng-deep {
+  .p-inputtext,
+  .p-dropdown,
+  .p-inputnumber,
+  .p-calendar,
+  .p-textarea {
+    width: 100%;
+  }
+
+  .p-inputtext,
+  .p-inputnumber-input,
+  .p-dropdown .p-dropdown-label,
+  .p-calendar .p-inputtext,
+  .p-textarea {
+    background: var(--bg-0) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border-gold) !important;
+    border-radius: 10px !important;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.2) !important;
+      border-color: rgba(212, 175, 55, 0.5) !important;
+    }
+  }
+
+  .p-dropdown .p-dropdown-trigger,
+  .p-calendar .p-datepicker-trigger {
+    background: rgba(212, 175, 55, 0.08) !important;
+    border: 1px solid var(--border-gold) !important;
+    color: var(--gold) !important;
+    border-radius: 10px !important;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.14) !important;
+    }
+  }
+
+  /* Panel dropdown (lista) */
+  .p-dropdown-panel {
+    background: var(--bg-1) !important;
+    border: 1px solid var(--border-gold) !important;
+
+    .p-dropdown-items .p-dropdown-item {
+      color: var(--text) !important;
+
+      &:hover {
+        background: rgba(212, 175, 55, 0.1) !important;
+      }
+
+      &.p-highlight {
+        background: rgba(212, 175, 55, 0.18) !important;
+        color: var(--gold) !important;
+      }
+    }
+  }
+}
+
+/* =========================
+   TIPO MOVIMIENTO (radios cards)
+   ========================= */
+.tipo-movimiento-options {
+  display: flex;
+  gap: 1rem;
+
+  .radio-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid var(--border-gold);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: var(--bg-1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.45);
+      background: rgba(212, 175, 55, 0.06);
+    }
+
+    &.ingreso:hover {
+      border-color: rgba(40, 167, 69, 0.55);
+      background: rgba(40, 167, 69, 0.08);
+    }
+
+    &.egreso:hover {
+      border-color: rgba(220, 53, 69, 0.55);
+      background: rgba(220, 53, 69, 0.08);
+    }
+
+    .radio-label {
+      cursor: pointer;
+      font-weight: 900;
+      color: var(--gold-soft);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        font-size: 1.25rem;
+        color: var(--gold);
+      }
+    }
+  }
+}
+
+/* Estilo del radiobutton Prime */
+::ng-deep .p-radiobutton {
+  .p-radiobutton-box {
+    border: 1px solid var(--border-gold);
+    background: var(--bg-0);
+
+    &.p-highlight {
+      border-color: rgba(212, 175, 55, 0.6);
+      background: rgba(212, 175, 55, 0.12);
+    }
+  }
+
+  .p-radiobutton-icon {
+    background: var(--gold) !important;
+  }
+}
+
+/* =========================
+   FOOTER / BOTONES (dorados)
+   ========================= */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+::ng-deep {
+  /* Cancelar (outline dorado) */
+  .p-button.p-button-secondary.p-button-outlined {
+    background: transparent !important;
+    border: 1px solid var(--border-gold) !important;
+    color: var(--gold) !important;
+    border-radius: 10px;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.1) !important;
+    }
+  }
+
+  /* Guardar (dorado premium) */
+  .p-button.p-button-success {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    color: #111 !important;
+    border-radius: 10px;
+    font-weight: 900;
+
+    &:hover {
+      filter: brightness(1.02);
+      box-shadow: 0 10px 18px rgba(212, 175, 55, 0.18);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* =========================
+   DIALOG (header dorado + content dark)
+   ========================= */
+::ng-deep .modern-dialog {
+  .p-dialog-header {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+
+    .p-dialog-title {
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .p-dialog-header-icon {
+      color: #111 !important;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+    background: var(--bg-0) !important;
+    color: var(--text) !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--bg-0) !important;
+    border-top: 1px solid var(--border-gold);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 768px) {
+  .tipo-movimiento-options {
+    flex-direction: column;
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}

@@ -69,6 +69,13 @@ export const routes: Routes = [
             (m) => m.IndexFlujoCajaComponent,
           ),
       },
+      {
+        path: 'arqueo-caja',
+        loadComponent: () =>
+          import('./modules/arqueo-caja/UI/pages/index-arqueo-caja.component').then(
+            (m) => m.IndexArqueoCajaComponent,
+          ),
+      }
     ],
   },
   {

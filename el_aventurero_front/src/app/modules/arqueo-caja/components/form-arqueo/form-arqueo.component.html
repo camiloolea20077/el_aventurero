@@ -1,0 +1,228 @@
+<p-dialog
+    header="Arqueo de Caja"
+    [(visible)]="displayModal"
+    [modal]="true"
+    [style]="{ width: '95vw', maxWidth: '1200px' }"
+    [draggable]="false"
+    [resizable]="false"
+    (onHide)="onModalHide()"
+    styleClass="modern-dialog arqueo-dialog"
+>
+    <form [formGroup]="frmArqueo" class="form-container">
+        <!-- Loading -->
+        <div *ngIf="loadingDatos" class="loading-container">
+            <i class="pi pi-spin pi-spinner loading-spinner"></i>
+            <span>Cargando datos del día...</span>
+        </div>
+
+        <div *ngIf="!loadingDatos" class="arqueo-content">
+            <!-- Resumen del Sistema -->
+            <div class="resumen-sistema">
+                <h3 class="section-title">
+                    <i class="pi pi-database"></i>
+                    Resumen del Sistema
+                </h3>
+
+                <div class="resumen-grid">
+                    <div class="resumen-item">
+                        <span class="label">Saldo Inicial</span>
+                        <span class="valor">${{ saldoInicial | number: '1.0-0' }}</span>
+                    </div>
+                    <div class="resumen-item ingreso">
+                        <span class="label">Ingresos del Día</span>
+                        <span class="valor">+${{ totalIngresosSistema | number: '1.0-0' }}</span>
+                    </div>
+                    <div class="resumen-item egreso">
+                        <span class="label">Egresos del Día</span>
+                        <span class="valor">-${{ totalEgresosSistema | number: '1.0-0' }}</span>
+                    </div>
+                    <div class="resumen-item esperado">
+                        <span class="label">Saldo Esperado</span>
+                        <span class="valor">${{ saldoEsperado | number: '1.0-0' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Conteo de Efectivo -->
+            <div class="conteo-efectivo">
+                <h3 class="section-title">
+                    <i class="pi pi-money-bill"></i>
+                    Conteo de Efectivo
+                </h3>
+
+                <div class="conteo-grid">
+                    <!-- Billetes -->
+                    <div class="conteo-section">
+                        <h4 class="subsection-title">
+                            <i class="pi pi-wallet"></i>
+                            Billetes
+                        </h4>
+
+                        <div class="denominaciones-list">
+                            <div 
+                                *ngFor="let billete of billetes; let i = index" 
+                                class="denominacion-item"
+                            >
+                                <div class="denominacion-info">
+                                    <span class="denominacion-label">
+                                        ${{ billete.denominacion | number: '1.0-0' }}
+                                    </span>
+                                    <span class="multiplicador">×</span>
+                                </div>
+                                <div class="denominacion-input">
+                                    <p-inputNumber
+                                        [(ngModel)]="billete.cantidad"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        [min]="0"
+                                        [showButtons]="true"
+                                        buttonLayout="horizontal"
+                                        spinnerMode="horizontal"
+                                        decrementButtonClass="p-button-secondary"
+                                        incrementButtonClass="p-button-secondary"
+                                        incrementButtonIcon="pi pi-plus"
+                                        decrementButtonIcon="pi pi-minus"
+                                        (onInput)="onCantidadChange('billete', i)"
+                                    ></p-inputNumber>
+                                </div>
+                                <div class="denominacion-total">
+                                    <span>= ${{ billete.total | number: '1.0-0' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subtotal">
+                            <span class="subtotal-label">Total Billetes:</span>
+                            <span class="subtotal-valor">${{ totalBilletes | number: '1.0-0' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Monedas -->
+                    <div class="conteo-section">
+                        <h4 class="subsection-title">
+                            <i class="pi pi-circle"></i>
+                            Monedas
+                        </h4>
+
+                        <div class="denominaciones-list">
+                            <div 
+                                *ngFor="let moneda of monedas; let i = index" 
+                                class="denominacion-item"
+                            >
+                                <div class="denominacion-info">
+                                    <span class="denominacion-label">
+                                        ${{ moneda.denominacion | number: '1.0-0' }}
+                                    </span>
+                                    <span class="multiplicador">×</span>
+                                </div>
+                                <div class="denominacion-input">
+                                    <p-inputNumber
+                                        [(ngModel)]="moneda.cantidad"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        [min]="0"
+                                        [showButtons]="true"
+                                        buttonLayout="horizontal"
+                                        spinnerMode="horizontal"
+                                        decrementButtonClass="p-button-secondary"
+                                        incrementButtonClass="p-button-secondary"
+                                        incrementButtonIcon="pi pi-plus"
+                                        decrementButtonIcon="pi pi-minus"
+                                        (onInput)="onCantidadChange('moneda', i)"
+                                    ></p-inputNumber>
+                                </div>
+                                <div class="denominacion-total">
+                                    <span>= ${{ moneda.total | number: '1.0-0' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subtotal">
+                            <span class="subtotal-label">Total Monedas:</span>
+                            <span class="subtotal-valor">${{ totalMonedas | number: '1.0-0' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Resumen Final -->
+            <div class="resumen-final">
+                <h3 class="section-title">
+                    <i class="pi pi-calculator"></i>
+                    Resultado del Arqueo
+                </h3>
+
+                <div class="resultado-grid">
+                    <div class="resultado-item">
+                        <span class="label">Efectivo Real Contado</span>
+                        <span class="valor grande">${{ efectivoReal | number: '1.0-0' }}</span>
+                    </div>
+                    <div class="resultado-item">
+                        <span class="label">Saldo Esperado (Sistema)</span>
+                        <span class="valor">${{ saldoEsperado | number: '1.0-0' }}</span>
+                    </div>
+                    <div class="resultado-item diferencia" [attr.data-severity]="getDiferenciaSeverity()">
+                        <span class="label">
+                            <i [class]="getDiferenciaIcon()"></i>
+                            Diferencia
+                        </span>
+                        <span class="valor diferencia-valor">
+                            {{ diferencia >= 0 ? '+' : '' }}${{ diferencia | number: '1.0-0' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Mensaje de diferencia -->
+                <div *ngIf="diferencia !== 0" class="diferencia-mensaje" [attr.data-type]="diferencia > 0 ? 'sobrante' : 'faltante'">
+                    <i [class]="diferencia > 0 ? 'pi pi-exclamation-circle' : 'pi pi-times-circle'"></i>
+                    <span>
+                        {{ diferencia > 0 ? 'Sobrante' : 'Faltante' }} de 
+                        <strong>${{ Math.abs(diferencia) | number: '1.0-0' }}</strong>
+                        - Se recomienda agregar observaciones
+                    </span>
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="form-field" *ngIf="diferencia !== 0">
+                <label for="observaciones" class="form-label">
+                    <i class="pi pi-align-left mr-2"></i>
+                    Observaciones (Recomendado)
+                </label>
+                <textarea
+                    id="observaciones"
+                    pInputTextarea
+                    formControlName="observaciones"
+                    rows="3"
+                    placeholder="Explique el motivo de la diferencia: venta no registrada, gasto olvidado, error en conteo, etc."
+                    class="w-full"
+                ></textarea>
+            </div>
+        </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+        <div class="dialog-footer">
+            <p-button
+                label="Cancelar"
+                icon="pi pi-times"
+                (onClick)="closeModal()"
+                severity="secondary"
+                [outlined]="true"
+                [disabled]="isSubmitting"
+            ></p-button>
+            <p-button
+                label="Guardar Arqueo"
+                icon="pi pi-check"
+                (onClick)="buildSaveArqueo()"
+                [severity]="getDiferenciaSeverity()"
+                [loading]="isSubmitting"
+                [disabled]="isSubmitting || efectivoReal === 0"
+            ></p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

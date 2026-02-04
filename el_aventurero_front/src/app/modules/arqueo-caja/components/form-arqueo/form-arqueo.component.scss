@@ -1,0 +1,445 @@
+.form-container {
+    padding: 0;
+}
+
+.loading-container {
+    text-align: center;
+    padding: 4rem 2rem;
+
+    .loading-spinner {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    span {
+        display: block;
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+}
+
+.arqueo-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+// Section Title
+.section-title {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+
+    i {
+        color: #667eea;
+        font-size: 1.5rem;
+    }
+}
+
+.subsection-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+        color: #667eea;
+    }
+}
+
+// Resumen del Sistema
+.resumen-sistema {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+
+    .resumen-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+
+        .resumen-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-left: 4px solid #667eea;
+
+            &.ingreso {
+                border-left-color: #28a745;
+
+                .valor {
+                    color: #28a745;
+                }
+            }
+
+            &.egreso {
+                border-left-color: #dc3545;
+
+                .valor {
+                    color: #dc3545;
+                }
+            }
+
+            &.esperado {
+                border-left-color: #007bff;
+
+                .valor {
+                    color: #007bff;
+                }
+            }
+
+            .label {
+                font-size: 0.85rem;
+                color: #6c757d;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .valor {
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: #495057;
+                font-family: 'Courier New', monospace;
+            }
+        }
+    }
+}
+
+// Conteo de Efectivo
+.conteo-efectivo {
+    .conteo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+    }
+
+    .conteo-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .denominaciones-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .denominacion-item {
+        display: grid;
+        grid-template-columns: 100px 1fr 120px;
+        gap: 1rem;
+        align-items: center;
+        background: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+
+        .denominacion-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+
+            .denominacion-label {
+                font-weight: 700;
+                color: #495057;
+                font-family: 'Courier New', monospace;
+                font-size: 0.95rem;
+            }
+
+            .multiplicador {
+                color: #6c757d;
+                font-size: 1.2rem;
+            }
+        }
+
+        .denominacion-input {
+            ::ng-deep .p-inputnumber {
+                width: 100%;
+
+                .p-inputnumber-input {
+                    text-align: center;
+                    font-weight: 600;
+                }
+            }
+        }
+
+        .denominacion-total {
+            text-align: right;
+
+            span {
+                font-weight: 700;
+                color: #667eea;
+                font-family: 'Courier New', monospace;
+            }
+        }
+    }
+
+    .subtotal {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #667eea;
+
+        .subtotal-label {
+            font-weight: 700;
+            color: #495057;
+            font-size: 1.05rem;
+        }
+
+        .subtotal-valor {
+            font-weight: 900;
+            color: #667eea;
+            font-size: 1.5rem;
+            font-family: 'Courier New', monospace;
+        }
+    }
+}
+
+// Resumen Final
+.resumen-final {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    color: white;
+
+    .section-title {
+        color: white;
+        border-bottom-color: rgba(255, 255, 255, 0.3);
+
+        i {
+            color: white;
+        }
+    }
+
+    .resultado-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        .resultado-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+
+            &.diferencia {
+                background: rgba(255, 255, 255, 0.25);
+
+                &[data-severity="success"] {
+                    border: 2px solid #28a745;
+                }
+
+                &[data-severity="warning"] {
+                    border: 2px solid #ffc107;
+                }
+
+                &[data-severity="danger"] {
+                    border: 2px solid #dc3545;
+                }
+            }
+
+            .label {
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.9);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .valor {
+                font-size: 1.5rem;
+                font-weight: 900;
+                color: white;
+                font-family: 'Courier New', monospace;
+
+                &.grande {
+                    font-size: 2rem;
+                }
+
+                &.diferencia-valor {
+                    font-size: 1.75rem;
+                }
+            }
+        }
+    }
+
+    .diferencia-mensaje {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+
+        &[data-type="sobrante"] {
+            border-left: 4px solid #ffc107;
+
+            i {
+                color: #ffc107;
+            }
+        }
+
+        &[data-type="faltante"] {
+            border-left: 4px solid #dc3545;
+
+            i {
+                color: #dc3545;
+            }
+        }
+
+        i {
+            font-size: 1.5rem;
+        }
+
+        span {
+            color: white;
+            font-size: 0.95rem;
+
+            strong {
+                font-weight: 900;
+                font-size: 1.1rem;
+            }
+        }
+    }
+}
+
+// Form Field
+.form-field {
+    margin-top: 1rem;
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.95rem;
+    }
+}
+
+// Dialog Footer
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+}
+
+// Dialog Styles
+::ng-deep .arqueo-dialog {
+    .p-dialog-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+
+        .p-dialog-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .p-dialog-header-icon {
+            color: white;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+
+    .p-dialog-content {
+        padding: 2rem;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+}
+
+// Responsive
+@media (max-width: 1200px) {
+    .conteo-efectivo {
+        .conteo-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .resumen-sistema {
+        .resumen-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .resumen-final {
+        .resultado-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .conteo-efectivo {
+        .denominacion-item {
+            grid-template-columns: 80px 1fr 100px;
+            gap: 0.5rem;
+            padding: 0.5rem;
+
+            .denominacion-info {
+                .denominacion-label {
+                    font-size: 0.85rem;
+                }
+            }
+
+            .denominacion-total {
+                span {
+                    font-size: 0.85rem;
+                }
+            }
+        }
+    }
+
+    .dialog-footer {
+        flex-direction: column;
+
+        ::ng-deep .p-button {
+            width: 100%;
+        }
+    }
+}
+
+// InputNumber custom styles
+::ng-deep .p-inputnumber {
+    .p-button {
+        &.p-button-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+
+            &:hover {
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+        }
+    }
+}

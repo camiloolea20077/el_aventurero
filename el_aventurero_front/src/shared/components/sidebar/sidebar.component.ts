@@ -146,6 +146,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       { label: 'ventas', icon: 'pi pi-dollar', route: '/sales' },
       { label: 'Usuarios', icon: 'pi pi-users', route: '/users' },
       { label: 'Caja', icon: 'pi pi-wallet', route: '/caja' },
+      { label: 'Arqueo', icon: 'pi pi-chart-bar', route: '/arqueo-caja' },
     ];
   }
 

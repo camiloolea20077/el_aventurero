@@ -131,12 +131,13 @@
                 <th>Concepto</th>
                 <th class="text-right">Monto</th>
                 <th>Método Pago</th>
-                <th class="text-center">Acciones</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-movimiento>
               <tr>
-                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>
+                  {{ formatDateTime(movimiento.created_at) }}
+                </td>
                 <td>
                   <p-tag
                     [value]="movimiento.tipo"
@@ -162,16 +163,6 @@
                   </span>
                 </td>
                 <td>{{ movimiento.metodo_pago || "N/A" }}</td>
-                <td class="text-center">
-                  <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [text]="true"
-                    size="small"
-                    (click)="deleteMovimiento(movimiento.id)"
-                    pTooltip="Eliminar"
-                  ></p-button>
-                </td>
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage">
@@ -207,7 +198,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-movimiento>
               <tr>
-                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>{{ formatDateTime(movimiento.created_at) }}</td>
                 <td>
                   <p-tag
                     [value]="movimiento.categoria"
@@ -255,7 +246,9 @@
             </ng-template>
             <ng-template pTemplate="body" let-movimiento>
               <tr>
-                <td>{{ formatDateTime(movimiento.fecha) }}</td>
+                <td>
+                  {{ movimiento.created_at | date: "short" : "" : "es-CO" }}
+                </td>
                 <td>
                   <p-tag
                     [value]="movimiento.categoria"

@@ -163,6 +163,60 @@ body {
   color: var(--bg-0) !important;
 }
 
+/* Números de página - color de fondo negro */
+:host ::ng-deep .p-paginator .p-paginator-page {
+  background: var(--bg-0) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border-gold) !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-page:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold-soft) !important;
+}
+
+/* Select del paginador - fondo negro */
+:host ::ng-deep .p-paginator .p-dropdown {
+  background: var(--bg-0) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown .p-dropdown-label {
+  background: var(--bg-0) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown .p-dropdown-trigger {
+  color: var(--text) !important;
+}
+
+/* Panel del dropdown del paginador */
+:host ::ng-deep .p-paginator .p-dropdown-panel {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--border-gold) !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item {
+  background: var(--bg-1) !important;
+  color: var(--text) !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold-soft) !important;
+}
+
+:host ::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item.p-highlight {
+  background: rgba(212, 175, 55, 0.25) !important;
+  color: var(--gold-soft) !important;
+}
+
+/* Current page report - texto del contador */
+:host ::ng-deep .p-paginator .p-paginator-current {
+  color: var(--text) !important;
+}
+
 /* Botones */
 :host ::ng-deep .btn-gold .p-button {
   background: linear-gradient(
@@ -316,5 +370,131 @@ body {
 }
 
 :host ::ng-deep .p-toast .p-toast-message .p-toast-message-content {
+  color: var(--text) !important;
+}
+/* =========================
+   TABLAS PRIME (GLOBAL)
+   - aplica a cualquier p-table con class "table-dark-gold"
+   ========================= */
+::ng-deep .table-dark-gold {
+  background: var(--bg-0) !important;
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  overflow: hidden;
+
+  .p-datatable-wrapper {
+    background: var(--bg-0) !important;
+  }
+
+  /* Header (th) */
+  .p-datatable-thead > tr > th {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+    font-weight: 900;
+    border: none;
+  }
+
+  /* Body rows */
+  .p-datatable-tbody > tr {
+    background: var(--bg-0) !important;
+
+    &:nth-child(even) {
+      background: var(--bg-1) !important;
+    }
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.08) !important;
+    }
+
+    /* TD dorados (lo que pediste) */
+    > td {
+      background: transparent !important;
+      color: var(--gold-soft) !important;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+      font-weight: 700;
+    }
+  }
+
+  /* Footer */
+  .p-datatable-tfoot > tr > td {
+    background: var(--bg-0) !important;
+    color: var(--gold-soft) !important;
+    border-top: 2px solid var(--gold);
+    font-weight: 900;
+  }
+}
+
+/* =========================
+   ESTILOS GLOBALES DE PAGINACIÓN
+   (para todas las tablas del sistema)
+   ========================= */
+
+/* Paginador global */
+::ng-deep .p-paginator {
+  background: rgba(15, 16, 18, 0.7) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--text) !important;
+}
+
+::ng-deep .p-paginator .p-paginator-page.p-highlight {
+  background: var(--gold) !important;
+  color: var(--bg-0) !important;
+}
+
+/* Números de página - fondo negro */
+::ng-deep .p-paginator .p-paginator-page {
+  background: var(--bg-0) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border-gold) !important;
+}
+
+::ng-deep .p-paginator .p-paginator-page:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold-soft) !important;
+}
+
+/* Select del paginador - fondo negro */
+::ng-deep .p-paginator .p-dropdown {
+  background: var(--bg-0) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--text) !important;
+}
+
+::ng-deep .p-paginator .p-dropdown .p-dropdown-label {
+  background: var(--bg-0) !important;
+  color: var(--text) !important;
+}
+
+::ng-deep .p-paginator .p-dropdown .p-dropdown-trigger {
+  color: var(--text) !important;
+}
+
+/* Panel del dropdown del paginador */
+::ng-deep .p-paginator .p-dropdown-panel {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--border-gold) !important;
+}
+
+::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item {
+  background: var(--bg-1) !important;
+  color: var(--text) !important;
+}
+
+::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: var(--gold-soft) !important;
+}
+
+::ng-deep .p-paginator .p-dropdown-panel .p-dropdown-item.p-highlight {
+  background: rgba(212, 175, 55, 0.25) !important;
+  color: var(--gold-soft) !important;
+}
+
+/* Current page report - texto del contador */
+::ng-deep .p-paginator .p-paginator-current {
   color: var(--text) !important;
 }

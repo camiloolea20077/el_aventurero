@@ -2,269 +2,382 @@
   header="Cierre Semanal"
   [(visible)]="displayModal"
   [modal]="true"
-  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [style]="{ width: '95vw', maxWidth: '1400px' }"
   [draggable]="false"
   [resizable]="false"
   (onHide)="onModalHide()"
-  styleClass="modern-dialog cierre-dialog"
-  [maximizable]="true"
+  styleClass="modern-dialog cierre-semanal-dialog"
 >
-  <!-- Selector de Fecha -->
-  <div class="filtro-semana">
-    <div class="fecha-inputs">
-      <div class="campo-fecha">
-        <label>Fecha Inicio</label>
-        <p-calendar
-          [(ngModel)]="fechaInicio"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-        ></p-calendar>
-      </div>
-      <div class="campo-fecha">
-        <label>Fecha Fin</label>
-        <p-calendar
-          [(ngModel)]="fechaFin"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-        ></p-calendar>
-      </div>
-      <p-button
-        label="Generar"
-        icon="pi pi-refresh"
-        (click)="cargarCierre()"
-        [loading]="loading"
-      ></p-button>
-    </div>
-  </div>
-
-  <!-- Loading -->
-  <div *ngIf="loading" class="loading-container">
-    <i class="pi pi-spin pi-spinner loading-spinner"></i>
-    <span>Generando cierre semanal...</span>
-  </div>
-
-  <!-- Contenido del Cierre -->
-  <div *ngIf="!loading && cierre" class="cierre-container">
-    <!-- Encabezado del Cierre -->
-    <div class="cierre-header">
-      <div class="header-info">
-        <h3>Cierre Semanal - Semana {{ cierre.semana }}</h3>
-        <p class="periodo">
-          {{ formatDateDisplay(cierre.fecha_inicio) }} -
-          {{ formatDateDisplay(cierre.fecha_fin) }}
-        </p>
-      </div>
+  <div class="cierre-container">
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <i class="pi pi-spin pi-spinner loading-spinner"></i>
+      <span>Generando cierre semanal...</span>
     </div>
 
-    <p-divider></p-divider>
-
-    <!-- Resumen Financiero -->
-    <div class="resumen-financiero">
-      <h4 class="section-title">
-        <i class="pi pi-dollar"></i>
-        Resumen Financiero
-      </h4>
-
-      <div class="stats-grid">
-        <div class="stat-card ventas">
-          <i class="pi pi-shopping-cart"></i>
-          <div class="stat-content">
-            <span class="label">Ventas Totales</span>
-            <span class="valor"
-              >${{ cierre.ventas_totales | number: "1.0-0" }}</span
-            >
-            <span class="detalle"
-              >{{ cierre.cantidad_ventas }} ventas realizadas</span
-            >
-          </div>
+    <!-- Contenido del Cierre -->
+    <div *ngIf="!loading && cierre" class="cierre-content">
+      <!-- Header -->
+      <div class="cierre-header">
+        <div class="header-info">
+          <h2 class="semana-title">Semana {{ cierre.semana }}</h2>
+          <p class="periodo">
+            {{ cierre.fecha_inicio | date: "d MMM" }} -
+            {{ cierre.fecha_fin | date: "d MMM yyyy" }}
+          </p>
         </div>
+      </div>
 
-        <div class="stat-card ingresos">
-          <i class="pi pi-arrow-up"></i>
-          <div class="stat-content">
-            <span class="label">Total Ingresos</span>
-            <span class="valor"
-              >${{ cierre.total_ingresos | number: "1.0-0" }}</span
-            >
-            <span class="detalle">Incluye ventas y otros ingresos</span>
-          </div>
-        </div>
-
-        <div class="stat-card egresos">
-          <i class="pi pi-arrow-down"></i>
-          <div class="stat-content">
-            <span class="label">Total Egresos</span>
-            <span class="valor"
-              >${{ cierre.total_egresos | number: "1.0-0" }}</span
-            >
-            <span class="detalle">Gastos operativos</span>
-          </div>
-        </div>
-
-        <div
-          class="stat-card balance"
-          [class.negativo]="cierre.balance_neto < 0"
-        >
+      <!-- Resumen Financiero -->
+      <div class="resumen-financiero">
+        <h3 class="section-title">
           <i class="pi pi-chart-line"></i>
-          <div class="stat-content">
-            <span class="label">Balance Neto</span>
-            <span class="valor"
-              >${{ cierre.balance_neto | number: "1.0-0" }}</span
-            >
-            <span class="detalle">
-              {{ cierre.balance_neto >= 0 ? "Ganancia" : "Pérdida" }}
-            </span>
-          </div>
-        </div>
+          Resumen Financiero
+        </h3>
 
-        <div class="stat-card ticket">
-          <i class="pi pi-ticket"></i>
-          <div class="stat-content">
-            <span class="label">Ticket Promedio</span>
-            <span class="valor"
-              >${{ cierre.ticket_promedio | number: "1.0-0" }}</span
-            >
-            <span class="detalle">Por venta</span>
+        <div class="cards-grid">
+          <div class="summary-card ventas">
+            <div class="card-icon">
+              <i class="pi pi-shopping-cart"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Ventas Totales</span>
+              <span class="card-value"
+                >${{ cierre.ventas_totales | number: "1.0-0" }}</span
+              >
+              <span class="card-detail"
+                >{{ cierre.cantidad_ventas }} ventas</span
+              >
+            </div>
+          </div>
+
+          <div class="summary-card ingresos">
+            <div class="card-icon">
+              <i class="pi pi-arrow-circle-up"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Total Ingresos</span>
+              <span class="card-value"
+                >${{ cierre.total_ingresos | number: "1.0-0" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="summary-card egresos">
+            <div class="card-icon">
+              <i class="pi pi-arrow-circle-down"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Total Egresos</span>
+              <span class="card-value"
+                >${{ cierre.total_egresos | number: "1.0-0" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="summary-card balance">
+            <div class="card-icon">
+              <i class="pi pi-wallet"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Balance Neto</span>
+              <span class="card-value"
+                >${{ cierre.balance_neto | number: "1.0-0" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="summary-card ticket">
+            <div class="card-icon">
+              <i class="pi pi-receipt"></i>
+            </div>
+            <div class="card-content">
+              <span class="card-label">Ticket Promedio</span>
+              <span class="card-value"
+                >${{ cierre.ticket_promedio | number: "1.0-0" }}</span
+              >
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <p-divider></p-divider>
+      <p-divider></p-divider>
 
-    <!-- Gráficas -->
-    <div class="charts-section">
-      <!-- Métodos de Pago -->
-      <div class="chart-container">
-        <h4 class="section-title">
-          <i class="pi pi-credit-card"></i>
-          Distribución por Método de Pago
-        </h4>
-        <p-chart
-          type="doughnut"
-          [data]="metodosPagoChart"
-          [options]="metodosPagoChartOptions"
-          height="300px"
-        ></p-chart>
+      <!-- Sección de Control de Arqueos -->
+      <div class="control-arqueos-section" *ngIf="cierre?.resumen_arqueos">
+        <h3 class="section-title">
+          <i class="pi pi-shield"></i>
+          Control de Arqueos
+        </h3>
 
-        <!-- Tabla de Métodos de Pago -->
-        <p-table [value]="cierre.metodos_pago" styleClass="metodos-table mt-3">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Método</th>
-              <th class="text-center">Cantidad</th>
-              <th class="text-right">Total</th>
-              <th class="text-center">Porcentaje</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-metodo>
-            <tr>
-              <td>
-                <p-tag [value]="metodo.metodo" severity="info"></p-tag>
-              </td>
-              <td class="text-center">{{ metodo.cantidad }}</td>
-              <td class="text-right currency">
-                ${{ metodo.total | number: "1.0-0" }}
-              </td>
-              <td class="text-center">
-                <strong>{{ metodo.porcentaje }}%</strong>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
+        <!-- Grid de Estadísticas -->
+        <div class="arqueos-stats-grid">
+          <div class="stat-card dias">
+            <div class="stat-icon">
+              <i class="pi pi-calendar"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Total de Días</span>
+              <span class="stat-value">{{
+                cierre.resumen_arqueos.total_dias
+              }}</span>
+            </div>
+          </div>
 
-      <!-- Top Productos -->
-      <div class="chart-container">
-        <h4 class="section-title">
-          <i class="pi pi-star"></i>
-          Top 5 Productos Más Vendidos
-        </h4>
-        <p-chart
-          type="bar"
-          [data]="productosChart"
-          [options]="productosChartOptions"
-          height="300px"
-        ></p-chart>
+          <div class="stat-card realizados">
+            <div class="stat-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Arqueos Realizados</span>
+              <span class="stat-value">
+                {{ cierre.resumen_arqueos.arqueos_realizados }} /
+                {{ cierre.resumen_arqueos.total_dias }}
+              </span>
+            </div>
+          </div>
 
-        <!-- Tabla de Productos -->
-        <p-table
-          [value]="cierre.productos_top"
-          styleClass="productos-table mt-3"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Producto</th>
-              <th class="text-center">Cantidad</th>
-              <th class="text-right">Total Vendido</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-producto let-rowIndex="rowIndex">
-            <tr>
-              <td>
-                <div class="producto-info">
-                  <span class="ranking">#{{ rowIndex + 1 }}</span>
-                  <span class="nombre">{{ producto.producto_nombre }}</span>
+          <div class="stat-card cuadrados">
+            <div class="stat-icon">
+              <i class="pi pi-check"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Cuadrados</span>
+              <span class="stat-value">{{
+                cierre.resumen_arqueos.arqueos_cuadrados
+              }}</span>
+            </div>
+          </div>
+
+          <div
+            class="stat-card pendientes"
+            *ngIf="cierre.resumen_arqueos.arqueos_pendientes > 0"
+          >
+            <div class="stat-icon warning">
+              <i class="pi pi-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Pendientes</span>
+              <span class="stat-value">{{
+                cierre.resumen_arqueos.arqueos_pendientes
+              }}</span>
+            </div>
+          </div>
+
+          <div
+            class="stat-card ajustados"
+            *ngIf="cierre.resumen_arqueos.arqueos_ajustados > 0"
+          >
+            <div class="stat-icon">
+              <i class="pi pi-wrench"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Ajustados</span>
+              <span class="stat-value">{{
+                cierre.resumen_arqueos.arqueos_ajustados
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen de Diferencias -->
+        <div class="diferencias-resumen">
+          <div class="diferencias-card">
+            <h4 class="card-title">Análisis de Diferencias</h4>
+
+            <div class="diferencias-grid">
+              <div class="diferencia-item sobrantes">
+                <div class="diferencia-header">
+                  <i class="pi pi-arrow-up"></i>
+                  <span class="diferencia-label">Sobrantes</span>
                 </div>
-              </td>
-              <td class="text-center">
-                <p-tag
-                  [value]="producto.cantidad_vendida.toString()"
-                  severity="success"
-                ></p-tag>
-              </td>
-              <td class="text-right currency">
-                ${{ producto.total_vendido | number: "1.0-0" }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </div>
+                <span class="diferencia-valor">
+                  +${{
+                    cierre.resumen_arqueos.total_sobrantes | number: "1.0-0"
+                  }}
+                </span>
+              </div>
 
-    <!-- Conclusiones -->
-    <div class="conclusiones">
-      <h4 class="section-title">
-        <i class="pi pi-check-circle"></i>
-        Conclusiones
-      </h4>
-      <div class="conclusiones-content">
-        <div class="conclusion-item">
-          <i class="pi pi-info-circle"></i>
-          <p>
-            El balance neto de la semana es de
-            <strong>${{ cierre.balance_neto | number: "1.0-0" }}</strong
-            >, con una rentabilidad del
-            <strong>
-              {{
-                ((cierre.balance_neto / cierre.total_ingresos) * 100).toFixed(
-                  1
-                )
-              }}%
-            </strong>
-          </p>
+              <div class="diferencia-item faltantes">
+                <div class="diferencia-header">
+                  <i class="pi pi-arrow-down"></i>
+                  <span class="diferencia-label">Faltantes</span>
+                </div>
+                <span class="diferencia-valor">
+                  -${{
+                    cierre.resumen_arqueos.total_faltantes | number: "1.0-0"
+                  }}
+                </span>
+              </div>
+
+              <div
+                class="diferencia-item total"
+                [class.positivo]="cierre.resumen_arqueos.total_diferencias > 0"
+                [class.negativo]="cierre.resumen_arqueos.total_diferencias < 0"
+                [class.cero]="cierre.resumen_arqueos.total_diferencias === 0"
+              >
+                <div class="diferencia-header">
+                  <i class="pi pi-calculator"></i>
+                  <span class="diferencia-label">Balance de Diferencias</span>
+                </div>
+                <span class="diferencia-valor">
+                  {{
+                    cierre.resumen_arqueos.total_diferencias >= 0 ? "+" : ""
+                  }}${{
+                    cierre.resumen_arqueos.total_diferencias | number: "1.0-0"
+                  }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="conclusion-item">
-          <i class="pi pi-chart-bar"></i>
-          <p>
-            El método de pago más utilizado fue
-            <strong>{{ cierre.metodos_pago[0]?.metodo }}</strong>
-            con
-            <strong
-              >{{ cierre.metodos_pago[0]?.cantidad }} transacciones</strong
-            >
-          </p>
+
+        <!-- Alerta si faltan arqueos -->
+        <div
+          class="alert-arqueos"
+          *ngIf="
+            cierre.resumen_arqueos.arqueos_realizados <
+            cierre.resumen_arqueos.total_dias
+          "
+        >
+          <div class="alert-content warning">
+            <i class="pi pi-exclamation-triangle"></i>
+            <div class="alert-text">
+              <strong>¡Atención!</strong>
+              <span>
+                Faltan
+                {{
+                  cierre.resumen_arqueos.total_dias -
+                    cierre.resumen_arqueos.arqueos_realizados
+                }}
+                arqueo(s) por realizar en este período.
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="conclusion-item">
+
+        <!-- Alerta si hay pendientes -->
+        <div
+          class="alert-arqueos"
+          *ngIf="cierre.resumen_arqueos.arqueos_pendientes > 0"
+        >
+          <div class="alert-content danger">
+            <i class="pi pi-times-circle"></i>
+            <div class="alert-text">
+              <strong>Diferencias sin justificar</strong>
+              <span>
+                Hay {{ cierre.resumen_arqueos.arqueos_pendientes }} arqueo(s)
+                con diferencias pendientes de justificar. Total sin justificar:
+                <strong>
+                  {{
+                    cierre.resumen_arqueos.total_diferencias >= 0 ? "+" : ""
+                  }}${{
+                    cierre.resumen_arqueos.total_diferencias | number: "1.0-0"
+                  }}
+                </strong>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje de éxito si todo está bien -->
+        <div
+          class="alert-arqueos"
+          *ngIf="
+            cierre.resumen_arqueos.arqueos_realizados ===
+              cierre.resumen_arqueos.total_dias &&
+            cierre.resumen_arqueos.arqueos_pendientes === 0
+          "
+        >
+          <div class="alert-content success">
+            <i class="pi pi-check-circle"></i>
+            <div class="alert-text">
+              <strong>¡Excelente!</strong>
+              <span> Todos los arqueos están completos y justificados. </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Métodos de Pago -->
+      <div class="metodos-pago-section">
+        <h3 class="section-title">
+          <i class="pi pi-credit-card"></i>
+          Métodos de Pago
+        </h3>
+
+        <div class="metodos-grid">
+          <div class="metodo-card" *ngFor="let metodo of cierre.metodos_pago">
+            <div class="metodo-header">
+              <i
+                class="pi"
+                [ngClass]="{
+                  'pi-money-bill': metodo.metodo === 'EFECTIVO',
+                  'pi-credit-card': metodo.metodo === 'TARJETA',
+                  'pi-arrow-right-arrow-left':
+                    metodo.metodo === 'TRANSFERENCIA',
+                  'pi-mobile': metodo.metodo === 'DIGITAL',
+                }"
+              ></i>
+              <span class="metodo-nombre">{{ metodo.metodo }}</span>
+            </div>
+            <div class="metodo-stats">
+              <div class="stat">
+                <span class="stat-label">Cantidad</span>
+                <span class="stat-value">{{ metodo.cantidad }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Total</span>
+                <span class="stat-value"
+                  >${{ metodo.total | number: "1.0-0" }}</span
+                >
+              </div>
+              <div class="stat">
+                <span class="stat-label">Porcentaje</span>
+                <span class="stat-value"
+                  >{{ metodo.porcentaje | number: "1.1-1" }}%</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Productos Top -->
+      <div class="productos-top-section">
+        <h3 class="section-title">
           <i class="pi pi-star-fill"></i>
-          <p>
-            El producto más vendido fue
-            <strong>{{ cierre.productos_top[0]?.producto_nombre }}</strong>
-            con
-            <strong>
-              {{ cierre.productos_top[0]?.cantidad_vendida }} unidades
-            </strong>
-          </p>
+          Top 5 Productos Más Vendidos
+        </h3>
+
+        <div class="productos-table">
+          <div class="table-header">
+            <span class="col-posicion">#</span>
+            <span class="col-producto">Producto</span>
+            <span class="col-cantidad">Cantidad</span>
+            <span class="col-total">Total Vendido</span>
+          </div>
+          <div
+            class="table-row"
+            *ngFor="let producto of cierre.productos_top; let i = index"
+          >
+            <span class="col-posicion">
+              <div class="posicion-badge" [class]="'pos-' + (i + 1)">
+                {{ i + 1 }}
+              </div>
+            </span>
+            <span class="col-producto">{{ producto.producto_nombre }}</span>
+            <span class="col-cantidad"
+              >{{ producto.cantidad_vendida }} unidades</span
+            >
+            <span class="col-total"
+              >${{ producto.total_vendido | number: "1.0-0" }}</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -280,19 +393,19 @@
         [outlined]="true"
       ></p-button>
       <p-button
-        label="Imprimir"
-        icon="pi pi-print"
-        (onClick)="imprimirCierre()"
-        severity="info"
-        [disabled]="!cierre"
+        label="Descargar PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [outlined]="true"
       ></p-button>
       <p-button
-        label="Exportar PDF"
-        icon="pi pi-file-pdf"
-        (onClick)="exportarPDF()"
-        severity="danger"
-        [disabled]="!cierre"
+        label="Exportar Excel"
+        icon="pi pi-file-excel"
+        severity="success"
+        [outlined]="true"
       ></p-button>
     </div>
   </ng-template>
 </p-dialog>
+
+<p-toast></p-toast>

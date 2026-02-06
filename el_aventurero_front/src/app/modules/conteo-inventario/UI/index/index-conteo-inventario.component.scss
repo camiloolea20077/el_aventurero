@@ -1,0 +1,442 @@
+.main-container {
+  padding: 1.5rem;
+  background:
+    radial-gradient(
+      1200px 800px at 20% 0%,
+      rgba(212, 175, 55, 0.06),
+      transparent 55%
+    ),
+    linear-gradient(180deg, var(--bg-0) 0%, #070708 100%);
+  min-height: 100vh;
+  color: var(--text);
+}
+
+.card {
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+  border-radius: 14px;
+  border: 1px solid var(--border-gold);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--bronze) 100%);
+  color: #111;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+  h4 {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+  }
+}
+
+.card-content {
+  padding: 1.75rem;
+}
+
+.p-toolbar {
+  background: transparent;
+  border: none;
+  padding: 0 0 1.5rem 0;
+}
+
+// Alert del día
+.arqueo-dia-alert {
+  margin-bottom: 2rem;
+
+  .alert-success,
+  .alert-warning {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid;
+
+    i {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      strong {
+        font-size: 1.1rem;
+      }
+
+      span {
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+
+  .alert-success {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    border-left-color: #28a745;
+
+    i {
+      color: #28a745;
+    }
+  }
+
+  .alert-warning {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border-left-color: #ffc107;
+
+    i {
+      color: #ffc107;
+    }
+  }
+}
+
+.diferencia-value {
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  font-size: 1.1rem;
+
+  &.positivo {
+    color: #28a745;
+  }
+
+  &.negativo {
+    color: #dc3545;
+  }
+
+  &.cero {
+    color: #6c757d;
+  }
+}
+
+// Filtros de Fecha
+.filtros-fecha {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+
+  .fecha-inputs {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex: 1;
+
+    .campo-fecha {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .fecha-rapida {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+// Tabla
+/* =========================
+   TABLAS PRIME – TEMA DORADO
+   ========================= */
+
+::ng-deep .table-gold {
+  background: #0b0c0e;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+
+  /* Wrapper */
+  .p-datatable-wrapper {
+    background: #0b0c0e;
+  }
+
+  /* =========================
+     HEADER (TH)
+     ========================= */
+  .p-datatable-thead > tr > th {
+    background: linear-gradient(135deg, #d4af37 0%, #cd7f32 100%);
+    color: #111;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 0.85rem;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+  }
+
+  /* =========================
+     BODY (TD)
+     ========================= */
+  .p-datatable-tbody > tr {
+    background: #0b0c0e;
+    transition: background-color 0.2s ease;
+
+    &:nth-child(even) {
+      background: #101114;
+    }
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    > td {
+      color: rgba(212, 175, 55, 0.92); /* DORADO */
+      font-weight: 600;
+      padding: 0.85rem;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* =========================
+     FOOTER
+     ========================= */
+  .p-datatable-tfoot > tr > td {
+    background: #0b0c0e;
+    color: rgba(212, 175, 55, 0.95);
+    font-weight: 800;
+    border-top: 2px solid #d4af37;
+    padding: 0.85rem;
+  }
+
+  .p-datatable-emptymessage td {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(212, 175, 55, 0.6);
+    font-style: italic;
+  }
+}
+
+.currency {
+  font-family: "Courier New", monospace;
+  font-weight: 600;
+
+  &.ingreso {
+    color: #28a745;
+  }
+
+  &.egreso {
+    color: #dc3545;
+  }
+}
+
+.diferencia-tag {
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.loading-state {
+  text-align: center;
+  padding: 3rem 1rem;
+
+  .loading-spinner {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+
+  span {
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .main-container {
+    padding: 1rem;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .p-toolbar {
+    .toolbar-right {
+      width: 100%;
+
+      ::ng-deep .p-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .arqueo-dia-alert {
+    .alert-success,
+    .alert-warning {
+      flex-direction: column;
+      text-align: center;
+
+      .alert-content {
+        align-items: center;
+      }
+    }
+  }
+
+  .filtros-fecha {
+    flex-direction: column;
+    align-items: stretch;
+
+    .fecha-inputs {
+      flex-direction: column;
+    }
+
+    .fecha-rapida {
+      ::ng-deep .p-button {
+        flex: 1;
+      }
+    }
+  }
+}
+::ng-deep .modern-table {
+  background: transparent !important;
+
+  .p-datatable-wrapper {
+    background: transparent !important;
+  }
+
+  .p-datatable-table {
+    background: transparent !important;
+  }
+
+  .p-datatable-header {
+    background: rgba(15, 16, 18, 0.7) !important;
+    border: 1px solid var(--border-gold) !important;
+    padding: 1rem;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: rgba(15, 16, 18, 0.7) !important;
+    color: var(--gold-soft) !important;
+    font-weight: 700;
+    border: 1px solid var(--border-gold) !important;
+    padding: 1rem;
+
+    .header-text {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .p-datatable-tbody > tr {
+    background: rgba(26, 28, 31, 0.5) !important;
+    color: var(--text) !important;
+
+    &:hover {
+      background-color: rgba(212, 175, 55, 0.15) !important;
+    }
+
+    > td {
+      padding: 1rem;
+      border: none !important;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1) !important;
+      color: var(--text) !important;
+    }
+  }
+
+  .p-datatable-emptymessage > td {
+    background: rgba(26, 28, 31, 0.5) !important;
+  }
+
+  .p-datatable-loading-overlay {
+    background: rgba(15, 16, 18, 0.8) !important;
+  }
+}
+// Paginador
+::ng-deep .p-paginator {
+  background: rgba(15, 16, 18, 0.7);
+  border: 1px solid var(--border-gold);
+  color: var(--text);
+
+  .p-paginator-current {
+    color: var(--muted);
+  }
+
+  .p-paginator-pages .p-paginator-page {
+    color: var(--text);
+    border: 1px solid transparent;
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--border-gold);
+    }
+
+    &.p-highlight {
+      background: var(--gold);
+      color: var(--bg-0);
+      border-color: var(--gold);
+    }
+  }
+
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    color: var(--text);
+
+    &:not(.p-disabled):hover {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-soft);
+    }
+  }
+}
+::ng-deep .p-datatable-gridlines {
+  .p-datatable-header {
+    border: 1px solid var(--border-gold) !important;
+  }
+
+  .p-datatable-thead > tr > th {
+    border: 1px solid var(--border-gold) !important;
+  }
+
+  .p-datatable-tbody > tr > td {
+    border: 1px solid rgba(212, 175, 55, 0.1) !important;
+  }
+
+  .p-datatable-tfoot > tr > td {
+    border: 1px solid var(--border-gold) !important;
+  }
+}

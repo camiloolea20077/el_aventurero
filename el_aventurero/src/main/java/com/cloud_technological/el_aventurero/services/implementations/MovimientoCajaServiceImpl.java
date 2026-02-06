@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.CierreSemanalDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.CreateMovimientoDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.MovimientoCajaDto;
+import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenArqueosDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenFlujoDto;
 import com.cloud_technological.el_aventurero.entity.MovimientoCajaEntity;
 import com.cloud_technological.el_aventurero.mappers.movimiento_caja.MovimientoCajaMapper;
@@ -96,6 +97,10 @@ public class MovimientoCajaServiceImpl implements MovimientoCajaService {
     
     @Override
     public CierreSemanalDto getCierreSemanal(LocalDate fechaInicio, LocalDate fechaFin) {
-        return movimientoCajaQueryRepository.getCierreSemanal(fechaInicio, fechaFin);
+        CierreSemanalDto cierre = movimientoCajaQueryRepository.getCierreSemanal(fechaInicio, fechaFin);
+        ResumenArqueosDto resumenArqueos = movimientoCajaQueryRepository.getResumenArqueos(fechaInicio, fechaFin);
+        cierre.setResumen_arqueos(resumenArqueos);
+        
+        return cierre;
     }
 }

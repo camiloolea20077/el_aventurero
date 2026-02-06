@@ -1,3 +1,5 @@
+import { ResumenArqueosModel } from './resumen-arqueos.model';
+
 export interface CierreSemanalModel {
   semana: number;
   fecha_inicio: string;
@@ -10,6 +12,7 @@ export interface CierreSemanalModel {
   ticket_promedio: number;
   metodos_pago: MetodoPagoResumen[];
   productos_top: ProductoTopResumen[];
+  resumen_arqueos: ResumenArqueosModel;
 }
 
 export interface MetodoPagoResumen {

@@ -47,7 +47,6 @@
   padding: 2rem;
 }
 
-// Loading state
 .loading-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -65,7 +64,6 @@
   }
 }
 
-// Grid de Mesas
 .mesas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -131,7 +129,6 @@
   }
 }
 
-// Mesa Libre
 .mesa-libre {
   border-color: #22c55e;
   background: linear-gradient(
@@ -162,7 +159,6 @@
   }
 }
 
-// Mesa Ocupada
 .mesa-ocupada {
   border-color: #ef4444;
   background: linear-gradient(
@@ -193,7 +189,6 @@
   }
 }
 
-// Estado vacío
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -214,7 +209,6 @@
   }
 }
 
-// Dialog de Consumo
 ::ng-deep .consumo-dialog {
   .p-dialog {
     background: var(--bg-card) !important;
@@ -270,7 +264,6 @@
   background: transparent;
 }
 
-// Sección agregar producto
 .add-producto-section {
   background: rgba(15, 16, 18, 0.5);
   border: 1px solid var(--border-gold);
@@ -346,7 +339,6 @@
   display: none;
 }
 
-// Sección consumos
 .consumos-section {
   background: rgba(15, 16, 18, 0.5);
   border: 1px solid var(--border-gold);
@@ -406,7 +398,6 @@
   overflow-y: auto;
   padding-right: 0.5rem;
 
-  // Scrollbar personalizado
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -494,7 +485,6 @@
   }
 }
 
-// Footer del dialog
 .dialog-footer {
   display: flex;
   justify-content: space-between;
@@ -538,63 +528,353 @@
   }
 }
 
-// Botones dorados - estilos globales para el dialog
+/* =========================
+   DIALOG CONSUMO (MEJORADO)
+   ========================= */
+
 ::ng-deep .consumo-dialog {
-  // Botón Agregar y Cerrar Cuenta (success)
-  .p-button-success {
+  .p-dialog {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-gold) !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7) !important;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .p-dialog-header {
     background: linear-gradient(
       90deg,
       var(--bronze),
       var(--gold),
       var(--gold-soft)
     ) !important;
-    border: 0 !important;
     color: var(--bg-0) !important;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--border-gold);
+
+    .p-dialog-title {
+      font-weight: 900;
+      font-size: 1.4rem;
+      letter-spacing: 0.2px;
+    }
+
+    .p-dialog-header-icon {
+      color: var(--bg-0) !important;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.12) !important;
+      }
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 0 !important;
+    background: var(--bg-card) !important;
+    color: var(--text) !important;
+  }
+
+  .p-dialog-footer {
+    padding: 1.25rem 1.75rem !important;
+    background: rgba(15, 16, 18, 0.75) !important;
+    border-top: 1px solid var(--border-gold) !important;
+  }
+}
+
+.consumo-container {
+  padding: 1.75rem;
+}
+
+/* ---------- Agregar producto ---------- */
+.add-producto-section {
+  background: rgba(15, 16, 18, 0.55);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.add-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+  h5 {
+    color: var(--gold-soft);
+    font-weight: 900;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    i {
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+  }
+
+  .add-total {
+    color: var(--text);
     font-weight: 700;
 
-    &:hover:not(:disabled) {
-      opacity: 0.9;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4) !important;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      background: linear-gradient(
-        90deg,
-        rgba(205, 127, 50, 0.5),
-        rgba(212, 175, 55, 0.5),
-        rgba(243, 217, 139, 0.5)
-      ) !important;
-    }
-  }
-
-  // Botón Cancelar (secondary outlined)
-  .p-button-secondary.p-button-outlined {
-    background: transparent !important;
-    border: 1px solid rgba(243, 217, 139, 0.3) !important;
-    color: var(--text) !important;
-
-    &:hover {
-      background: rgba(243, 217, 139, 0.1) !important;
-      border-color: rgba(243, 217, 139, 0.5) !important;
-    }
-  }
-
-  // Botón eliminar (danger)
-  .p-button-danger {
-    background: transparent !important;
-    border: 0 !important;
-    color: #ef4444 !important;
-
-    &:hover {
-      background: rgba(239, 68, 68, 0.15) !important;
-      color: #fca5a5 !important;
+    strong {
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 1.1rem;
     }
   }
 }
 
-// También para el botón agregar fuera del dialog
+.add-producto-form {
+  .form-row {
+    display: flex;
+    gap: 2rem;
+    grid-template-columns: 1fr 160px 160px;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+  }
+
+  .qty-field {
+    min-width: 140px;
+  }
+
+  .action-field {
+    min-width: 150px;
+  }
+}
+
+/* Input cantidad SIN BOTONES */
+::ng-deep .qty-input {
+  background: rgba(10, 10, 12, 0.55) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  color: var(--text) !important;
+  font-weight: 800;
+  text-align: center;
+  border-radius: 10px;
+  padding: 0.7rem 0.75rem;
+
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.45) !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25) !important;
+  }
+}
+
+/* Dropdown option */
+.producto-option {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+
+  .nombre {
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .tipo {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #111;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--bronze) 100%);
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ---------- Sección consumos ---------- */
+.consumos-section {
+  background: rgba(15, 16, 18, 0.55);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+
+  h5 {
+    color: var(--gold-soft);
+    font-weight: 900;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    i {
+      color: var(--gold);
+    }
+  }
+}
+
+.loading-small {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--muted);
+
+  i {
+    margin-right: 0.5rem;
+  }
+}
+
+.consumos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 16, 18, 0.5);
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 10px;
+  }
+}
+
+.consumo-item {
+  background: rgba(26, 28, 31, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 12px;
+  padding: 0.95rem 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.18s ease;
+
+  &:hover {
+    border-color: rgba(212, 175, 55, 0.5);
+    transform: translateX(2px);
+    background: rgba(26, 28, 31, 0.95);
+  }
+
+  .producto-nombre {
+    font-weight: 900;
+    color: var(--gold-soft);
+    margin-bottom: 0.2rem;
+  }
+
+  .producto-detalle {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .consumo-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .subtotal {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--gold);
+      font-family: "Courier New", monospace;
+    }
+  }
+}
+
+.sin-consumos {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  color: var(--muted);
+
+  i {
+    font-size: 2.5rem;
+    color: rgba(212, 175, 55, 0.3);
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* ---------- Footer ---------- */
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+
+  .metodo-pago {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+      font-weight: 800;
+      color: var(--gold-soft);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .consumo-container {
+    padding: 1.25rem;
+  }
+
+  .add-producto-form {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+    align-items: stretch;
+
+    .footer-actions {
+      width: 100%;
+
+      ::ng-deep .p-button {
+        width: 100%;
+      }
+    }
+  }
+}
+
 ::ng-deep .add-button {
   .p-button {
     width: 100%;
@@ -617,7 +897,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 768px) {
   .mesas-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -679,5 +958,40 @@
         flex: 1;
       }
     }
+  }
+}
+::ng-deep .modern-dialog {
+  .p-dialog-header {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+    border-radius: 10px 10px 0 0;
+
+    .p-dialog-title {
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .p-dialog-header-icon {
+      color: #111;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+    background: var(--bg-0);
+    color: var(--text);
+  }
+
+  .p-dialog-footer {
+    background: var(--bg-0);
+    border-top: 1px solid var(--border-gold);
   }
 }

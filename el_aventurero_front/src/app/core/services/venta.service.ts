@@ -43,4 +43,17 @@ export class VentaService {
   deleteVenta(id: number): Observable<ResponseModel<boolean>> {
     return this.http.delete<ResponseModel<boolean>>(`${this.apiUrl}/${id}`);
   }
+
+  // Métodos para estadísticas del dashboard
+  getWeeklySales(): Observable<ResponseModel<any>> {
+    return this.http.get<ResponseModel<any>>(`${this.apiUrl}/weekly-sales`);
+  }
+
+  getPaymentMethodsStats(): Observable<ResponseModel<any>> {
+    return this.http.get<ResponseModel<any>>(`${this.apiUrl}/payment-methods-stats`);
+  }
+
+  getSalesByDateRange(startDate: string, endDate: string): Observable<ResponseModel<any>> {
+    return this.http.get<ResponseModel<any>>(`${this.apiUrl}/sales-by-date-range?startDate=${startDate}&endDate=${endDate}`);
+  }
 }

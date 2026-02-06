@@ -179,13 +179,56 @@ CREATE INDEX idx_movimiento_caja_tipo ON movimiento_caja(tipo);
 CREATE INDEX idx_movimiento_caja_categoria ON movimiento_caja(categoria);
 CREATE INDEX idx_movimiento_caja_deleted_at ON movimiento_caja(deleted_at);
 
-            SELECT 
-                u.id AS id,
-                u.email AS email,
-                u.nombre_completo AS name,
-                r.nombre AS role,
-                array_to_json(u.permisos) AS permisos
-            FROM usuarios u
-            LEFT JOIN roles r ON r.id = u.role_id
-            WHERE u.deleted_at IS NULL AND u.email = 'camiloolea200@gmail.com'
-            LIMIT 1;
+CREATE TABLE arqueo_caja (
+    id BIGSERIAL PRIMARY KEY,
+    fecha DATE NOT NULL,
+    saldo_inicial DECIMAL(15,2) NOT NULL,
+    total_ingresos_sistema DECIMAL(15,2) NOT NULL,
+    total_egresos_sistema DECIMAL(15,2) NOT NULL,
+    saldo_esperado DECIMAL(15,2) NOT NULL,
+    efectivo_real DECIMAL(15,2) NOT NULL,
+    diferencia DECIMAL(15,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL, -- PENDIENTE, CUADRADO, AJUSTADO
+    observaciones TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP
+);
+
+CREATE TABLE conteo_inventario (
+    id BIGSERIAL PRIMARY KEY,
+    fecha DATE NOT NULL,
+    tipo VARCHAR(20) DEFAULT 'PERIODICO', -- PERIODICO, CICLICO, ANUAL
+    estado VARCHAR(20) DEFAULT 'EN_PROCESO', -- EN_PROCESO, COMPLETADO
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP
+);
+
+CREATE TABLE detalle_conteo (
+    id BIGSERIAL PRIMARY KEY,
+    conteo_id BIGINT NOT NULL,
+    producto_id BIGINT NOT NULL,
+    stock_sistema INTEGER NOT NULL,
+    stock_fisico INTEGER NOT NULL,
+    diferencia INTEGER NOT NULL,
+    motivo TEXT,
+    ajustado BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conteo_id) REFERENCES conteo_inventario(id),
+    FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+CREATE TABLE ajuste_inventario (
+    id BIGSERIAL PRIMARY KEY,
+    producto_id BIGINT NOT NULL,
+    tipo VARCHAR(20) NOT NULL, -- SUMA, RESTA
+    cantidad INTEGER NOT NULL,
+    motivo VARCHAR(100) NOT NULL, -- MERMA, ROBO, ERROR_CONTEO, VENTA_NO_REGISTRADA, OTRO
+    descripcion TEXT,
+    conteo_id BIGINT, -- Referencia opcional al conteo que originó el ajuste
+    usuario_id BIGINT,
+    fecha DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES productos(id),
+    FOREIGN KEY (conteo_id) REFERENCES conteo_inventario(id)
+);

@@ -246,6 +246,7 @@
       var(--bronze) 100%
     ) !important;
     color: #111 !important;
+    border-radius: 10px 10px 0 0;
 
     .p-dialog-title {
       font-weight: 900;
@@ -253,22 +254,22 @@
     }
 
     .p-dialog-header-icon {
-      color: #111 !important;
+      color: #111;
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.12) !important;
+        background-color: rgba(0, 0, 0, 0.12);
       }
     }
   }
 
   .p-dialog-content {
     padding: 1.5rem;
-    background: var(--bg-0) !important;
-    color: var(--text) !important;
+    background: var(--bg-0);
+    color: var(--text);
   }
 
   .p-dialog-footer {
-    background: var(--bg-0) !important;
+    background: var(--bg-0);
     border-top: 1px solid var(--border-gold);
   }
 }

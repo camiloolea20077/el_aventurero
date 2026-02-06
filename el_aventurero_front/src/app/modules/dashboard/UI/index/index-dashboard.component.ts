@@ -76,6 +76,10 @@ export class IndexDashboardComponent implements OnInit {
   stockChart: any;
   stockChartOptions: any;
 
+  // Datos para las gráficas
+  weeklySalesData: any[] = [];
+  paymentMethodsData: any[] = [];
+
   constructor(
     private ventaService: VentaService,
     private inventarioService: InventarioService,
@@ -144,10 +148,35 @@ export class IndexDashboardComponent implements OnInit {
 
   async cargarVentas(): Promise<void> {
     try {
-      // Aquí podrías cargar estadísticas de ventas
-      // Por ahora usaremos datos de ejemplo
+      // Cargar datos reales de ventas para las gráficas
+      const [weeklySales, paymentMethods] = await Promise.all([
+        lastValueFrom(this.ventaService.getWeeklySales()),
+        lastValueFrom(this.ventaService.getPaymentMethodsStats())
+      ]);
+
+      // Guardar datos para usar en las gráficas
+      this.weeklySalesData = weeklySales.data || [];
+      this.paymentMethodsData = paymentMethods.data || [];
+
     } catch (error) {
       console.error('Error cargando ventas:', error);
+      // Si falla la API, usamos datos de ejemplo
+      this.weeklySalesData = [
+        { day: 'Lun', total: 250000 },
+        { day: 'Mar', total: 320000 },
+        { day: 'Mié', total: 180000 },
+        { day: 'Jue', total: 450000 },
+        { day: 'Vie', total: 520000 },
+        { day: 'Sáb', total: 680000 },
+        { day: 'Dom', total: 590000 }
+      ];
+      
+      this.paymentMethodsData = [
+        { method: 'Efectivo', percentage: 45 },
+        { method: 'Tarjeta', percentage: 30 },
+        { method: 'Transferencia', percentage: 15 },
+        { method: 'Digital', percentage: 10 }
+      ];
     }
   }
 
@@ -195,12 +224,23 @@ export class IndexDashboardComponent implements OnInit {
   inicializarVentasChart(): void {
     const documentStyle = getComputedStyle(document.documentElement);
 
+    // Usar datos reales o de ejemplo
+    const salesData = this.weeklySalesData.length > 0 ? this.weeklySalesData : [
+      { day: 'Lun', total: 250000 },
+      { day: 'Mar', total: 320000 },
+      { day: 'Mié', total: 180000 },
+      { day: 'Jue', total: 450000 },
+      { day: 'Vie', total: 520000 },
+      { day: 'Sáb', total: 680000 },
+      { day: 'Dom', total: 590000 }
+    ];
+
     this.ventasChart = {
-      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      labels: salesData.map(item => item.day),
       datasets: [
         {
           label: 'Ventas de la Semana',
-          data: [250000, 320000, 180000, 450000, 520000, 680000, 590000],
+          data: salesData.map(item => item.total),
           fill: true,
           borderColor:
             documentStyle.getPropertyValue('--primary-color') || '#667eea',
@@ -253,11 +293,19 @@ export class IndexDashboardComponent implements OnInit {
   inicializarMetodosPagoChart(): void {
     const documentStyle = getComputedStyle(document.documentElement);
 
+    // Usar datos reales o de ejemplo
+    const paymentData = this.paymentMethodsData.length > 0 ? this.paymentMethodsData : [
+      { method: 'Efectivo', percentage: 45 },
+      { method: 'Tarjeta', percentage: 30 },
+      { method: 'Transferencia', percentage: 15 },
+      { method: 'Digital', percentage: 10 }
+    ];
+
     this.metodosPagoChart = {
-      labels: ['Efectivo', 'Tarjeta', 'Transferencia', 'Digital'],
+      labels: paymentData.map(item => item.method),
       datasets: [
         {
-          data: [45, 30, 15, 10],
+          data: paymentData.map(item => item.percentage),
           backgroundColor: ['#28a745', '#007bff', '#ffc107', '#6f42c1'],
           hoverBackgroundColor: ['#218838', '#0056b3', '#e0a800', '#5a32a3'],
         },

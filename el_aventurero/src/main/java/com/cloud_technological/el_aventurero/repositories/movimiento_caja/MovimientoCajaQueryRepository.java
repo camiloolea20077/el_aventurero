@@ -15,6 +15,7 @@ import com.cloud_technological.el_aventurero.dto.movimiento_caja.CierreSemanalDt
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.MetodoPagoResumenDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.MovimientoCajaDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.ProductoTopResumenDto;
+import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenArqueosDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenFlujoDto;
 import com.cloud_technological.el_aventurero.util.MapperRepository;
 
@@ -252,5 +253,50 @@ public class MovimientoCajaQueryRepository {
         // Calcular número de semana del año
         java.time.temporal.WeekFields weekFields = java.time.temporal.WeekFields.of(java.util.Locale.getDefault());
         return fecha.get(weekFields.weekOfWeekBasedYear());
+    }
+    public ResumenArqueosDto getResumenArqueos(LocalDate fechaInicio, LocalDate fechaFin) {
+    // Calcular días en el rango
+    long totalDias = java.time.temporal.ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
+    
+    String sql = """
+        SELECT
+            COUNT(*) AS arqueos_realizados,
+            COUNT(CASE WHEN a.estado = 'CUADRADO' THEN 1 END) AS arqueos_cuadrados,
+            COUNT(CASE WHEN a.estado = 'PENDIENTE' THEN 1 END) AS arqueos_pendientes,
+            COUNT(CASE WHEN a.estado = 'AJUSTADO' THEN 1 END) AS arqueos_ajustados,
+            COALESCE(SUM(a.diferencia), 0)::text AS total_diferencias,
+            COALESCE(SUM(CASE WHEN a.diferencia > 0 THEN a.diferencia ELSE 0 END), 0)::text AS total_sobrantes,
+            COALESCE(SUM(CASE WHEN a.diferencia < 0 THEN ABS(a.diferencia) ELSE 0 END), 0)::text AS total_faltantes
+        FROM arqueo_caja a
+        WHERE a.deleted_at IS NULL
+        AND a.fecha BETWEEN :fechaInicio AND :fechaFin
+        """;
+        
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fechaInicio", fechaInicio);
+        params.addValue("fechaFin", fechaFin);
+        
+        List<Map<String, Object>> resultList = namedParameterJdbcTemplate.query(
+            sql, params, new ColumnMapRowMapper()
+        );
+        
+        if (resultList.isEmpty()) {
+            ResumenArqueosDto resumen = new ResumenArqueosDto();
+            resumen.setTotal_dias((int) totalDias);
+            resumen.setArqueos_realizados(0);
+            resumen.setArqueos_cuadrados(0);
+            resumen.setArqueos_pendientes(0);
+            resumen.setArqueos_ajustados(0);
+            resumen.setTotal_diferencias(BigDecimal.ZERO);
+            resumen.setTotal_sobrantes(BigDecimal.ZERO);
+            resumen.setTotal_faltantes(BigDecimal.ZERO);
+            return resumen;
+        }
+        
+        List<ResumenArqueosDto> result = MapperRepository.mapListToDtoListNull(resultList, ResumenArqueosDto.class);
+        ResumenArqueosDto resumen = result.get(0);
+        resumen.setTotal_dias((int) totalDias);
+        
+        return resumen;
     }
 }

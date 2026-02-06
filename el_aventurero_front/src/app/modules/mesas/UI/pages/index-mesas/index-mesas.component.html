@@ -51,19 +51,26 @@
   [(visible)]="displayConsumoDialog"
   [header]="'Mesa ' + mesaSeleccionada?.numero"
   [modal]="true"
-  [style]="{ width: '700px' }"
+  [style]="{ width: '760px' }"
   [draggable]="false"
   [resizable]="false"
   (onHide)="cerrarDialog()"
-  styleClass="consumo-dialog"
+  styleClass="modern-dialog consumo-dialog"
 >
   <div class="consumo-container" *ngIf="mesaSeleccionada">
     <!-- Agregar Producto -->
     <div class="add-producto-section">
-      <h5>
-        <i class="pi pi-plus-circle"></i>
-        Agregar Producto
-      </h5>
+      <div class="add-header">
+        <h5>
+          <i class="pi pi-plus-circle"></i>
+          Agregar producto
+        </h5>
+
+        <div class="add-total">
+          Total mesa:
+          <strong>${{ totalMesa.toLocaleString() }}</strong>
+        </div>
+      </div>
 
       <div class="add-producto-form">
         <div class="form-row">
@@ -88,69 +95,59 @@
             </p-dropdown>
           </div>
 
-          <div class="form-field">
+          <div class="form-field qty-field">
             <label>Cantidad</label>
             <p-inputNumber
               [(ngModel)]="cantidad"
               [min]="1"
-              [showButtons]="true"
-              buttonLayout="horizontal"
-              spinnerMode="horizontal"
-              decrementButtonClass="p-button-secondary"
-              incrementButtonClass="p-button-secondary"
-              incrementButtonIcon="pi pi-plus"
-              decrementButtonIcon="pi pi-minus"
-              styleClass="cantidad-input"
+              [showButtons]="false"
+              inputId="cantidad"
+              inputStyleClass="qty-input"
+              styleClass="w-full"
+              placeholder="Ej: 2"
             ></p-inputNumber>
           </div>
 
-          <div class="form-field">
+          <div class="form-field action-field">
             <label>&nbsp;</label>
             <p-button
               label="Agregar"
               icon="pi pi-plus"
               (onClick)="agregarProducto()"
               severity="warn"
-              styleClass="add-button"
+              styleClass="add-button w-full"
+              [disabled]="!productoSeleccionado || !cantidad || cantidad < 1"
             ></p-button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- Lista de Consumos -->
+    <!-- Lista -->
     <div class="consumos-section">
       <div class="section-header">
         <h5>
           <i class="pi pi-list"></i>
-          Productos en la Mesa
+          Productos en la mesa
         </h5>
-        <div class="total-mesa">
-          Total: <strong>${{ totalMesa.toLocaleString() }}</strong>
-        </div>
       </div>
 
-      <!-- Loading consumos -->
       <div *ngIf="loadingConsumo" class="loading-small">
         <i class="pi pi-spin pi-spinner"></i>
         Cargando...
       </div>
 
-      <!-- Lista de consumos -->
       <div *ngIf="!loadingConsumo" class="consumos-list">
         <div *ngFor="let consumo of consumos" class="consumo-item">
           <div class="consumo-info">
-            <div class="producto-nombre">
-              {{ consumo.producto_nombre }}
-            </div>
+            <div class="producto-nombre">{{ consumo.producto_nombre }}</div>
             <div class="producto-detalle">
-              {{ consumo.cantidad }} x ${{
+              {{ consumo.cantidad }} × ${{
                 consumo.precio_unitario.toLocaleString()
               }}
             </div>
           </div>
+
           <div class="consumo-actions">
             <div class="subtotal">${{ consumo.subtotal.toLocaleString() }}</div>
             <p-button
@@ -165,7 +162,6 @@
           </div>
         </div>
 
-        <!-- Sin consumos -->
         <div *ngIf="consumos.length === 0" class="sin-consumos">
           <i class="pi pi-inbox"></i>
           <p>No hay productos en esta mesa</p>
@@ -174,11 +170,11 @@
     </div>
   </div>
 
-  <!-- Footer con acciones -->
+  <!-- Footer -->
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
-      <div class="metodo-pago gap-3 flex">
-        <label>Método de Pago:</label>
+      <div class="metodo-pago">
+        <label>Método de Pago</label>
         <p-dropdown
           [(ngModel)]="metodoPagoSeleccionado"
           [options]="metodosPago"
@@ -188,7 +184,7 @@
         ></p-dropdown>
       </div>
 
-      <div class="footer-actions mt-3 gap-3 flex">
+      <div class="footer-actions">
         <p-button
           label="Cancelar"
           icon="pi pi-times"
@@ -196,6 +192,7 @@
           severity="danger"
           [outlined]="true"
         ></p-button>
+
         <p-button
           label="Cerrar Cuenta"
           icon="pi pi-check"

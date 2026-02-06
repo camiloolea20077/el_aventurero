@@ -1,6 +1,7 @@
 package com.cloud_technological.el_aventurero.services.implementations;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,11 +17,13 @@ import com.cloud_technological.el_aventurero.dto.detalle_compras.CreateDetalleCo
 import com.cloud_technological.el_aventurero.dto.detalle_compras.DetalleCompraDto;
 import com.cloud_technological.el_aventurero.entity.CompraEntity;
 import com.cloud_technological.el_aventurero.entity.DetalleCompraEntity;
+import com.cloud_technological.el_aventurero.entity.MovimientoCajaEntity;
 import com.cloud_technological.el_aventurero.mappers.compras.CompraMapper;
 import com.cloud_technological.el_aventurero.repositories.compras.CompraJPARepository;
 import com.cloud_technological.el_aventurero.repositories.compras.CompraQueryRepository;
 import com.cloud_technological.el_aventurero.repositories.detalle_compras.DetalleCompraJPARepository;
 import com.cloud_technological.el_aventurero.repositories.detalle_compras.DetalleCompraQueryRepository;
+import com.cloud_technological.el_aventurero.repositories.movimiento_caja.MovimientoCajaJPARepository;
 import com.cloud_technological.el_aventurero.repositories.productos.ProductoJPARepository;
 import com.cloud_technological.el_aventurero.services.CompraService;
 import com.cloud_technological.el_aventurero.services.InventarioService;
@@ -37,6 +40,7 @@ public class CompraServiceImpl implements CompraService {
     private final ProductoJPARepository productoJPARepository;
     private final InventarioService inventarioService;
     private final CompraMapper compraMapper;
+    private final MovimientoCajaJPARepository movimientoCajaJPARepository;
 
     public CompraServiceImpl(
         CompraJPARepository compraJPARepository,
@@ -45,6 +49,7 @@ public class CompraServiceImpl implements CompraService {
         DetalleCompraQueryRepository detalleCompraQueryRepository,
         ProductoJPARepository productoJPARepository,
         InventarioService inventarioService,
+        MovimientoCajaJPARepository movimientoCajaJPARepository,
         CompraMapper compraMapper
     ) {
         this.compraJPARepository = compraJPARepository;
@@ -52,6 +57,7 @@ public class CompraServiceImpl implements CompraService {
         this.detalleCompraJPARepository = detalleCompraJPARepository;
         this.detalleCompraQueryRepository = detalleCompraQueryRepository;
         this.productoJPARepository = productoJPARepository;
+        this.movimientoCajaJPARepository = movimientoCajaJPARepository;
         this.inventarioService = inventarioService;
         this.compraMapper = compraMapper;
     }
@@ -110,6 +116,25 @@ public class CompraServiceImpl implements CompraService {
                 inventarioService.sumarStock(detalleDto.getProducto_id(), totalUnidades);
             }
 
+            // ====== NUEVO: Registrar automáticamente en Flujo de Caja ======
+            try {
+                MovimientoCajaEntity movimiento = new MovimientoCajaEntity();
+                movimiento.setTipo("EGRESO");
+                movimiento.setConcepto("Compra de productos");
+                movimiento.setCategoria("COMPRA");
+                movimiento.setMonto(totalCompra); // ✅ Usar el total calculado
+                movimiento.setMetodo_pago(createDto.getMetodo_pago());
+                movimiento.setFecha(LocalDate.now());
+                movimiento.setCompra_id(savedCompra.getId());
+                movimiento.setDescripcion("Compra automática con " + createDto.getDetalles().size() + " productos");
+                
+                movimientoCajaJPARepository.save(movimiento);
+            } catch (Exception e) {
+                // Log error pero no fallar la compra
+                System.err.println("Error registrando movimiento de caja para compra: " + e.getMessage());
+            }
+            // ================================================================
+
             // Retornar compra con detalles
             CompraDto compraDto = compraQueryRepository.findByIdWithDetails(savedCompra.getId());
             List<DetalleCompraDto> detalles = detalleCompraQueryRepository.findByCompraId(savedCompra.getId());
@@ -121,7 +146,6 @@ public class CompraServiceImpl implements CompraService {
             throw new RuntimeException("Error al crear la compra: " + e.getMessage(), e);
         }
     }
-
     @Override
     @Transactional
     public Boolean delete(Long id) {

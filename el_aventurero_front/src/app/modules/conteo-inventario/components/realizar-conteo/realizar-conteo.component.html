@@ -1,0 +1,332 @@
+<p-dialog
+  [header]="
+    paso === 'INICIAR'
+      ? 'Iniciar Conteo de Inventario'
+      : 'Realizar Conteo de Inventario'
+  "
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog realizar-conteo-dialog"
+>
+  <div class="realizar-conteo-container">
+    <!-- PASO 1: INICIAR CONTEO -->
+    <div *ngIf="paso === 'INICIAR'" class="paso-iniciar">
+      <div class="info-card">
+        <i class="pi pi-info-circle"></i>
+        <div class="info-content">
+          <strong>¿Qué es un conteo de inventario?</strong>
+          <p>
+            Realiza un conteo físico de tus productos para detectar diferencias
+            entre el stock del sistema y la realidad. Esto te ayuda a
+            identificar ventas no registradas, mermas, robos o errores.
+          </p>
+        </div>
+      </div>
+
+      <form [formGroup]="frmConteo" class="form-container">
+        <!-- Fecha -->
+        <div class="form-field">
+          <label for="fecha" class="form-label required">
+            <i class="pi pi-calendar mr-2"></i>
+            Fecha del Conteo
+          </label>
+          <p-calendar
+            appendTo="body"
+            id="fecha"
+            formControlName="fecha"
+            dateFormat="dd/mm/yy"
+            [showIcon]="true"
+            placeholder="Seleccione la fecha"
+            styleClass="w-full"
+          ></p-calendar>
+          <small
+            *ngIf="
+              frmConteo.get('fecha')?.invalid && frmConteo.get('fecha')?.touched
+            "
+            class="p-error"
+          >
+            La fecha es requerida
+          </small>
+        </div>
+
+        <!-- Tipo -->
+        <div class="form-field">
+          <label for="tipo" class="form-label required">
+            <i class="pi pi-tag mr-2"></i>
+            Tipo de Conteo
+          </label>
+          <p-dropdown
+            appendTo="body"
+            id="tipo"
+            [options]="tiposConteo"
+            formControlName="tipo"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccione el tipo"
+            styleClass="w-full"
+          ></p-dropdown>
+          <small class="help-text">
+            <strong>Periódico:</strong> Conteo regular (semanal/mensual).<br />
+            <strong>Cíclico:</strong> Rotar productos por zonas.<br />
+            <strong>Anual:</strong> Inventario completo de fin de año.
+          </small>
+        </div>
+      </form>
+    </div>
+
+    <!-- PASO 2: REALIZAR CONTEO -->
+    <div *ngIf="paso === 'CONTEO'" class="paso-conteo">
+      <!-- Info del Conteo -->
+      <div class="conteo-info-header">
+        <div class="info-item">
+          <span class="label">Fecha:</span>
+          <span class="value">{{
+            conteoActual?.fecha | date: "d MMMM yyyy"
+          }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tipo:</span>
+          <span class="value">{{ conteoActual?.tipo }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Estado:</span>
+          <p-tag [value]="conteoActual?.estado" severity="warn"></p-tag>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Agregar Productos -->
+      <div class="agregar-producto-section">
+        <h3 class="section-title">
+          <i class="pi pi-plus-circle"></i>
+          Agregar Productos al Conteo
+        </h3>
+
+        <div class="agregar-producto-form">
+          <div class="autocomplete-wrapper">
+            <label>Buscar Producto</label>
+            <p-autoComplete
+              [(ngModel)]="productoSeleccionado"
+              [suggestions]="productosFiltrados"
+              (completeMethod)="buscarProductos($event)"
+              field="nombre"
+              [dropdown]="true"
+              placeholder="Busca por nombre o código de barras..."
+              styleClass="w-full"
+            >
+              <ng-template let-producto pTemplate="item">
+                <div class="producto-item">
+                  <div class="producto-info">
+                    <strong>{{ producto.nombre }}</strong>
+                    <small class="d-block text-muted">{{
+                      producto.tipo_venta
+                    }}</small>
+                  </div>
+                  <span class="producto-stock"
+                    >Stock: {{ getStockSistema(producto.id) }}</span
+                  >
+                </div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+          <p-button
+            label="Agregar"
+            icon="pi pi-plus"
+            (click)="agregarProducto()"
+            [disabled]="!productoSeleccionado"
+          ></p-button>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Tabla de Productos -->
+      <div class="productos-conteo-section">
+        <h3 class="section-title">
+          <i class="pi pi-list"></i>
+          Productos en Conteo ({{ productosConteo.length }})
+        </h3>
+
+        <div *ngIf="productosConteo.length === 0" class="empty-state">
+          <i class="pi pi-inbox"></i>
+          <p>No hay productos agregados al conteo</p>
+          <small>Usa el buscador de arriba para agregar productos</small>
+        </div>
+
+        <p-table
+          *ngIf="productosConteo.length > 0"
+          [value]="productosConteo"
+          styleClass="p-datatable-striped"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 250px">Producto</th>
+              <th style="width: 120px">Sistema</th>
+              <th style="width: 150px">Físico</th>
+              <th style="width: 120px">Diferencia</th>
+              <th style="width: 100px">Estado</th>
+              <th style="width: 180px; text-align: center">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-pc let-i="rowIndex">
+            <tr>
+              <td>
+                <strong>{{ pc.producto.nombre }}</strong>
+                <small class="d-block text-muted">{{
+                  pc.producto.tipo_venta
+                }}</small>
+              </td>
+              <td>
+                <span class="stock-badge sistema">{{ pc.stock_sistema }}</span>
+              </td>
+              <td>
+                <p-inputNumber
+                  [(ngModel)]="pc.stock_fisico"
+                  [min]="0"
+                  buttonLayout="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus"
+                  [disabled]="pc.guardado"
+                  (onInput)="onStockFisicoChange(pc)"
+                  styleClass="stock-input"
+                ></p-inputNumber>
+              </td>
+              <td>
+                <p-tag
+                  [value]="(pc.diferencia >= 0 ? '+' : '') + pc.diferencia"
+                  [severity]="getDiferenciaSeverity(pc.diferencia)"
+                  [icon]="'pi ' + getDiferenciaIcon(pc.diferencia)"
+                ></p-tag>
+              </td>
+              <td>
+                <p-tag
+                  *ngIf="!pc.guardado"
+                  value="Pendiente"
+                  severity="secondary"
+                  icon="pi pi-clock"
+                ></p-tag>
+                <p-tag
+                  *ngIf="pc.guardado"
+                  value="Guardado"
+                  severity="success"
+                  icon="pi pi-check"
+                ></p-tag>
+              </td>
+              <td class="text-center">
+                <p-button
+                  *ngIf="!pc.guardado"
+                  label="Guardar"
+                  icon="pi pi-save"
+                  size="small"
+                  (click)="guardarDetalle(pc)"
+                  severity="success"
+                  [outlined]="true"
+                ></p-button>
+                <p-button
+                  *ngIf="pc.guardado && pc.diferencia !== 0"
+                  label="Justificar"
+                  icon="pi pi-exclamation-triangle"
+                  size="small"
+                  (click)="openJustificarModal(pc)"
+                  severity="warn"
+                  [outlined]="true"
+                  class="ml-2"
+                ></p-button>
+                <p-button
+                  *ngIf="!pc.guardado"
+                  icon="pi pi-trash"
+                  size="small"
+                  (click)="eliminarProducto(i)"
+                  severity="danger"
+                  [text]="true"
+                  class="ml-2"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <!-- Resumen -->
+      <div class="resumen-section" *ngIf="productosConteo.length > 0">
+        <div class="resumen-card">
+          <div class="resumen-item">
+            <span class="label">Total Productos:</span>
+            <span class="value">{{ productosConteo.length }}</span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Guardados:</span>
+            <span class="value success">
+              {{ productosGuardados }}
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Pendientes:</span>
+            <span class="value warning">
+              {{ productosPendientes }}
+            </span>
+          </div>
+          <div class="resumen-item">
+            <span class="label">Con Diferencias:</span>
+            <span class="value danger">
+              {{ productosConDiferencias }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+
+      <!-- Footer Paso 1 -->
+      <p-button
+        *ngIf="paso === 'INICIAR'"
+        label="Iniciar Conteo"
+        icon="pi pi-check"
+        (onClick)="iniciarConteo()"
+        severity="success"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || frmConteo.invalid"
+      ></p-button>
+
+      <!-- Footer Paso 2 -->
+      <p-button
+        *ngIf="paso === 'CONTEO'"
+        label="Completar Conteo"
+        icon="pi pi-check-circle"
+        (onClick)="completarConteo()"
+        severity="success"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || productosConteo.length === 0"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Modal Justificar Diferencia -->
+<!-- <app-justificar-diferencia
+    [displayModal]="showJustificarModal"
+    [detalle]="detalleParaJustificar"
+    (modalClosed)="onJustificarModalClosed()"
+    (diferenciaJustificada)="onDiferenciaJustificada()"
+>
+</app-justificar-diferencia> -->
+
+<p-toast></p-toast>

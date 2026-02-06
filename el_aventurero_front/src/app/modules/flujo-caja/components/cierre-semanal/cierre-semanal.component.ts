@@ -16,6 +16,7 @@ import { FlujoCajaService } from '../../../../core/services/flujo-caja.service';
 import { VentaService } from '../../../../core/services/venta.service';
 import { AlertService } from '../../../../../shared/pipes/alert.service';
 import { CierreSemanalModel } from '../../../../core/models/flujo-caja/cierre-semanal.model';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-cierre-semanal',
@@ -33,6 +34,7 @@ import { CierreSemanalModel } from '../../../../core/models/flujo-caja/cierre-se
     ChartModule,
     DividerModule,
     TagModule,
+    ToastModule,
   ],
 })
 export class CierreSemanalComponent implements OnInit {

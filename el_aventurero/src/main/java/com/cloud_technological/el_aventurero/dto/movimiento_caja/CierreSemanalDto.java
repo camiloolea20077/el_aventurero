@@ -21,4 +21,5 @@ public class CierreSemanalDto {
     private BigDecimal ticket_promedio;
     private List<MetodoPagoResumenDto> metodos_pago;
     private List<ProductoTopResumenDto> productos_top;
+    private ResumenArqueosDto resumen_arqueos;
 }

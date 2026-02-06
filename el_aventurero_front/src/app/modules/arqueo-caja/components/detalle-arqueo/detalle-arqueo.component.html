@@ -1,0 +1,288 @@
+<p-dialog
+  header="Detalle del Arqueo de Caja"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog detalle-arqueo-dialog"
+>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-spinner"></i>
+    <span>Cargando detalle del arqueo...</span>
+  </div>
+
+  <div *ngIf="!loading && arqueo" class="detalle-content">
+    <!-- Header con Información General -->
+    <div class="header-info">
+      <div class="info-row">
+        <div class="info-item">
+          <span class="label">Fecha del Arqueo</span>
+          <span class="value">{{ formatDateTime(arqueo.created_at) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Estado</span>
+          <p-tag
+            [value]="arqueo.estado"
+            [severity]="getEstadoSeverity(arqueo.estado)"
+            [icon]="getEstadoIcon(arqueo.estado)"
+            styleClass="estado-tag"
+          ></p-tag>
+        </div>
+        <div class="info-item">
+          <span class="label">Diferencia</span>
+          <p-tag
+            [value]="
+              (arqueo.diferencia >= 0 ? '+' : '') +
+              '$' +
+              (arqueo.diferencia | number: '1.0-0')
+            "
+            [severity]="getDiferenciaSeverity(arqueo.diferencia)"
+            [icon]="getDiferenciaIcon(arqueo.diferencia)"
+            styleClass="diferencia-tag-large"
+          ></p-tag>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Resumen del Sistema -->
+    <div class="resumen-sistema">
+      <h3 class="section-title">
+        <i class="pi pi-database"></i>
+        Resumen del Sistema
+      </h3>
+
+      <div class="resumen-grid">
+        <div class="resumen-item">
+          <span class="label">Saldo Inicial</span>
+          <span class="valor"
+            >${{ arqueo.saldo_inicial | number: "1.0-0" }}</span
+          >
+        </div>
+        <div class="resumen-item ingreso">
+          <span class="label">Ingresos del Día</span>
+          <span class="valor"
+            >+${{ arqueo.total_ingresos_sistema | number: "1.0-0" }}</span
+          >
+        </div>
+        <div class="resumen-item egreso">
+          <span class="label">Egresos del Día</span>
+          <span class="valor"
+            >-${{ arqueo.total_egresos_sistema | number: "1.0-0" }}</span
+          >
+        </div>
+        <div class="resumen-item esperado">
+          <span class="label">Saldo Esperado</span>
+          <span class="valor"
+            >${{ arqueo.saldo_esperado | number: "1.0-0" }}</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Conteo de Efectivo -->
+    <div class="conteo-efectivo">
+      <h3 class="section-title">
+        <i class="pi pi-money-bill"></i>
+        Conteo de Efectivo Real
+      </h3>
+
+      <div class="conteo-grid">
+        <!-- Billetes -->
+        <div class="conteo-section">
+          <h4 class="subsection-title">
+            <i class="pi pi-wallet"></i>
+            Billetes
+          </h4>
+
+          <div class="denominaciones-list">
+            <div
+              *ngFor="let billete of billetes"
+              class="denominacion-item"
+              [class.con-valor]="billete.cantidad > 0"
+            >
+              <div class="denominacion-info">
+                <span class="denominacion-label">
+                  ${{ billete.denominacion | number: "1.0-0" }}
+                </span>
+                <span class="multiplicador">×</span>
+              </div>
+              <div class="denominacion-cantidad">
+                <span class="cantidad-value">{{ billete.cantidad }}</span>
+              </div>
+              <div class="denominacion-total">
+                <span>= ${{ billete.total | number: "1.0-0" }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subtotal">
+            <span class="subtotal-label">Total Billetes:</span>
+            <span class="subtotal-valor"
+              >${{ totalBilletes | number: "1.0-0" }}</span
+            >
+          </div>
+        </div>
+
+        <!-- Monedas -->
+        <div class="conteo-section">
+          <h4 class="subsection-title">
+            <i class="pi pi-circle"></i>
+            Monedas
+          </h4>
+
+          <div class="denominaciones-list">
+            <div
+              *ngFor="let moneda of monedas"
+              class="denominacion-item"
+              [class.con-valor]="moneda.cantidad > 0"
+            >
+              <div class="denominacion-info">
+                <span class="denominacion-label">
+                  ${{ moneda.denominacion | number: "1.0-0" }}
+                </span>
+                <span class="multiplicador">×</span>
+              </div>
+              <div class="denominacion-cantidad">
+                <span class="cantidad-value">{{ moneda.cantidad }}</span>
+              </div>
+              <div class="denominacion-total">
+                <span>= ${{ moneda.total | number: "1.0-0" }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="subtotal">
+            <span class="subtotal-label">Total Monedas:</span>
+            <span class="subtotal-valor"
+              >${{ totalMonedas | number: "1.0-0" }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Resultado Final -->
+    <div class="resultado-final">
+      <h3 class="section-title">
+        <i class="pi pi-calculator"></i>
+        Resultado del Arqueo
+      </h3>
+
+      <div class="resultado-grid">
+        <div class="resultado-item">
+          <span class="label">Efectivo Real Contado</span>
+          <span class="valor grande"
+            >${{ arqueo.efectivo_real | number: "1.0-0" }}</span
+          >
+        </div>
+        <div class="resultado-item">
+          <span class="label">Saldo Esperado (Sistema)</span>
+          <span class="valor"
+            >${{ arqueo.saldo_esperado | number: "1.0-0" }}</span
+          >
+        </div>
+        <div
+          class="resultado-item diferencia"
+          [attr.data-severity]="getDiferenciaSeverity(arqueo.diferencia)"
+        >
+          <span class="label">
+            <i [class]="getDiferenciaIcon(arqueo.diferencia)"></i>
+            Diferencia
+          </span>
+          <span class="valor diferencia-valor">
+            {{ arqueo.diferencia >= 0 ? "+" : "" }}${{
+              arqueo.diferencia | number: "1.0-0"
+            }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div
+      class="observaciones-section"
+      *ngIf="arqueo.observaciones && !showAjustarForm"
+    >
+      <h4 class="subsection-title">
+        <i class="pi pi-align-left"></i>
+        Observaciones
+      </h4>
+      <div class="observaciones-content">
+        {{ arqueo.observaciones }}
+      </div>
+    </div>
+
+    <!-- Formulario de Ajuste -->
+    <div class="ajuste-section" *ngIf="showAjustarForm">
+      <div class="ajuste-form">
+        <h4 class="subsection-title">
+          <i class="pi pi-wrench"></i>
+          Justificar Diferencia
+        </h4>
+        <p class="ajuste-instrucciones">
+          Explique el motivo de la diferencia. Por ejemplo: venta no registrada,
+          gasto olvidado, error en conteo, etc.
+        </p>
+        <textarea
+          pInputTextarea
+          [(ngModel)]="observacionesAjuste"
+          rows="4"
+          placeholder="Escriba las observaciones..."
+          class="w-full"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+
+      <!-- Botón para mostrar formulario de ajuste -->
+      <p-button
+        *ngIf="arqueo && arqueo.estado === 'PENDIENTE' && !showAjustarForm"
+        label="Marcar como Ajustado"
+        icon="pi pi-wrench"
+        (onClick)="mostrarFormAjuste()"
+        severity="info"
+      ></p-button>
+
+      <!-- Botones cuando está en modo ajuste -->
+      <ng-container *ngIf="showAjustarForm">
+        <p-button
+          label="Cancelar"
+          icon="pi pi-times"
+          (onClick)="cancelarAjuste()"
+          severity="secondary"
+          [disabled]="isSubmitting"
+        ></p-button>
+        <p-button
+          label="Confirmar Ajuste"
+          icon="pi pi-check"
+          (onClick)="marcarComoAjustado()"
+          severity="success"
+          [loading]="isSubmitting"
+          [disabled]="isSubmitting"
+        ></p-button>
+      </ng-container>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

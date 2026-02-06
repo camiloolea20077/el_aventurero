@@ -1,15 +1,112 @@
-:root{
-  --bg-0:#0E0F10;
-  --bg-1:#1A1C1F;
-  --bg-2:#2A2D31;
+:root {
+  --bg-0: #0e0f10;
+  --bg-1: #1a1c1f;
+  --bg-2: #2a2d31;
 
-  --gold:#D4AF37;
-  --gold-soft:#F3D98B;
-  --bronze:#8C6A2F;
+  --gold: #d4af37;
+  --gold-soft: #f3d98b;
+  --bronze: #8c6a2f;
 
-  --text:#F4F1EA;
-  --muted:#C9CDD3;
+  --text: #f4f1ea;
+  --muted: #c9cdd3;
 
-  --wine:#6B1E2E;
-  --amber:#C07A2D;
+  --wine: #6b1e2e;
+  --amber: #c07a2d;
+}
+/* =========================
+   TABLAS PRIME – TEMA DORADO
+   ========================= */
+
+::ng-deep .table-gold {
+  background: #0b0c0e;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+
+  /* Wrapper */
+  .p-datatable-wrapper {
+    background: #0b0c0e;
+  }
+
+  /* =========================
+     HEADER (TH)
+     ========================= */
+  .p-datatable-thead > tr > th {
+    background: linear-gradient(135deg, #d4af37 0%, #cd7f32 100%);
+    color: #111;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 0.85rem;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+  }
+
+  /* =========================
+     BODY (TD)
+     ========================= */
+  .p-datatable-tbody > tr {
+    background: #0b0c0e;
+    transition: background-color 0.2s ease;
+
+    &:nth-child(even) {
+      background: #101114;
+    }
+
+    &:hover {
+      background: rgba(212, 175, 55, 0.08);
+    }
+
+    > td {
+      color: rgba(212, 175, 55, 0.92); /* DORADO */
+      font-weight: 600;
+      padding: 0.85rem;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* =========================
+     FOOTER
+     ========================= */
+  .p-datatable-tfoot > tr > td {
+    background: #0b0c0e;
+    color: rgba(212, 175, 55, 0.95);
+    font-weight: 800;
+    border-top: 2px solid #d4af37;
+    padding: 0.85rem;
+  }
+
+  /* =========================
+     PAGINATOR
+     ========================= */
+  .p-paginator {
+    background: #0b0c0e;
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+
+    .p-paginator-page,
+    .p-paginator-next,
+    .p-paginator-prev {
+      color: rgba(212, 175, 55, 0.85);
+      font-weight: 700;
+
+      &.p-highlight {
+        background: linear-gradient(135deg, #d4af37 0%, #cd7f32 100%);
+        color: #111;
+        border-radius: 6px;
+      }
+    }
+  }
+
+  /* =========================
+     EMPTY MESSAGE
+     ========================= */
+  .p-datatable-emptymessage td {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(212, 175, 55, 0.6);
+    font-style: italic;
+  }
 }

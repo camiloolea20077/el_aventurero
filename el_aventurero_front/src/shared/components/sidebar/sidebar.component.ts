@@ -139,14 +139,58 @@ export class SidebarComponent implements OnInit, OnDestroy {
         route: '/dashboard',
         exact: true,
       },
-      { label: 'Mesas', icon: 'pi pi-table', route: '/mesas' },
-      { label: 'Productos', icon: 'pi pi-barcode', route: '/products' },
-      { label: 'Inventario', icon: 'pi pi-box', route: '/inventory' },
-      { label: 'Compras', icon: 'pi pi-shopping-cart', route: '/shopping' },
-      { label: 'ventas', icon: 'pi pi-dollar', route: '/sales' },
-      { label: 'Usuarios', icon: 'pi pi-users', route: '/users' },
-      { label: 'Caja', icon: 'pi pi-wallet', route: '/caja' },
-      { label: 'Arqueo', icon: 'pi pi-chart-bar', route: '/arqueo-caja' },
+      // --- OPERACIONES DEL BAR ---
+      {
+        label: 'Operaciones',
+        icon: 'pi pi-cog',
+        children: [
+          { label: 'Mesas', icon: 'pi pi-table', route: '/mesas' },
+          { label: 'Ventas', icon: 'pi pi-dollar', route: '/sales' },
+        ]
+      },
+      // --- GESTIÓN DE PRODUCTOS ---
+      {
+        label: 'Productos',
+        icon: 'pi pi-box',
+        children: [
+          { label: 'Catálogo', icon: 'pi pi-barcode', route: '/products' },
+          { label: 'Inventario', icon: 'pi pi-list', route: '/inventory' },
+          { label: 'Conteo de Inventario', icon: 'pi pi-calculator', route: '/conteo-inventario' },
+        ]
+      },
+      // --- COMPRAS Y PROVEEDORES ---
+      {
+        label: 'Compras',
+        icon: 'pi pi-shopping-cart',
+        route: '/shopping',
+      },
+      // --- CAJA Y FINANZAS ---
+      {
+        label: 'Caja',
+        icon: 'pi pi-wallet',
+        children: [
+          {
+            label: 'Flujo de Caja',
+            icon: 'pi pi-chart-line',
+            route: '/flujo-caja',
+          },
+          { 
+            label: 'Arqueo de Caja', 
+            icon: 'pi pi-calculator', 
+            route: '/arqueo-caja' 
+          },
+        ],
+      },
+      // --- ADMINISTRACIÓN (FUTURO) ---
+      // {
+      //   label: 'Administración',
+      //   icon: 'pi pi-users',
+      //   children: [
+      //     { label: 'Usuarios', icon: 'pi pi-user', route: '/users' },
+      //     { label: 'Permisos', icon: 'pi pi-key', route: '/permissions' },
+      //     { label: 'Configuración', icon: 'pi pi-cog', route: '/settings' },
+      //   ]
+      // },
     ];
   }
 

@@ -13,20 +13,22 @@
           <div class="alert-content">
             <strong>Arqueo del día realizado</strong>
             <span>
-              Estado: 
-              <p-tag 
-                [value]="arqueoDelDia.estado" 
+              Estado:
+              <p-tag
+                [value]="arqueoDelDia.estado"
                 [severity]="getEstadoSeverity(arqueoDelDia.estado)"
                 [icon]="getEstadoIcon(arqueoDelDia.estado)"
               ></p-tag>
-              - Diferencia: 
-              <span 
-                class="diferencia-value" 
+              - Diferencia:
+              <span
+                class="diferencia-value"
                 [class.positivo]="arqueoDelDia.diferencia > 0"
                 [class.negativo]="arqueoDelDia.diferencia < 0"
                 [class.cero]="arqueoDelDia.diferencia === 0"
               >
-                {{ arqueoDelDia.diferencia >= 0 ? '+' : '' }}${{ arqueoDelDia.diferencia | number: '1.0-0' }}
+                {{ arqueoDelDia.diferencia >= 0 ? "+" : "" }}${{
+                  arqueoDelDia.diferencia | number: "1.0-0"
+                }}
               </span>
             </span>
           </div>
@@ -112,7 +114,7 @@
       <p-table
         [value]="arqueos"
         [loading]="loading"
-        styleClass="arqueos-table"
+        styleClass="table-gold"
         [scrollable]="true"
         scrollHeight="600px"
         responsiveLayout="scroll"
@@ -135,19 +137,19 @@
           <tr>
             <td>{{ formatDateTime(arqueo.created_at) }}</td>
             <td class="text-right currency">
-              ${{ arqueo.saldo_inicial | number: '1.0-0' }}
+              ${{ arqueo.saldo_inicial | number: "1.0-0" }}
             </td>
             <td class="text-right currency ingreso">
-              +${{ arqueo.total_ingresos_sistema | number: '1.0-0' }}
+              +${{ arqueo.total_ingresos_sistema | number: "1.0-0" }}
             </td>
             <td class="text-right currency egreso">
-              -${{ arqueo.total_egresos_sistema | number: '1.0-0' }}
+              -${{ arqueo.total_egresos_sistema | number: "1.0-0" }}
             </td>
             <td class="text-right currency">
-              ${{ arqueo.saldo_esperado | number: '1.0-0' }}
+              ${{ arqueo.saldo_esperado | number: "1.0-0" }}
             </td>
             <td class="text-right currency">
-              <strong>${{ arqueo.efectivo_real | number: '1.0-0' }}</strong>
+              <strong>${{ arqueo.efectivo_real | number: "1.0-0" }}</strong>
             </td>
             <td class="text-right">
               <p-tag
@@ -174,15 +176,7 @@
                 [text]="true"
                 size="small"
                 pTooltip="Ver Detalle"
-                tooltipPosition="top"
-              ></p-button>
-              <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                [text]="true"
-                size="small"
-                (click)="deleteArqueo(arqueo.id)"
-                pTooltip="Eliminar"
+                (click)="openDetalleModal(arqueo.id)"
                 tooltipPosition="top"
               ></p-button>
             </td>
@@ -230,5 +224,12 @@
 >
 </app-form-arqueo>
 
+<app-detalle-arqueo
+  [displayModal]="showDetalleModal"
+  [arqueoId]="arqueoIdSeleccionado"
+  (modalClosed)="onDetalleModalClosed()"
+  (arqueoActualizado)="onArqueoActualizado()"
+>
+</app-detalle-arqueo>
 <p-toast></p-toast>
 <p-confirmDialog styleClass="modern-confirm-dialog"></p-confirmDialog>

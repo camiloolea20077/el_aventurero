@@ -49,6 +49,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'conteo-inventario',
+        loadComponent: () =>
+          import('./modules/conteo-inventario/UI/index/index-conteo-inventario.component').then(
+            (m) => m.IndexConteoInventarioComponent,
+          ),
+      },
+      {
         path: 'shopping',
         loadComponent: () =>
           import('./modules/compras/UI/pages/index-compra.component').then(
@@ -63,7 +70,7 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'caja',
+        path: 'flujo-caja',
         loadComponent: () =>
           import('./modules/flujo-caja/UI/pages/index-flujo-caja.component').then(
             (m) => m.IndexFlujoCajaComponent,
@@ -75,7 +82,7 @@ export const routes: Routes = [
           import('./modules/arqueo-caja/UI/pages/index-arqueo-caja.component').then(
             (m) => m.IndexArqueoCajaComponent,
           ),
-      }
+      },
     ],
   },
   {

@@ -1,0 +1,189 @@
+<p-toast position="top-right"></p-toast>
+
+<div class="main-container">
+  <div class="card">
+    <div class="card-header">
+      <h4>Gestión de Usaurios</h4>
+    </div>
+    <div class="card-content">
+      <!-- Header estándar -->
+      <div class="p-toolbar mb-4">
+        <div class="toolbar-left"></div>
+        <div class="toolbar-right">
+          <p-button
+            severity="warn"
+            label="Registrar Usuario"
+            icon="pi pi-plus"
+            routerLink="create"
+            class="create-button"
+          ></p-button>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Tabla -->
+      <div class="table-container">
+        <p-table
+          #dt
+          [value]="users"
+          [lazy]="true"
+          responsiveLayout="scroll"
+          dataKey="id"
+          [loading]="loadingTable"
+          [rows]="rowSize"
+          [totalRecords]="totalRecords"
+          [paginator]="true"
+          (onLazyLoad)="loadTable($event)"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} entradas"
+          styleClass="p-datatable-gridlines modern-table"
+        >
+          <ng-template pTemplate="caption">
+            <div class="table-header">
+              <div class="search-container">
+                <span class="p-input-icon-left">
+                  <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                      pInputText
+                      type="text"
+                      placeholder="Buscar usuarios..."
+                      class="search-input"
+                    />
+                  </p-iconfield>
+                </span>
+              </div>
+            </div>
+          </ng-template>
+          <!-- Headers -->
+          <ng-template pTemplate="header">
+            <tr>
+              <ng-container *ngFor="let col of cols">
+                <th
+                  *ngIf="col.field !== 'actions'"
+                  [pSortableColumn]="col.field"
+                  [style]="col.minWidth"
+                  [class]="col.nameClass"
+                >
+                  <div class="flex justify-content-between align-items-center">
+                    <span class="header-text">
+                      {{ col.header }}
+                    </span>
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                  </div>
+                </th>
+
+                <th
+                  *ngIf="col.field === 'actions'"
+                  [class]="col.nameClass"
+                  [style]="col.minWidth"
+                >
+                  <span class="header-text">
+                    <i class="pi pi-cog mr-2"></i>
+                    {{ col.header }}
+                  </span>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+
+          <!-- Filas -->
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr class="table-row" [attr.data-index]="rowIndex">
+              <td
+                *ngFor="let col of cols"
+                [class]="col.nameClass + ' table-cell'"
+                [attr.data-field]="col.field"
+              >
+                <!-- Activo/Inactivo (tu col type icon) -->
+                <ng-container *ngIf="col.type === 'icon'">
+                  <p-tag
+                    [value]="item.activo == 1 ? 'Activo' : 'Inactivo'"
+                    [severity]="item.activo == 1 ? 'success' : 'danger'"
+                    [icon]="
+                      item.activo == 1
+                        ? 'pi pi-check-circle'
+                        : 'pi pi-times-circle'
+                    "
+                  ></p-tag>
+                </ng-container>
+
+                <!-- Number -->
+                <ng-container *ngIf="col.type === 'number'">
+                  {{ item[col.field] }}
+                </ng-container>
+
+                <!-- String -->
+                <ng-container *ngIf="col.type === 'string'">
+                  {{ item[col.field] | uppercase }}
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container *ngIf="col.field === 'actions'">
+                  <div class="action-buttons">
+                    <p-button
+                      icon="pi pi-pencil"
+                      severity="secondary"
+                      size="small"
+                      [outlined]="true"
+                      pTooltip="Editar"
+                      tooltipPosition="top"
+                      [routerLink]="'edit/' + item.id"
+                    ></p-button>
+
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      size="small"
+                      pTooltip="Eliminar"
+                      tooltipPosition="top"
+                      class="ml-2"
+                    ></p-button>
+                  </div>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Mensaje vacío -->
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td [attr.colspan]="cols.length" class="empty-message">
+                <div class="empty-state">
+                  <i class="pi pi-inbox empty-icon"></i>
+                  <h3>No hay usuarios registrados</h3>
+                  <p>
+                    No se encontraron registros que coincidan con tu búsqueda.
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Loading -->
+          <ng-template pTemplate="loadingbody">
+            <tr>
+              <td [attr.colspan]="cols.length">
+                <div class="loading-state">
+                  <i class="pi pi-spin pi-spinner loading-spinner"></i>
+                  <span>Cargando usuarios...</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog
+  [breakpoints]="{ '960px': '75vw', '640px': '100vw' }"
+  [style]="{ width: '30vw' }"
+  [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-danger"
+  styleClass="modern-confirm-dialog"
+>
+</p-confirmDialog>

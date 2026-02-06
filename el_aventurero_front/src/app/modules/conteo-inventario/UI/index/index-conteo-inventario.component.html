@@ -6,8 +6,32 @@
     </div>
 
     <div class="card-content">
+      <div class="conteo-proceso-alert" *ngIf="conteoEnProceso">
+        <div class="alert-warning">
+          <i class="pi pi-exclamation-triangle"></i>
+          <div class="alert-content">
+            <strong>Tienes un conteo sin completar</strong>
+            <span>
+              Iniciado el {{ conteoEnProceso.fecha | date: "d MMMM yyyy" }}.
+              ¿Deseas continuar ese conteo o iniciar uno nuevo?
+            </span>
+          </div>
+          <div class="alert-actions">
+            <p-button
+              label="Continuar Conteo"
+              icon="pi pi-play"
+              (click)="continuarConteo()"
+              severity="warn"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+
       <!-- Alert - Estado de Conteos -->
-      <div class="arqueo-dia-alert" *ngIf="getAlertaUltimoConteo() as alerta">
+      <div
+        class="arqueo-dia-alert"
+        *ngIf="!conteoEnProceso && getAlertaUltimoConteo() as alerta"
+      >
         <!-- SUCCESS -->
         <div class="alert-success" *ngIf="alerta.severity === 'success'">
           <i class="pi pi-check-circle"></i>
@@ -184,9 +208,17 @@
   </div>
 </div>
 
+<app-detalle-conteo
+  [displayModal]="showDetalleModal"
+  [conteoId]="conteoIdSeleccionado"
+  (modalClosed)="onDetalleModalClosed()"
+>
+</app-detalle-conteo>
+
 <!-- Modal Realizar Conteo -->
 <app-realizar-conteo
   [displayModal]="showRealizarConteoModal"
+  [conteoId]="conteoIdSeleccionado"
   (modalClosed)="onRealizarConteoModalClosed()"
 >
 </app-realizar-conteo>

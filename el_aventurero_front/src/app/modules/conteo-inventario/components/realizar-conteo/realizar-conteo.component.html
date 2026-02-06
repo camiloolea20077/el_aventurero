@@ -109,7 +109,7 @@
 
         <div class="agregar-producto-form">
           <div class="autocomplete-wrapper">
-            <label>Buscar Producto</label>
+            <label class="form-label">Buscar Producto</label>
             <p-autoComplete
               [(ngModel)]="productoSeleccionado"
               [suggestions]="productosFiltrados"
@@ -134,11 +134,14 @@
               </ng-template>
             </p-autoComplete>
           </div>
+
           <p-button
             label="Agregar"
             icon="pi pi-plus"
             (click)="agregarProducto()"
             [disabled]="!productoSeleccionado"
+            severity="success"
+            size="small"
           ></p-button>
         </div>
       </div>
@@ -161,17 +164,19 @@
         <p-table
           *ngIf="productosConteo.length > 0"
           [value]="productosConteo"
-          styleClass="p-datatable-striped"
+          styleClass="detalles-table"
+          [scrollable]="true"
+          scrollHeight="420px"
           responsiveLayout="scroll"
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 250px">Producto</th>
-              <th style="width: 120px">Sistema</th>
-              <th style="width: 150px">Físico</th>
-              <th style="width: 120px">Diferencia</th>
-              <th style="width: 100px">Estado</th>
-              <th style="width: 180px; text-align: center">Acciones</th>
+              <th style="width: 260px">Producto</th>
+              <th style="width: 130px">Sistema</th>
+              <th style="width: 160px">Físico</th>
+              <th style="width: 140px">Diferencia</th>
+              <th style="width: 140px">Estado</th>
+              <th style="width: 210px; text-align: center">Acciones</th>
             </tr>
           </ng-template>
 
@@ -183,21 +188,25 @@
                   pc.producto.tipo_venta
                 }}</small>
               </td>
+
               <td>
                 <span class="stock-badge sistema">{{ pc.stock_sistema }}</span>
               </td>
-              <td>
+
+              <td class="td-qty">
                 <p-inputNumber
                   [(ngModel)]="pc.stock_fisico"
                   [min]="0"
-                  buttonLayout="horizontal"
-                  incrementButtonIcon="pi pi-plus"
-                  decrementButtonIcon="pi pi-minus"
+                  [showButtons]="false"
+                  inputmode="numeric"
+                  [useGrouping]="false"
                   [disabled]="pc.guardado"
                   (onInput)="onStockFisicoChange(pc)"
-                  styleClass="stock-input"
+                  styleClass="qty-field w-full"
+                  inputStyleClass="qty-input text-center"
                 ></p-inputNumber>
               </td>
+
               <td>
                 <p-tag
                   [value]="(pc.diferencia >= 0 ? '+' : '') + pc.diferencia"
@@ -205,6 +214,7 @@
                   [icon]="'pi ' + getDiferenciaIcon(pc.diferencia)"
                 ></p-tag>
               </td>
+
               <td>
                 <p-tag
                   *ngIf="!pc.guardado"
@@ -219,6 +229,7 @@
                   icon="pi pi-check"
                 ></p-tag>
               </td>
+
               <td class="text-center">
                 <p-button
                   *ngIf="!pc.guardado"
@@ -229,8 +240,9 @@
                   severity="success"
                   [outlined]="true"
                 ></p-button>
+
                 <p-button
-                  *ngIf="pc.guardado && pc.diferencia !== 0"
+                  *ngIf="pc.guardado && pc.diferencia !== 0 && !pc.ajustado"
                   label="Justificar"
                   icon="pi pi-exclamation-triangle"
                   size="small"
@@ -239,6 +251,7 @@
                   [outlined]="true"
                   class="ml-2"
                 ></p-button>
+
                 <p-button
                   *ngIf="!pc.guardado"
                   icon="pi pi-trash"
@@ -251,6 +264,12 @@
               </td>
             </tr>
           </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="text-center">No hay productos</td>
+            </tr>
+          </ng-template>
         </p-table>
       </div>
 
@@ -258,26 +277,20 @@
       <div class="resumen-section" *ngIf="productosConteo.length > 0">
         <div class="resumen-card">
           <div class="resumen-item">
-            <span class="label">Total Productos:</span>
+            <span class="label">Total Productos</span>
             <span class="value">{{ productosConteo.length }}</span>
           </div>
           <div class="resumen-item">
-            <span class="label">Guardados:</span>
-            <span class="value success">
-              {{ productosGuardados }}
-            </span>
+            <span class="label">Guardados</span>
+            <span class="value success">{{ productosGuardados }}</span>
           </div>
           <div class="resumen-item">
-            <span class="label">Pendientes:</span>
-            <span class="value warning">
-              {{ productosPendientes }}
-            </span>
+            <span class="label">Pendientes</span>
+            <span class="value warning">{{ productosPendientes }}</span>
           </div>
           <div class="resumen-item">
-            <span class="label">Con Diferencias:</span>
-            <span class="value danger">
-              {{ productosConDiferencias }}
-            </span>
+            <span class="label">Con Diferencias</span>
+            <span class="value danger">{{ productosConDiferencias }}</span>
           </div>
         </div>
       </div>
@@ -295,7 +308,6 @@
         [disabled]="isSubmitting"
       ></p-button>
 
-      <!-- Footer Paso 1 -->
       <p-button
         *ngIf="paso === 'INICIAR'"
         label="Iniciar Conteo"
@@ -306,7 +318,6 @@
         [disabled]="isSubmitting || frmConteo.invalid"
       ></p-button>
 
-      <!-- Footer Paso 2 -->
       <p-button
         *ngIf="paso === 'CONTEO'"
         label="Completar Conteo"
@@ -320,13 +331,11 @@
   </ng-template>
 </p-dialog>
 
-<!-- Modal Justificar Diferencia -->
-<!-- <app-justificar-diferencia
-    [displayModal]="showJustificarModal"
-    [detalle]="detalleParaJustificar"
-    (modalClosed)="onJustificarModalClosed()"
-    (diferenciaJustificada)="onDiferenciaJustificada()"
->
-</app-justificar-diferencia> -->
+<app-justificar-diferencia
+  [displayModal]="showJustificarModal"
+  [detalle]="detalleParaJustificar"
+  (modalClosed)="onJustificarModalClosed()"
+  (diferenciaJustificada)="onDiferenciaJustificada()"
+></app-justificar-diferencia>
 
 <p-toast></p-toast>

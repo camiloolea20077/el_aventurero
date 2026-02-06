@@ -16,23 +16,31 @@ import com.cloud_technological.el_aventurero.entity.RoleEntity;
 public interface RolesMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "createdAt", ignore = true),
-            @Mapping(target = "updatedAt", ignore = true),
-            @Mapping(target = "deletedAt", ignore = true),
+            @Mapping(target = "created_at", ignore = true),
+            @Mapping(target = "updated_at", ignore = true),
+            @Mapping(target = "deleted_at", ignore = true),
             @Mapping(target = "activo", source = "dto.active"),
             @Mapping(target = "descripcion", source = "dto.description"),
             @Mapping(target = "nombre", source = "dto.name"),
     })
     RoleEntity createToEntity(CreateRoleDto dto);
-    @Mappings({ @Mapping(target = "id", source = "dto.id"), @Mapping(target = "createdAt", ignore = true),
-			@Mapping(target = "updatedAt", ignore = true), @Mapping(target = "deletedAt", ignore = true),
-			@Mapping(target = "nombre", source = "dto.name"),
-			})
-	void updateEntityFromDto(UpdateRoleDto dto, @MappingTarget RoleEntity entity);
+
+    @Mappings({
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "created_at", ignore = true),
+            @Mapping(target = "updated_at", ignore = true),
+            @Mapping(target = "deleted_at", ignore = true),
+            @Mapping(target = "activo", source = "dto.active"),
+            @Mapping(target = "descripcion", source = "dto.description"),
+            @Mapping(target = "nombre", source = "dto.name")
+    })
+    void updateEntityFromDto(UpdateRoleDto dto, @MappingTarget RoleEntity entity);
 
     @Mappings({
             @Mapping(target = "id", source = "entity.id"),
             @Mapping(target = "name", source = "entity.nombre"),
+            @Mapping(target = "description", source = "entity.descripcion"),
+            @Mapping(target = "active", source = "entity.activo")
     })
     RoleDto toDto(RoleEntity entity);
 }

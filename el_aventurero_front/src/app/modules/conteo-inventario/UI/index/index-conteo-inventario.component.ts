@@ -17,6 +17,7 @@ import { ConteoInventarioModel } from '../../../../core/models/conteo-inventario
 import { ConteoInventarioService } from '../../../../core/services/conteo-inventario.service';
 import { AlertService } from '../../../../../shared/pipes/alert.service';
 import { RealizarConteoComponent } from '../../components/realizar-conteo/realizar-conteo.component';
+import { DetalleConteoComponent } from '../../components/detalle-conteo/detalle-conteo.component';
 
 @Component({
   selector: 'app-index-conteo-inventario',
@@ -35,11 +36,12 @@ import { RealizarConteoComponent } from '../../components/realizar-conteo/realiz
     TooltipModule,
     CardModule,
     RealizarConteoComponent,
-    // DetalleConteoComponent,
+    DetalleConteoComponent,
   ],
   providers: [MessageService, ConfirmationService, AlertService],
 })
 export class IndexConteoInventarioComponent implements OnInit {
+  public conteoEnProceso: ConteoInventarioModel | null = null;
   // Datos
   public conteos: ConteoInventarioModel[] = [];
   public loading: boolean = false;
@@ -103,6 +105,13 @@ export class IndexConteoInventarioComponent implements OnInit {
         this.conteoInventarioService.getUltimoConteo(),
       );
       this.ultimoConteo = response.data;
+
+      // ✅ NUEVO: Detectar si hay conteo en proceso
+      if (this.ultimoConteo && this.ultimoConteo.estado === 'EN_PROCESO') {
+        this.conteoEnProceso = this.ultimoConteo;
+      } else {
+        this.conteoEnProceso = null;
+      }
     } catch (error) {
       console.error('Error cargando último conteo:', error);
     }
@@ -198,7 +207,7 @@ export class IndexConteoInventarioComponent implements OnInit {
 
     if (dias === null) {
       return {
-        severity: 'warning',
+        severity: 'warn',
         message:
           'No hay conteos registrados. Se recomienda realizar un conteo.',
       };
@@ -220,7 +229,7 @@ export class IndexConteoInventarioComponent implements OnInit {
 
     if (dias <= 14) {
       return {
-        severity: 'warning',
+        severity: 'warn',
         message: `Último conteo hace ${dias} día(s). Se recomienda realizar un nuevo conteo pronto.`,
       };
     }
@@ -229,5 +238,18 @@ export class IndexConteoInventarioComponent implements OnInit {
       severity: 'danger',
       message: `¡Atención! Último conteo hace ${dias} día(s). Es urgente realizar un nuevo conteo.`,
     };
+  }
+  // ✅ NUEVO: Método para continuar conteo
+  continuarConteo(): void {
+    if (this.conteoEnProceso) {
+      this.conteoIdSeleccionado = this.conteoEnProceso.id;
+      this.showRealizarConteoModal = true;
+    }
+  }
+
+  // ✅ NUEVO: Método para iniciar nuevo conteo
+  iniciarNuevoConteo(): void {
+    this.conteoIdSeleccionado = null;
+    this.showRealizarConteoModal = true;
   }
 }

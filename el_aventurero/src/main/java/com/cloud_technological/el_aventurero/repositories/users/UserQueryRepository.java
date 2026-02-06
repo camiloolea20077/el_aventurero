@@ -1,7 +1,5 @@
 package com.cloud_technological.el_aventurero.repositories.users;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -41,13 +38,13 @@ public class UserQueryRepository {
         sql = new StringBuilder("""
                                     SELECT
                                         o.id,
-                                        o.nombre_completo AS name,
+                                        o.nombre AS name,
                                         o.email AS email,
                                         r.nombre AS role,
                                         o.activo as activo,
                                         COUNT(*) OVER() AS total_rows
-                                    FROM users o
-                                    LEFT JOIN roles r ON r.id = o.role_id
+                                    FROM usuarios  o
+                                    LEFT JOIN roles r ON r.id = o.rol_id
                                     WHERE
                                         o.deleted_at IS NULL
                                         AND o.activo = 1

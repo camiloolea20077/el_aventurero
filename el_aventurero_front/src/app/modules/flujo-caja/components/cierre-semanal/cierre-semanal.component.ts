@@ -45,7 +45,7 @@ export class CierreSemanalComponent implements OnInit {
   fechaFin: Date = new Date();
   loading: boolean = false;
   cierre: CierreSemanalModel | null = null;
-
+  cierreSemanal: CierreSemanalModel | null = null;
   // Gráficas
   metodosPagoChart: any;
   metodosPagoChartOptions: any;

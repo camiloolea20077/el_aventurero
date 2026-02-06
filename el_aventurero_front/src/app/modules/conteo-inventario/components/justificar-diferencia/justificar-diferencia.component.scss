@@ -1,0 +1,491 @@
+/* =========================
+   PALETA NEGRO + DORADO (standard)
+   ========================= */
+:host {
+  --gold: #d4af37;
+  --bronze: #cd7f32;
+  --gold-soft: rgba(212, 175, 55, 0.92);
+
+  --bg-0: #0b0c0e;
+  --bg-1: #0f1012;
+  --bg-2: #15171a;
+
+  --text: rgba(212, 175, 55, 0.92);
+  --muted: rgba(212, 175, 55, 0.65);
+
+  --border-gold: rgba(212, 175, 55, 0.22);
+  --border-gold-strong: rgba(212, 175, 55, 0.38);
+
+  --shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+}
+
+/* =========================
+   BASE
+   ========================= */
+.justificar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  color: var(--text);
+  animation: fadeIn 0.35s ease-out;
+}
+
+/* =========================
+   PRODUCTO + STOCKS (KPI style)
+   ========================= */
+.producto-info {
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+
+  .producto-header {
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+  }
+
+  .stocks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+
+    .stock-item {
+      background: var(--bg-2);
+      border: 1px solid var(--border-gold);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+
+      /* barra izquierda tipo KPI */
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--gold);
+        opacity: 0.9;
+      }
+
+      .label {
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+
+        i {
+          font-size: 1rem;
+          color: var(--gold);
+        }
+      }
+
+      .value {
+        margin-top: 0.25rem;
+        font-size: 1.75rem;
+        font-weight: 900;
+        font-family: "Courier New", monospace;
+        color: var(--gold-soft);
+      }
+
+      &.sistema::before {
+        background: var(--gold);
+      }
+
+      &.fisico::before {
+        background: rgba(23, 162, 184, 0.9);
+      }
+
+      &.diferencia {
+        border: 1px solid var(--border-gold-strong);
+
+        &[data-severity="success"]::before {
+          background: rgba(40, 167, 69, 0.95);
+        }
+        &[data-severity="warning"]::before {
+          background: rgba(255, 193, 7, 0.95);
+        }
+        &[data-severity="danger"]::before {
+          background: rgba(220, 53, 69, 0.95);
+        }
+
+        &[data-severity="success"] .value {
+          color: rgba(40, 167, 69, 0.92);
+        }
+        &[data-severity="warning"] .value {
+          color: rgba(255, 193, 7, 0.95);
+        }
+        &[data-severity="danger"] .value {
+          color: rgba(220, 53, 69, 0.95);
+        }
+      }
+    }
+  }
+}
+
+/* =========================
+   EXPLICACIÓN (card info gold)
+   ========================= */
+.explicacion-section {
+  .explicacion-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 12px;
+    background: linear-gradient(
+      135deg,
+      rgba(212, 175, 55, 0.12) 0%,
+      rgba(205, 127, 50, 0.1) 100%
+    );
+    border: 1px solid var(--border-gold);
+    box-shadow: var(--shadow);
+
+    i {
+      font-size: 1.8rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .explicacion-content {
+      flex: 1;
+
+      strong {
+        display: block;
+        font-size: 1.05rem;
+        color: var(--gold);
+        margin-bottom: 0.35rem;
+        font-weight: 900;
+      }
+
+      p {
+        margin: 0;
+        color: var(--gold-soft);
+        line-height: 1.6;
+        font-weight: 700;
+
+        strong {
+          display: inline;
+          color: var(--gold);
+        }
+      }
+    }
+  }
+}
+
+/* =========================
+   FORM
+   ========================= */
+.form-container {
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    .form-label {
+      font-weight: 900;
+      color: var(--gold-soft);
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+
+      &.required::after {
+        content: "*";
+        color: var(--danger);
+        margin-left: 0.25rem;
+      }
+    }
+
+    .help-text {
+      color: var(--muted);
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+  }
+}
+
+/* =========================
+   MOTIVOS (items dark + seleccionado gold)
+   ========================= */
+.motivos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .motivo-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem;
+    background: var(--bg-2);
+    border-radius: 10px;
+    border: 1px solid var(--border-gold);
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--border-gold-strong);
+      background: rgba(212, 175, 55, 0.06);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    &.selected {
+      background: linear-gradient(
+        135deg,
+        rgba(212, 175, 55, 0.14) 0%,
+        rgba(205, 127, 50, 0.12) 100%
+      );
+      border-color: var(--border-gold-strong);
+
+      .motivo-label strong {
+        color: var(--gold);
+      }
+    }
+
+    ::ng-deep .p-radiobutton {
+      margin-top: 0.2rem;
+    }
+
+    .motivo-label {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      cursor: pointer;
+
+      strong {
+        color: var(--gold-soft);
+        font-size: 0.95rem;
+        font-weight: 900;
+      }
+
+      small {
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* =========================
+   ADVERTENCIA (card warning premium)
+   ========================= */
+.advertencia-section {
+  .advertencia-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 12px;
+
+    background: linear-gradient(
+      135deg,
+      rgba(255, 193, 7, 0.14) 0%,
+      rgba(212, 175, 55, 0.12) 100%
+    );
+    border: 1px solid rgba(255, 193, 7, 0.35);
+    box-shadow: var(--shadow);
+
+    i {
+      font-size: 1.8rem;
+      color: rgba(255, 193, 7, 0.95);
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .advertencia-content {
+      flex: 1;
+
+      strong {
+        display: block;
+        font-size: 1.05rem;
+        color: rgba(255, 193, 7, 0.95);
+        margin-bottom: 0.35rem;
+        font-weight: 900;
+      }
+
+      p {
+        margin: 0;
+        color: var(--gold-soft);
+        line-height: 1.6;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+/* =========================
+   PRIME OVERRIDES (inputs, divider, textarea, radio)
+   ========================= */
+::ng-deep {
+  /* Divider */
+  .p-divider.p-divider-horizontal:before {
+    border-top: 1px solid var(--border-gold) !important;
+    opacity: 0.7;
+  }
+
+  /* Textarea dark */
+  textarea.p-inputtextarea {
+    background: var(--bg-0) !important;
+    color: var(--gold-soft) !important;
+    border: 1px solid var(--border-gold) !important;
+    border-radius: 10px !important;
+    font-weight: 800;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.18) !important;
+      border-color: rgba(212, 175, 55, 0.45) !important;
+    }
+  }
+
+  /* Radio gold */
+  .p-radiobutton .p-radiobutton-box {
+    background: var(--bg-0) !important;
+    border: 1px solid var(--border-gold) !important;
+  }
+
+  .p-radiobutton .p-radiobutton-box.p-highlight {
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    background: rgba(212, 175, 55, 0.12) !important;
+  }
+
+  .p-radiobutton .p-radiobutton-icon {
+    background: var(--gold) !important;
+  }
+}
+
+/* =========================
+   DIALOG (header gold standard)
+   ========================= */
+::ng-deep .justificar-diferencia-dialog {
+  .p-dialog-header {
+    background: linear-gradient(
+      135deg,
+      var(--gold) 0%,
+      var(--bronze) 100%
+    ) !important;
+    color: #111 !important;
+
+    .p-dialog-title {
+      font-weight: 900;
+      font-size: 1.35rem;
+      letter-spacing: 0.2px;
+    }
+
+    .p-dialog-header-icon {
+      color: #111 !important;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.75rem;
+    max-height: 78vh;
+    overflow-y: auto;
+    background: var(--bg-0) !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--bg-0) !important;
+    border-top: 1px solid var(--border-gold);
+  }
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 768px) {
+  .producto-info .stocks-grid {
+    grid-template-columns: 1fr;
+
+    .stock-item .value {
+      font-size: 1.5rem;
+    }
+  }
+
+  .explicacion-section .explicacion-card,
+  .advertencia-section .advertencia-card {
+    flex-direction: column;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+
+  .motivos-grid .motivo-item {
+    flex-direction: column;
+    align-items: flex-start;
+
+    ::ng-deep .p-radiobutton {
+      margin-top: 0;
+    }
+  }
+
+  .dialog-footer {
+    flex-direction: column;
+
+    ::ng-deep .p-button {
+      width: 100%;
+    }
+  }
+}
+
+/* =========================
+   ANIM
+   ========================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

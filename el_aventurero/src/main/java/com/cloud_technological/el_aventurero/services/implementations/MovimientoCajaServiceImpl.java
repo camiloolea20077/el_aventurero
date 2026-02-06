@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cloud_technological.el_aventurero.dto.conteo_inventario.ResumenConteosDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.CierreSemanalDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.CreateMovimientoDto;
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.MovimientoCajaDto;
@@ -15,6 +16,8 @@ import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenArqueosD
 import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenFlujoDto;
 import com.cloud_technological.el_aventurero.entity.MovimientoCajaEntity;
 import com.cloud_technological.el_aventurero.mappers.movimiento_caja.MovimientoCajaMapper;
+import com.cloud_technological.el_aventurero.repositories.arqueo_caja.ArqueoCajaQueryRepository;
+import com.cloud_technological.el_aventurero.repositories.conteo_inventario.ConteoInventarioQueryRepository;
 import com.cloud_technological.el_aventurero.repositories.movimiento_caja.MovimientoCajaJPARepository;
 import com.cloud_technological.el_aventurero.repositories.movimiento_caja.MovimientoCajaQueryRepository;
 import com.cloud_technological.el_aventurero.services.MovimientoCajaService;
@@ -26,15 +29,20 @@ public class MovimientoCajaServiceImpl implements MovimientoCajaService {
     private final MovimientoCajaJPARepository movimientoCajaJPARepository;
     private final MovimientoCajaQueryRepository movimientoCajaQueryRepository;
     private final MovimientoCajaMapper movimientoCajaMapper;
+    private final ArqueoCajaQueryRepository arqueoCajaQueryRepository;
+    private final ConteoInventarioQueryRepository conteoInventarioQueryRepository;
 
     public MovimientoCajaServiceImpl(
-        MovimientoCajaJPARepository movimientoCajaJPARepository,
-        MovimientoCajaQueryRepository movimientoCajaQueryRepository,
-        MovimientoCajaMapper movimientoCajaMapper
-    ) {
+            MovimientoCajaJPARepository movimientoCajaJPARepository,
+            MovimientoCajaQueryRepository movimientoCajaQueryRepository,
+            MovimientoCajaMapper movimientoCajaMapper,
+            ArqueoCajaQueryRepository arqueoCajaQueryRepository,
+            ConteoInventarioQueryRepository conteoInventarioQueryRepository) {
         this.movimientoCajaJPARepository = movimientoCajaJPARepository;
         this.movimientoCajaQueryRepository = movimientoCajaQueryRepository;
         this.movimientoCajaMapper = movimientoCajaMapper;
+        this.arqueoCajaQueryRepository = arqueoCajaQueryRepository;
+        this.conteoInventarioQueryRepository = conteoInventarioQueryRepository;
     }
 
     @Override
@@ -48,10 +56,10 @@ public class MovimientoCajaServiceImpl implements MovimientoCajaService {
         try {
             // Usar el mapper para convertir DTO a Entity
             MovimientoCajaEntity entity = movimientoCajaMapper.createToEntity(createDto);
-            
+
             // Guardar la entidad
             MovimientoCajaEntity savedEntity = movimientoCajaJPARepository.save(entity);
-            
+
             // Retornar el DTO desde la base de datos
             return movimientoCajaQueryRepository.findById(savedEntity.getId());
         } catch (Exception e) {
@@ -59,11 +67,12 @@ public class MovimientoCajaServiceImpl implements MovimientoCajaService {
             throw new RuntimeException("Error al crear el movimiento: " + e.getMessage(), e);
         }
     }
+
     @Override
     @Transactional
     public Boolean delete(Long id) {
         MovimientoCajaEntity entity = movimientoCajaJPARepository.findById(id)
-            .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "Movimiento no encontrado"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "Movimiento no encontrado"));
 
         try {
             entity.setDeleted_at(LocalDateTime.now());
@@ -94,13 +103,15 @@ public class MovimientoCajaServiceImpl implements MovimientoCajaService {
     public ResumenFlujoDto getResumenFlujo(LocalDate fechaInicio, LocalDate fechaFin) {
         return movimientoCajaQueryRepository.getResumenFlujo(fechaInicio, fechaFin);
     }
-    
+
     @Override
     public CierreSemanalDto getCierreSemanal(LocalDate fechaInicio, LocalDate fechaFin) {
         CierreSemanalDto cierre = movimientoCajaQueryRepository.getCierreSemanal(fechaInicio, fechaFin);
-        ResumenArqueosDto resumenArqueos = movimientoCajaQueryRepository.getResumenArqueos(fechaInicio, fechaFin);
+        ResumenArqueosDto resumenArqueos = arqueoCajaQueryRepository.getResumenArqueos(fechaInicio, fechaFin);
         cierre.setResumen_arqueos(resumenArqueos);
-        
+        ResumenConteosDto resumenConteos = conteoInventarioQueryRepository.getResumenConteos(fechaInicio, fechaFin);
+        cierre.setResumen_conteos(resumenConteos);
+
         return cierre;
     }
 }

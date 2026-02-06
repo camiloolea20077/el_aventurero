@@ -26,6 +26,7 @@ export const routes: Routes = [
           import('./modules/dashboard/UI/index/index-dashboard.component').then(
             (c) => c.IndexDashboardComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'mesas',
@@ -33,6 +34,7 @@ export const routes: Routes = [
           import('./modules/mesas/UI/pages/index-mesas/index-mesas.component').then(
             (m) => m.IndexMesasComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'products',
@@ -40,6 +42,7 @@ export const routes: Routes = [
           import('./modules/productos/UI/pages/index-producto.component').then(
             (m) => m.IndexProductoComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'inventory',
@@ -47,6 +50,7 @@ export const routes: Routes = [
           import('./modules/inventario/UI/index/index-inventario.component').then(
             (m) => m.IndexInventarioComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'conteo-inventario',
@@ -54,6 +58,7 @@ export const routes: Routes = [
           import('./modules/conteo-inventario/UI/index/index-conteo-inventario.component').then(
             (m) => m.IndexConteoInventarioComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'shopping',
@@ -61,6 +66,7 @@ export const routes: Routes = [
           import('./modules/compras/UI/pages/index-compra.component').then(
             (m) => m.IndexCompraComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'sales',
@@ -68,6 +74,7 @@ export const routes: Routes = [
           import('./modules/ventas/UI/index/index-venta.component').then(
             (m) => m.IndexVentaComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'flujo-caja',
@@ -75,6 +82,7 @@ export const routes: Routes = [
           import('./modules/flujo-caja/UI/pages/index-flujo-caja.component').then(
             (m) => m.IndexFlujoCajaComponent,
           ),
+        canActivate: [AuthGuard],
       },
       {
         path: 'arqueo-caja',
@@ -82,6 +90,12 @@ export const routes: Routes = [
           import('./modules/arqueo-caja/UI/pages/index-arqueo-caja.component').then(
             (m) => m.IndexArqueoCajaComponent,
           ),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'users',
+        loadChildren: () =>
+          import('./modules/users/users.routes').then((m) => m.USERS_ROUTES),
       },
     ],
   },

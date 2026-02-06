@@ -127,7 +127,22 @@ public class MapperRepository {
                             field.set(instance, "");
                         }
 
-                    } else {
+                    }
+                    else if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
+                        if (value == null) {
+                            field.set(instance, field.getType().equals(boolean.class) ? false : null);
+                        } else if (value instanceof Boolean) {
+                            field.set(instance, (Boolean) value);
+                        } else if (value instanceof Number) {
+                            field.set(instance, ((Number) value).intValue() != 0);
+                        } else if (value instanceof String) {
+                            String s = ((String) value).trim().toLowerCase();
+                            field.set(instance, s.equals("true") || s.equals("1") || s.equals("t") || s.equals("yes") || s.equals("y"));
+                        } else {
+                            field.set(instance, null);
+                        }
+                    }
+                     else {
                         // Handle other types as needed
                     }
                 } catch (NoSuchFieldException e) {

@@ -1,3 +1,4 @@
+import { ResumenConteosModel } from '../arqueo-caja/resumen-conteos.model';
 import { ResumenArqueosModel } from './resumen-arqueos.model';
 
 export interface CierreSemanalModel {
@@ -13,6 +14,7 @@ export interface CierreSemanalModel {
   metodos_pago: MetodoPagoResumen[];
   productos_top: ProductoTopResumen[];
   resumen_arqueos: ResumenArqueosModel;
+  resumen_conteos: ResumenConteosModel;
 }
 
 export interface MetodoPagoResumen {

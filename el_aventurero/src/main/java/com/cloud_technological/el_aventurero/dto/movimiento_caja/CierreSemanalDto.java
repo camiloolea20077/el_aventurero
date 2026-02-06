@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.cloud_technological.el_aventurero.dto.conteo_inventario.ResumenConteosDto;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +24,5 @@ public class CierreSemanalDto {
     private List<MetodoPagoResumenDto> metodos_pago;
     private List<ProductoTopResumenDto> productos_top;
     private ResumenArqueosDto resumen_arqueos;
+    private ResumenConteosDto resumen_conteos;
 }

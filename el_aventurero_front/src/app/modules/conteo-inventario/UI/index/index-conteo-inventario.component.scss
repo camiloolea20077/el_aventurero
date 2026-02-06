@@ -98,7 +98,52 @@
     }
   }
 }
+// Alerta de Conteo en Proceso
+.conteo-proceso-alert {
+  margin-bottom: 2rem;
 
+  .alert-warning {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+
+    i {
+      font-size: 2rem;
+      color: #ffc107;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      strong {
+        font-size: 1.1rem;
+        color: #856404;
+        font-weight: 700;
+      }
+
+      span {
+        color: #856404;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
+
+    .alert-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      align-items: center;
+    }
+  }
+}
 .diferencia-value {
   font-weight: 700;
   font-family: "Courier New", monospace;

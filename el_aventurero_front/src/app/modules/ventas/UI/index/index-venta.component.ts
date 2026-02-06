@@ -19,6 +19,8 @@ import { HelpersService } from '../../../../../shared/pipes/helper.service';
 import { VentaService } from '../../../../core/services/venta.service';
 import { DetalleVentaComponent } from '../../components/detalle/detalle-venta.component';
 import { AlertService } from '../../../../../shared/pipes/alert.service';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-index-venta',
@@ -38,6 +40,8 @@ import { AlertService } from '../../../../../shared/pipes/alert.service';
     TableModule,
     CommonModule,
     ToastModule,
+    IconFieldModule,
+    InputIconModule,
     DetalleVentaComponent,
   ],
 })

@@ -1,0 +1,270 @@
+<p-toast position="top-right"></p-toast>
+
+<div class="main-container">
+  <div class="card usuarios-form-card">
+    <!-- Header estándar -->
+    <div class="page-header">
+      <div class="title">
+        <i class="pi pi-user-edit"></i>
+        <div class="title-text">
+          <h2>{{ slug === "edit" ? "Editar Usuario" : "Nuevo Usuario" }}</h2>
+          <small>{{
+            slug === "edit"
+              ? "Actualiza la información del usuario"
+              : "Crea un nuevo usuario para el sistema"
+          }}</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <p-button
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-arrow-left"
+          label="Volver"
+          routerLink="/users"
+        ></p-button>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Contenido -->
+    <div class="card-content">
+      <form
+        [formGroup]="frm"
+        name="frm"
+        id="frm"
+        class="form-container"
+        (ngSubmit)="buildSaveUsers()"
+      >
+        <!-- Bloque: estado -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="pi pi-shield mr-2"></i>
+            Estado del usuario
+          </h3>
+
+          <div class="switch-row">
+            <div class="field-checkbox">
+              <p-toggleswitch formControlName="active"></p-toggleswitch>
+              <label class="ml-2">Activo</label>
+            </div>
+
+            <small class="hint">
+              <i class="pi pi-info-circle mr-1"></i>
+              Si está inactivo, el usuario no podrá iniciar sesión.
+            </small>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Bloque: datos -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="pi pi-id-card mr-2"></i>
+            Información del usuario
+          </h3>
+
+          <div class="form-grid">
+            <!-- Nombre -->
+            <div class="form-field">
+              <label for="name" class="form-label required">
+                <i class="pi pi-user mr-2"></i>
+                Nombre
+              </label>
+              <input
+                pInputText
+                id="name"
+                formControlName="name"
+                placeholder="Ej: Juan Pérez"
+                class="w-full"
+              />
+              <small
+                class="p-error"
+                *ngIf="frm.get('name')?.invalid && frm.get('name')?.touched"
+              >
+                Campo obligatorio
+              </small>
+            </div>
+
+            <!-- Email -->
+            <div class="form-field">
+              <label for="email" class="form-label required">
+                <i class="pi pi-envelope mr-2"></i>
+                Email
+              </label>
+              <input
+                pInputText
+                id="email"
+                formControlName="email"
+                placeholder="correo@dominio.com"
+                class="w-full"
+              />
+              <small
+                class="p-error"
+                *ngIf="frm.get('email')?.invalid && frm.get('email')?.touched"
+              >
+                Campo obligatorio
+              </small>
+              <small
+                class="p-error"
+                *ngIf="
+                  frm.get('email')?.errors?.['invalidEmail'] &&
+                  frm.get('email')?.touched
+                "
+              >
+                Formato de correo inválido.
+              </small>
+            </div>
+
+            <!-- Password -->
+            <div class="form-field">
+              <label for="password" class="form-label required">
+                <i class="pi pi-lock mr-2"></i>
+                Contraseña
+              </label>
+              <input
+                pInputText
+                type="password"
+                id="password"
+                formControlName="password"
+                placeholder="••••••••"
+                class="w-full"
+              />
+              <small
+                class="p-error"
+                *ngIf="
+                  frm.get('password')?.invalid && frm.get('password')?.touched
+                "
+              >
+                Campo obligatorio
+              </small>
+            </div>
+
+            <!-- Username -->
+            <div class="form-field">
+              <label for="username" class="form-label required">
+                <i class="pi pi-at mr-2"></i>
+                Username
+              </label>
+              <input
+                pInputText
+                id="username"
+                formControlName="username"
+                placeholder="Ej: jhoandry"
+                class="w-full"
+              />
+              <small
+                class="p-error"
+                *ngIf="
+                  frm.get('username')?.invalid && frm.get('username')?.touched
+                "
+              >
+                Campo obligatorio
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Bloque: rol y permisos -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <i class="pi pi-key mr-2"></i>
+            Accesos y permisos
+          </h3>
+
+          <div class="form-grid">
+            <!-- Rol -->
+            <div class="form-field">
+              <label for="role_id" class="form-label required">
+                <i class="pi pi-sitemap mr-2"></i>
+                Rol
+              </label>
+
+              <p-dropdown
+                [options]="roles_list"
+                appendTo="body"
+                optionLabel="name"
+                optionValue="id"
+                formControlName="role_id"
+                placeholder="Seleccione un rol"
+                styleClass="w-full"
+              ></p-dropdown>
+
+              <small
+                class="p-error"
+                *ngIf="
+                  frm.get('role_id')?.invalid && frm.get('role_id')?.touched
+                "
+              >
+                Campo obligatorio
+              </small>
+            </div>
+
+            <!-- Permisos -->
+            <div class="form-field">
+              <label for="permissions" class="form-label required">
+                <i class="pi pi-list-check mr-2"></i>
+                Permisos
+              </label>
+
+              <p-multiSelect
+                appendTo="body"
+                [options]="permissionOptions"
+                formControlName="permissions"
+                display="chip"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Selecciona permisos"
+                styleClass="w-full"
+              ></p-multiSelect>
+
+              <small
+                class="p-error"
+                *ngIf="
+                  frm.get('permissions')?.invalid &&
+                  frm.get('permissions')?.touched
+                "
+              >
+                Selecciona al menos un permiso.
+              </small>
+
+              <small class="help-text">
+                <i class="pi pi-info-circle mr-1"></i>
+                El rol define el perfil base; los permisos permiten ajustes
+                finos.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer acciones (estilo estándar) -->
+        <div class="form-footer">
+          <div class="footer-actions">
+            <p-button
+              type="button"
+              label="Limpiar"
+              icon="pi pi-trash"
+              severity="secondary"
+              [outlined]="true"
+              class="w-full md:w-auto"
+              (onClick)="frm.reset()"
+            ></p-button>
+
+            <p-button
+              type="submit"
+              label="Guardar"
+              icon="pi pi-save"
+              severity="success"
+              class="w-full md:w-auto"
+            ></p-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,6 @@
 package com.cloud_technological.el_aventurero.repositories.arqueo_caja;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cloud_technological.el_aventurero.dto.arqueo_caja.ArqueoCajaDto;
 import com.cloud_technological.el_aventurero.dto.arqueo_caja.DatosParaArqueoDto;
+import com.cloud_technological.el_aventurero.dto.movimiento_caja.ResumenArqueosDto;
 import com.cloud_technological.el_aventurero.util.MapperRepository;
 
 @Repository
@@ -219,5 +221,77 @@ public class ArqueoCajaQueryRepository {
         datos.setSaldo_esperado(saldoEsperado);
         
         return datos;
+    }
+    public ResumenArqueosDto getResumenArqueos(LocalDate fechaInicio, LocalDate fechaFin) {
+        String sql = """
+            SELECT
+                COUNT(*) AS total_dias,
+                COUNT(CASE WHEN estado = 'CUADRADO' OR estado = 'AJUSTADO' THEN 1 END) AS arqueos_realizados,
+                COUNT(CASE WHEN estado = 'CUADRADO' THEN 1 END) AS arqueos_cuadrados,
+                COUNT(CASE WHEN estado = 'PENDIENTE' THEN 1 END) AS arqueos_pendientes,
+                COUNT(CASE WHEN estado = 'AJUSTADO' THEN 1 END) AS arqueos_ajustados,
+                COALESCE(SUM(diferencia), 0) AS total_diferencias,
+                COALESCE(SUM(CASE WHEN diferencia > 0 THEN diferencia ELSE 0 END), 0) AS total_sobrantes,
+                COALESCE(SUM(CASE WHEN diferencia < 0 THEN ABS(diferencia) ELSE 0 END), 0) AS total_faltantes
+            FROM arqueo_caja
+            WHERE fecha BETWEEN :fechaInicio AND :fechaFin
+            AND deleted_at IS NULL
+        """;
+        
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("fechaInicio", fechaInicio);
+        params.addValue("fechaFin", fechaFin);
+        
+        List<Map<String, Object>> resultList = namedParameterJdbcTemplate.query(
+            sql, params, new ColumnMapRowMapper()
+        );
+        
+        ResumenArqueosDto resumen = new ResumenArqueosDto();
+        
+        if (!resultList.isEmpty()) {
+            Map<String, Object> row = resultList.get(0);
+            
+            // Calcular días en el rango
+            long diasEnRango = java.time.temporal.ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
+            
+            Long totalDias = (Long) row.get("total_dias");
+            Long arqueosRealizados = (Long) row.get("arqueos_realizados");
+            Long arqueosCuadrados = (Long) row.get("arqueos_cuadrados");
+            Long arqueosPendientes = (Long) row.get("arqueos_pendientes");
+            Long arqueosAjustados = (Long) row.get("arqueos_ajustados");
+            
+            resumen.setTotal_dias((int) diasEnRango);
+            resumen.setArqueos_realizados(arqueosRealizados != null ? arqueosRealizados.intValue() : 0);
+            resumen.setArqueos_cuadrados(arqueosCuadrados != null ? arqueosCuadrados.intValue() : 0);
+            resumen.setArqueos_pendientes(arqueosPendientes != null ? arqueosPendientes.intValue() : 0);
+            resumen.setArqueos_ajustados(arqueosAjustados != null ? arqueosAjustados.intValue() : 0);
+            
+            // Diferencias
+            Object totalDiferenciasObj = row.get("total_diferencias");
+            Object totalSobrantesObj = row.get("total_sobrantes");
+            Object totalFaltantesObj = row.get("total_faltantes");
+            
+            BigDecimal totalDiferencias = totalDiferenciasObj != null ? new BigDecimal(totalDiferenciasObj.toString()) : BigDecimal.ZERO;
+            BigDecimal totalSobrantes = totalSobrantesObj != null ? new BigDecimal(totalSobrantesObj.toString()) : BigDecimal.ZERO;
+            BigDecimal totalFaltantes = totalFaltantesObj != null ? new BigDecimal(totalFaltantesObj.toString()) : BigDecimal.ZERO;
+            
+            resumen.setTotal_diferencias(totalDiferencias);
+            resumen.setTotal_sobrantes(totalSobrantes);
+            resumen.setTotal_faltantes(totalFaltantes);
+        } else {
+            // Si no hay datos, retornar valores por defecto
+            long diasEnRango = java.time.temporal.ChronoUnit.DAYS.between(fechaInicio, fechaFin) + 1;
+            
+            resumen.setTotal_dias((int) diasEnRango);
+            resumen.setArqueos_realizados(0);
+            resumen.setArqueos_cuadrados(0);
+            resumen.setArqueos_pendientes(0);
+            resumen.setArqueos_ajustados(0);
+            resumen.setTotal_diferencias(BigDecimal.ZERO);
+            resumen.setTotal_sobrantes(BigDecimal.ZERO);
+            resumen.setTotal_faltantes(BigDecimal.ZERO);
+        }
+        
+        return resumen;
     }
 }

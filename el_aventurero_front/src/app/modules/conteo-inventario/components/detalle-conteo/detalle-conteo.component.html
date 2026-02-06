@@ -1,0 +1,274 @@
+<p-dialog
+  header="Detalle del Conteo de Inventario"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '1400px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog detalle-conteo-dialog"
+>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <i class="pi pi-spin pi-spinner loading-spinner"></i>
+    <span>Cargando detalle del conteo...</span>
+  </div>
+
+  <div *ngIf="!loading && conteo" class="detalle-content">
+    <!-- Header con Información General -->
+    <div class="header-info">
+      <div class="info-row">
+        <div class="info-item">
+          <span class="label">Fecha del Conteo</span>
+          <span class="value">{{ conteo.fecha | date: "d MMMM yyyy" }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tipo</span>
+          <span class="value">{{ getTipoLabel(conteo.tipo) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Estado</span>
+          <p-tag
+            [value]="getEstadoLabel(conteo.estado)"
+            [severity]="getEstadoSeverity(conteo.estado)"
+            styleClass="estado-tag"
+          ></p-tag>
+        </div>
+        <div class="info-item">
+          <span class="label">Realizado</span>
+          <span class="value">{{ formatDateTime(conteo.created_at) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Resumen Estadístico -->
+    <div class="resumen-estadistico">
+      <h3 class="section-title">
+        <i class="pi pi-chart-bar"></i>
+        Resumen del Conteo
+      </h3>
+
+      <div class="stats-grid">
+        <div class="stat-card total">
+          <div class="stat-icon">
+            <i class="pi pi-box"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Total Productos</span>
+            <span class="stat-value">{{ totalProductos }}</span>
+          </div>
+        </div>
+
+        <div class="stat-card cuadrados">
+          <div class="stat-icon">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Sin Diferencias</span>
+            <span class="stat-value">{{ productosCuadrados }}</span>
+          </div>
+        </div>
+
+        <div class="stat-card diferencias">
+          <div class="stat-icon">
+            <i class="pi pi-exclamation-triangle"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Con Diferencias</span>
+            <span class="stat-value">{{ productosConDiferencia }}</span>
+          </div>
+        </div>
+
+        <div class="stat-card ajustados">
+          <div class="stat-icon">
+            <i class="pi pi-wrench"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Ajustados</span>
+            <span class="stat-value">{{ productosAjustados }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Tabla de Detalles -->
+    <div class="detalles-section">
+      <h3 class="section-title">
+        <i class="pi pi-list"></i>
+        Productos Contados ({{ detalles.length }})
+      </h3>
+
+      <p-table
+        [value]="detalles"
+        styleClass="p-datatable-striped"
+        responsiveLayout="scroll"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 300px">Producto</th>
+            <th style="width: 120px">Sistema</th>
+            <th style="width: 120px">Físico</th>
+            <th style="width: 120px">Diferencia</th>
+            <th style="width: 100px">Estado</th>
+            <th>Motivo</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-detalle>
+          <tr>
+            <td>
+              <strong>{{ detalle.producto_nombre }}</strong>
+            </td>
+            <td>
+              <span class="stock-badge sistema">{{
+                detalle.stock_sistema
+              }}</span>
+            </td>
+            <td>
+              <span class="stock-badge fisico">{{ detalle.stock_fisico }}</span>
+            </td>
+            <td>
+              <p-tag
+                [value]="
+                  (detalle.diferencia >= 0 ? '+' : '') + detalle.diferencia
+                "
+                [severity]="getDiferenciaSeverity(detalle.diferencia)"
+                [icon]="'pi ' + getDiferenciaIcon(detalle.diferencia)"
+              ></p-tag>
+            </td>
+            <td>
+              <p-tag
+                *ngIf="detalle.ajustado"
+                value="Ajustado"
+                severity="success"
+                icon="pi pi-check"
+              ></p-tag>
+              <p-tag
+                *ngIf="!detalle.ajustado && detalle.diferencia === 0"
+                value="OK"
+                severity="success"
+                icon="pi pi-check"
+              ></p-tag>
+              <p-tag
+                *ngIf="!detalle.ajustado && detalle.diferencia !== 0"
+                value="Pendiente"
+                severity="warn"
+                icon="pi pi-clock"
+              ></p-tag>
+            </td>
+            <td>
+              <span *ngIf="detalle.motivo" class="motivo-text">
+                {{ getMotivoLabel(detalle.motivo) }}
+              </span>
+              <span *ngIf="!detalle.motivo" class="text-muted">-</span>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">
+              <div class="empty-state">
+                <i class="pi pi-inbox"></i>
+                <p>No hay productos en este conteo</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Accordion de Ajustes -->
+    <div class="ajustes-section" *ngIf="ajustes.length > 0">
+      <h3 class="section-title">
+        <i class="pi pi-wrench"></i>
+        Ajustes Realizados ({{ ajustes.length }})
+      </h3>
+
+      <p-accordion [multiple]="true" [activeIndex]="[0]">
+        <p-accordionTab
+          *ngFor="let ajuste of ajustes"
+          [header]="ajuste.producto_nombre"
+        >
+          <div class="ajuste-detalle">
+            <div class="ajuste-grid">
+              <div class="ajuste-item">
+                <span class="label">Tipo de Ajuste</span>
+                <p-tag
+                  [value]="getTipoAjusteLabel(ajuste.tipo)"
+                  [severity]="getTipoAjusteSeverity(ajuste.tipo)"
+                ></p-tag>
+              </div>
+
+              <div class="ajuste-item">
+                <span class="label">Cantidad</span>
+                <span class="value">{{ ajuste.cantidad }} unidades</span>
+              </div>
+
+              <div class="ajuste-item">
+                <span class="label">Motivo</span>
+                <span class="value">{{ getMotivoLabel(ajuste.motivo) }}</span>
+              </div>
+
+              <div class="ajuste-item">
+                <span class="label">Fecha</span>
+                <span class="value">{{
+                  ajuste.fecha | date: "d MMM yyyy"
+                }}</span>
+              </div>
+            </div>
+
+            <div class="descripcion-section" *ngIf="ajuste.descripcion">
+              <span class="label">Descripción:</span>
+              <p class="descripcion-text">{{ ajuste.descripcion }}</p>
+            </div>
+          </div>
+        </p-accordionTab>
+      </p-accordion>
+    </div>
+
+    <!-- Mensaje si no hay ajustes -->
+    <div
+      class="sin-ajustes-message"
+      *ngIf="ajustes.length === 0 && conteo.estado === 'COMPLETADO'"
+    >
+      <div class="message-card success">
+        <i class="pi pi-check-circle"></i>
+        <div class="message-content">
+          <strong>¡Conteo perfecto!</strong>
+          <p>
+            No se realizaron ajustes. Todos los productos coinciden con el
+            sistema.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cerrar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+      ></p-button>
+      <p-button
+        label="Descargar PDF"
+        icon="pi pi-file-pdf"
+        severity="danger"
+        [outlined]="true"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

@@ -11,4 +11,8 @@ export const environment = {
   cajaUrl: 'http://localhost:9001/api/flujo-caja',
   arqueoCajaUrl: 'http://localhost:9001/api/arqueo-caja',
   conteoInventarioUrl: 'http://localhost:9001/api/conteo-inventario',
+  rolesUrl: 'http://localhost:9001/api/roles',
+
+  // URLs comunes
+  usersUrl: 'http://localhost:9001/users',
 };

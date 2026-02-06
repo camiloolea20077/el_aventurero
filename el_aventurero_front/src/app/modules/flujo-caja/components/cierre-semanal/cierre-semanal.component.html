@@ -301,6 +301,191 @@
 
       <p-divider></p-divider>
 
+      <!-- ✅ NUEVO: Control de Inventario -->
+      <div class="control-inventario-section" *ngIf="cierre?.resumen_conteos">
+        <h3 class="section-title">
+          <i class="pi pi-box"></i>
+          Control de Inventario
+        </h3>
+
+        <!-- Grid de Estadísticas -->
+        <div class="inventario-stats-grid">
+          <div class="stat-card conteos">
+            <div class="stat-icon">
+              <i class="pi pi-calculator"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Conteos Realizados</span>
+              <span class="stat-value">{{
+                cierre.resumen_conteos.total_conteos
+              }}</span>
+            </div>
+          </div>
+
+          <div class="stat-card productos">
+            <div class="stat-icon">
+              <i class="pi pi-box"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Productos Contados</span>
+              <span class="stat-value">{{
+                cierre.resumen_conteos.total_productos_contados
+              }}</span>
+            </div>
+          </div>
+
+          <div class="stat-card diferencias">
+            <div class="stat-icon">
+              <i class="pi pi-exclamation-triangle"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Diferencias Detectadas</span>
+              <span class="stat-value">{{
+                cierre.resumen_conteos.total_diferencias
+              }}</span>
+            </div>
+          </div>
+
+          <div class="stat-card ajustes">
+            <div class="stat-icon">
+              <i class="pi pi-wrench"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">Ajustes Realizados</span>
+              <span class="stat-value">{{
+                cierre.resumen_conteos.total_ajustes
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen de Estado -->
+        <div class="estado-inventario-resumen">
+          <div class="estado-card">
+            <h4 class="card-title">Estado del Control</h4>
+
+            <div class="estado-grid">
+              <div class="estado-item completados">
+                <div class="estado-header">
+                  <i class="pi pi-check-circle"></i>
+                  <span class="estado-label">Completados</span>
+                </div>
+                <span class="estado-valor">
+                  {{ cierre.resumen_conteos.conteos_completados }}
+                </span>
+              </div>
+
+              <div
+                class="estado-item proceso"
+                *ngIf="cierre.resumen_conteos.conteos_en_proceso > 0"
+              >
+                <div class="estado-header">
+                  <i class="pi pi-clock"></i>
+                  <span class="estado-label">En Proceso</span>
+                </div>
+                <span class="estado-valor">
+                  {{ cierre.resumen_conteos.conteos_en_proceso }}
+                </span>
+              </div>
+
+              <div class="estado-item productos-detail">
+                <div class="estado-header">
+                  <i class="pi pi-list"></i>
+                  <span class="estado-label">Cobertura</span>
+                </div>
+                <span class="estado-valor">
+                  {{ cierre.resumen_conteos.total_productos_contados }}
+                  productos
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alertas de Inventario -->
+        <div class="alert-inventario">
+          <!-- Sin Conteo -->
+          <div
+            class="alert-content danger"
+            *ngIf="!cierre.resumen_conteos.conteo_realizado_semana"
+          >
+            <i class="pi pi-times-circle"></i>
+            <div class="alert-text">
+              <strong>¡Atención! No se ha realizado conteo esta semana</strong>
+              <span>
+                Es importante realizar al menos un conteo de inventario por
+                semana para detectar diferencias y mantener el control del
+                stock.
+              </span>
+            </div>
+          </div>
+
+          <!-- Conteo en Proceso -->
+          <div
+            class="alert-content warning"
+            *ngIf="cierre.resumen_conteos.conteos_en_proceso > 0"
+          >
+            <i class="pi pi-exclamation-triangle"></i>
+            <div class="alert-text">
+              <strong>
+                Hay {{ cierre.resumen_conteos.conteos_en_proceso }} conteo(s)
+                sin completar
+              </strong>
+              <span>
+                Completa los conteos pendientes para tener un control preciso
+                del inventario.
+              </span>
+            </div>
+          </div>
+
+          <!-- Diferencias Detectadas -->
+          <div
+            class="alert-content warning"
+            *ngIf="
+              cierre.resumen_conteos.total_diferencias > 0 &&
+              cierre.resumen_conteos.conteos_en_proceso === 0
+            "
+          >
+            <i class="pi pi-info-circle"></i>
+            <div class="alert-text">
+              <strong>
+                Se detectaron
+                {{ cierre.resumen_conteos.total_diferencias }} diferencia(s)
+              </strong>
+              <span>
+                Todas las diferencias fueron justificadas y ajustadas
+                correctamente. Total de
+                {{ cierre.resumen_conteos.total_ajustes }} ajuste(s) realizados.
+              </span>
+            </div>
+          </div>
+
+          <!-- Todo OK -->
+          <div
+            class="alert-content success"
+            *ngIf="
+              cierre.resumen_conteos.conteo_realizado_semana &&
+              cierre.resumen_conteos.conteos_en_proceso === 0 &&
+              cierre.resumen_conteos.total_diferencias === 0
+            "
+          >
+            <i class="pi pi-check-circle"></i>
+            <div class="alert-text">
+              <strong>¡Excelente control de inventario!</strong>
+              <span>
+                Se realizaron
+                {{ cierre.resumen_conteos.conteos_completados }} conteo(s) de
+                {{ cierre.resumen_conteos.total_productos_contados }} productos
+                sin diferencias detectadas. El inventario está perfectamente
+                cuadrado.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
       <!-- Métodos de Pago -->
       <div class="metodos-pago-section">
         <h3 class="section-title">

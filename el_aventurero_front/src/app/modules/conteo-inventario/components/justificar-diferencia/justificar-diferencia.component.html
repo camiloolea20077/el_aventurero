@@ -1,0 +1,173 @@
+<p-dialog
+  header="Justificar Diferencia de Inventario"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '95vw', maxWidth: '700px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onModalHide()"
+  styleClass="modern-dialog justificar-diferencia-dialog"
+>
+  <div class="justificar-container" *ngIf="detalle">
+    <!-- Información del Producto -->
+    <div class="producto-info">
+      <div class="producto-header">
+        <h3>{{ detalle.producto_nombre }}</h3>
+      </div>
+
+      <div class="stocks-grid">
+        <div class="stock-item sistema">
+          <span class="label">Stock Sistema</span>
+          <span class="value">{{ detalle.stock_sistema }}</span>
+        </div>
+        <div class="stock-item fisico">
+          <span class="label">Stock Físico</span>
+          <span class="value">{{ detalle.stock_fisico }}</span>
+        </div>
+        <div
+          class="stock-item diferencia"
+          [attr.data-severity]="getDiferenciaSeverity()"
+        >
+          <span class="label">
+            <i [class]="'pi ' + getDiferenciaIcon()"></i>
+            {{ getDiferenciaLabel() }}
+          </span>
+          <span class="value">
+            {{ detalle.diferencia >= 0 ? "+" : "" }}{{ detalle.diferencia }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Explicación -->
+    <div class="explicacion-section">
+      <div class="explicacion-card">
+        <i class="pi pi-info-circle"></i>
+        <div class="explicacion-content">
+          <strong>¿Por qué hay diferencia?</strong>
+          <p *ngIf="detalle.diferencia > 0">
+            Hay <strong>{{ detalle.diferencia }} unidad(es) de más</strong> en
+            el inventario físico. Esto puede indicar que se recibieron productos
+            que no se registraron en el sistema.
+          </p>
+          <p *ngIf="detalle.diferencia < 0">
+            Faltan
+            <strong>{{ Math.abs(detalle.diferencia) }} unidad(es)</strong> en el
+            inventario físico. Esto puede indicar ventas no registradas, merma,
+            robo o error en el conteo.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="frmJustificar" class="form-container">
+      <!-- Motivo -->
+      <div class="form-field">
+        <label class="form-label required">
+          <i class="pi pi-tag mr-2"></i>
+          Selecciona el motivo de la diferencia
+        </label>
+
+        <div class="motivos-grid">
+          <div
+            *ngFor="let motivo of motivosAjuste"
+            class="motivo-item"
+            [class.selected]="
+              frmJustificar.get('motivo')?.value === motivo.value
+            "
+          >
+            <p-radioButton
+              [value]="motivo.value"
+              formControlName="motivo"
+              [inputId]="motivo.value"
+            ></p-radioButton>
+            <label [for]="motivo.value" class="motivo-label">
+              <strong>{{ motivo.label }}</strong>
+              <small>{{ motivo.descripcion }}</small>
+            </label>
+          </div>
+        </div>
+
+        <small
+          *ngIf="
+            frmJustificar.get('motivo')?.invalid &&
+            frmJustificar.get('motivo')?.touched
+          "
+          class="p-error"
+        >
+          Debes seleccionar un motivo
+        </small>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-field">
+        <label for="descripcion" class="form-label required">
+          <i class="pi pi-align-left mr-2"></i>
+          Describe en detalle lo que ocurrió
+        </label>
+        <textarea
+          id="descripcion"
+          pInputTextarea
+          formControlName="descripcion"
+          rows="4"
+          placeholder="Ej: Se vendieron 7 unidades ayer en la noche y no se registraron en el sistema..."
+          class="w-full"
+        ></textarea>
+        <small
+          *ngIf="
+            frmJustificar.get('descripcion')?.invalid &&
+            frmJustificar.get('descripcion')?.touched
+          "
+          class="p-error"
+        >
+          La descripción debe tener al menos 10 caracteres
+        </small>
+        <small class="help-text">
+          Mínimo 10 caracteres. Sé lo más específico posible para mantener un
+          buen registro.
+        </small>
+      </div>
+    </form>
+
+    <!-- Advertencia -->
+    <div class="advertencia-section">
+      <div class="advertencia-card">
+        <i class="pi pi-exclamation-triangle"></i>
+        <div class="advertencia-content">
+          <strong>Importante</strong>
+          <p>
+            Al confirmar, se ajustará automáticamente el inventario del sistema
+            para que coincida con el stock físico contado. Esta acción quedará
+            registrada para auditoría.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        (onClick)="closeModal()"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="isSubmitting"
+      ></p-button>
+      <p-button
+        label="Confirmar Ajuste"
+        icon="pi pi-check"
+        (onClick)="ajustarInventario()"
+        severity="success"
+        [loading]="isSubmitting"
+        [disabled]="isSubmitting || frmJustificar.invalid"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

@@ -41,7 +41,7 @@ public class DetalleConteoEntity {
     private String motivo;
 
     @Column(nullable = false)
-    private Boolean ajustado;
+    private Boolean ajustado = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime created_at;

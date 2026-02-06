@@ -73,7 +73,22 @@
     }
   }
 }
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  background: transparent !important;
 
+  .search-container {
+    flex: 1;
+    max-width: 400px;
+
+    .search-input {
+      width: 100%;
+    }
+  }
+}
 // Estilos de la tabla
 ::ng-deep .modern-table {
   background: transparent !important;

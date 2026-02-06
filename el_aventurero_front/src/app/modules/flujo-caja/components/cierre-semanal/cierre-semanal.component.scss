@@ -1,3 +1,62 @@
+// Variables
+$primary: #667eea;
+$primary-dark: #764ba2;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #17a2b8;
+$gray-light: #f8f9fa;
+$gray: #e9ecef;
+$gray-dark: #6c757d;
+$text-dark: #495057;
+
+// Mixins
+@mixin card-hover {
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@mixin gradient-bg($color1, $color2) {
+  background: linear-gradient(135deg, $color1 0%, $color2 100%);
+}
+
+@mixin stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  @include gradient-bg($gray-light, $gray);
+  i {
+    font-size: 1.5rem;
+    color: $primary;
+  }
+}
+
+@mixin stat-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  .stat-label {
+    font-size: 0.8rem;
+    color: $gray-dark;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: $text-dark;
+    font-family: "Courier New", monospace;
+  }
+}
+
+// Base
 .cierre-container {
   padding: 0;
 }
@@ -5,16 +64,14 @@
 .loading-container {
   text-align: center;
   padding: 4rem 2rem;
-
   .loading-spinner {
     font-size: 3rem;
-    color: #667eea;
+    color: $primary;
     margin-bottom: 1rem;
   }
-
   span {
     display: block;
-    color: #6c757d;
+    color: $gray-dark;
     font-size: 1.1rem;
   }
 }
@@ -27,18 +84,16 @@
 
 // Header
 .cierre-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @include gradient-bg($primary, $primary-dark);
   padding: 2rem;
   border-radius: 12px;
   color: white;
   text-align: center;
-
   .semana-title {
     margin: 0;
     font-size: 2rem;
     font-weight: 900;
   }
-
   .periodo {
     margin: 0.5rem 0 0 0;
     font-size: 1.1rem;
@@ -51,15 +106,14 @@
   margin: 0 0 1.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #495057;
+  color: $text-dark;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #f8f9fa;
-
+  border-bottom: 2px solid $gray-light;
   i {
-    color: #667eea;
+    color: $primary;
     font-size: 1.5rem;
   }
 }
@@ -71,39 +125,29 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
   }
-
   .summary-card {
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
     display: flex;
     gap: 1rem;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+    border: 2px solid $gray;
+    @include card-hover;
 
     &.ventas {
-      border-left: 4px solid #667eea;
+      border-left: 4px solid $primary;
     }
-
     &.ingresos {
-      border-left: 4px solid #28a745;
+      border-left: 4px solid $success;
     }
-
     &.egresos {
-      border-left: 4px solid #dc3545;
+      border-left: 4px solid $danger;
     }
-
     &.balance {
       border-left: 4px solid #007bff;
     }
-
     &.ticket {
-      border-left: 4px solid #ffc107;
+      border-left: 4px solid $warning;
     }
 
     .card-icon {
@@ -113,342 +157,291 @@
       width: 60px;
       height: 60px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-
+      @include gradient-bg($gray-light, $gray);
       i {
         font-size: 1.75rem;
-        color: #667eea;
+        color: $primary;
       }
     }
-
     .card-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-
       .card-label {
         font-size: 0.85rem;
-        color: #6c757d;
+        color: $gray-dark;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-
       .card-value {
         font-size: 1.5rem;
         font-weight: 900;
-        color: #495057;
+        color: $text-dark;
         font-family: "Courier New", monospace;
       }
-
       .card-detail {
         font-size: 0.85rem;
-        color: #6c757d;
+        color: $gray-dark;
       }
     }
   }
 }
 
-// Control de Arqueos
-.control-arqueos-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+// Shared section styles
+.control-arqueos-section,
+.control-inventario-section {
   padding: 2rem;
   border-radius: 12px;
 
   .section-title {
     border-bottom-color: rgba(0, 0, 0, 0.1);
   }
+}
 
-  .arqueos-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.control-arqueos-section {
+  @include gradient-bg($gray-light, $gray);
+}
+
+.control-inventario-section {
+  @include gradient-bg(#e8f5e9, #c8e6c9);
+}
+
+// Stats grid (compartido)
+.arqueos-stats-grid,
+.inventario-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    align-items: center;
+    border: 2px solid transparent;
+    @include card-hover;
 
-    .stat-card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.25rem;
+    &.dias,
+    &.conteos {
+      border-color: $primary;
+    }
+    &.realizados {
+      border-color: $info;
+    }
+    &.cuadrados,
+    &.productos {
+      border-color: $success;
+    }
+    &.pendientes,
+    &.diferencias {
+      border-color: $warning;
+    }
+    &.ajustados,
+    &.ajustes {
+      border-color: $gray-dark;
+    }
+
+    .stat-icon {
+      @include stat-icon;
+      &.warning i {
+        color: $warning;
+      }
+    }
+    .stat-content {
+      @include stat-content;
+    }
+  }
+}
+
+// Alert styles (compartido)
+.alert-arqueos,
+.alert-inventario {
+  margin-top: 1rem;
+
+  .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+
+    i {
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+    .alert-text {
+      flex: 1;
       display: flex;
-      gap: 1rem;
-      align-items: center;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
+      flex-direction: column;
+      gap: 0.5rem;
+      strong {
+        font-size: 1rem;
+      }
+      span {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    &.warning {
+      @include gradient-bg(#fff8e1, #ffecb3);
+      border-left-color: $warning;
+      i,
+      strong,
+      span {
+        color: #856404;
+      }
+    }
+    &.danger {
+      @include gradient-bg(#f8d7da, #f5c6cb);
+      border-left-color: $danger;
+      i {
+        color: $danger;
+      }
+      strong,
+      span {
+        color: #721c24;
+      }
+    }
+    &.success {
+      @include gradient-bg(#d4edda, #c3e6cb);
+      border-left-color: $success;
+      i {
+        color: $success;
+      }
+      strong,
+      span {
+        color: #155724;
+      }
+    }
+  }
+}
+
+// Diferencias/Estado resumen (compartido)
+.diferencias-resumen,
+.estado-inventario-resumen {
+  margin-bottom: 1.5rem;
+
+  .diferencias-card,
+  .estado-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid $gray;
+
+    .card-title {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $text-dark;
+    }
+  }
+
+  .diferencias-grid,
+  .estado-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+
+    .diferencia-item,
+    .estado-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 2px solid;
+
+      &.sobrantes,
+      &.completados {
+        @include gradient-bg(#d4edda, #c3e6cb);
+        border-color: $success;
+        .diferencia-header i,
+        .estado-header i,
+        .diferencia-valor,
+        .estado-valor {
+          color: $success;
+        }
+      }
+      &.faltantes {
+        @include gradient-bg(#f8d7da, #f5c6cb);
+        border-color: $danger;
+        .diferencia-header i,
+        .diferencia-valor {
+          color: $danger;
+        }
+      }
+      &.proceso {
+        @include gradient-bg(#fff8e1, #ffecb3);
+        border-color: $warning;
+        .estado-header i,
+        .estado-valor {
+          color: $warning;
+        }
+      }
+      &.productos-detail {
+        @include gradient-bg(#d1ecf1, #bee5eb);
+        border-color: $info;
+        .estado-header i,
+        .estado-valor {
+          color: $info;
+        }
+      }
+      &.total {
+        @include gradient-bg(#d1ecf1, #bee5eb);
+        border-color: $info;
+        .diferencia-header i,
+        .diferencia-valor {
+          color: $info;
+        }
+
+        &.positivo,
+        &.cero {
+          @include gradient-bg(#d4edda, #c3e6cb);
+          border-color: $success;
+          .diferencia-header i,
+          .diferencia-valor {
+            color: $success;
+          }
+        }
+        &.negativo {
+          @include gradient-bg(#f8d7da, #f5c6cb);
+          border-color: $danger;
+          .diferencia-header i,
+          .diferencia-valor {
+            color: $danger;
+          }
+        }
       }
 
-      &.dias {
-        border-color: #667eea;
-      }
-
-      &.realizados {
-        border-color: #17a2b8;
-      }
-
-      &.cuadrados {
-        border-color: #28a745;
-      }
-
-      &.pendientes {
-        border-color: #ffc107;
-      }
-
-      &.ajustados {
-        border-color: #6c757d;
-      }
-
-      .stat-icon {
+      .diferencia-header,
+      .estado-header {
         display: flex;
         align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-
+        gap: 0.5rem;
         i {
-          font-size: 1.5rem;
-          color: #667eea;
+          font-size: 1.25rem;
         }
-
-        &.warning i {
-          color: #ffc107;
-        }
-      }
-
-      .stat-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-
-        .stat-label {
-          font-size: 0.8rem;
-          color: #6c757d;
+        .diferencia-label,
+        .estado-label {
+          font-size: 0.85rem;
           font-weight: 600;
           text-transform: uppercase;
-        }
-
-        .stat-value {
-          font-size: 1.5rem;
-          font-weight: 900;
-          color: #495057;
-          font-family: "Courier New", monospace;
+          color: $text-dark;
         }
       }
-    }
-  }
 
-  .diferencias-resumen {
-    margin-bottom: 1.5rem;
-
-    .diferencias-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 2px solid #e9ecef;
-
-      .card-title {
-        margin: 0 0 1.5rem 0;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #495057;
-      }
-
-      .diferencias-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-
-        .diferencia-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          padding: 1.25rem;
-          border-radius: 8px;
-          border: 2px solid;
-
-          &.sobrantes {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border-color: #28a745;
-
-            .diferencia-header i {
-              color: #28a745;
-            }
-
-            .diferencia-valor {
-              color: #28a745;
-            }
-          }
-
-          &.faltantes {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            border-color: #dc3545;
-
-            .diferencia-header i {
-              color: #dc3545;
-            }
-
-            .diferencia-valor {
-              color: #dc3545;
-            }
-          }
-
-          &.total {
-            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
-            border-color: #17a2b8;
-
-            .diferencia-header i {
-              color: #17a2b8;
-            }
-
-            .diferencia-valor {
-              color: #17a2b8;
-            }
-
-            &.positivo {
-              background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-              border-color: #28a745;
-
-              .diferencia-header i,
-              .diferencia-valor {
-                color: #28a745;
-              }
-            }
-
-            &.negativo {
-              background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-              border-color: #dc3545;
-
-              .diferencia-header i,
-              .diferencia-valor {
-                color: #dc3545;
-              }
-            }
-
-            &.cero {
-              background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-              border-color: #28a745;
-
-              .diferencia-header i,
-              .diferencia-valor {
-                color: #28a745;
-              }
-            }
-          }
-
-          .diferencia-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-
-            i {
-              font-size: 1.25rem;
-            }
-
-            .diferencia-label {
-              font-size: 0.85rem;
-              font-weight: 600;
-              text-transform: uppercase;
-              color: #495057;
-            }
-          }
-
-          .diferencia-valor {
-            font-size: 1.75rem;
-            font-weight: 900;
-            font-family: "Courier New", monospace;
-          }
-        }
-      }
-    }
-  }
-
-  .alert-arqueos {
-    margin-top: 1rem;
-
-    .alert-content {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-      border-radius: 8px;
-      border-left: 4px solid;
-
-      i {
+      .diferencia-valor,
+      .estado-valor {
         font-size: 1.75rem;
-        flex-shrink: 0;
-      }
-
-      .alert-text {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-
-        strong {
-          font-size: 1rem;
-        }
-
-        span {
-          font-size: 0.95rem;
-          line-height: 1.5;
-        }
-      }
-
-      &.warning {
-        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-        border-left-color: #ffc107;
-
-        i {
-          color: #ffc107;
-        }
-
-        strong {
-          color: #856404;
-        }
-
-        span {
-          color: #856404;
-        }
-      }
-
-      &.danger {
-        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        border-left-color: #dc3545;
-
-        i {
-          color: #dc3545;
-        }
-
-        strong {
-          color: #721c24;
-        }
-
-        span {
-          color: #721c24;
-        }
-      }
-
-      &.success {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        border-left-color: #28a745;
-
-        i {
-          color: #28a745;
-        }
-
-        strong {
-          color: #155724;
-        }
-
-        span {
-          color: #155724;
-        }
+        font-weight: 900;
+        font-family: "Courier New", monospace;
       }
     }
   }
@@ -461,18 +454,14 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
   }
-
   .metodo-card {
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
-    border: 2px solid #e9ecef;
-    transition: all 0.3s ease;
-
+    border: 2px solid $gray;
+    @include card-hover;
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-color: #667eea;
+      border-color: $primary;
     }
 
     .metodo-header {
@@ -481,40 +470,34 @@
       gap: 0.75rem;
       margin-bottom: 1.25rem;
       padding-bottom: 1rem;
-      border-bottom: 2px solid #f8f9fa;
-
+      border-bottom: 2px solid $gray-light;
       i {
         font-size: 1.5rem;
-        color: #667eea;
+        color: $primary;
       }
-
       .metodo-nombre {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #495057;
+        color: $text-dark;
       }
     }
-
     .metodo-stats {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-
       .stat {
         display: flex;
         justify-content: space-between;
         align-items: center;
-
         .stat-label {
           font-size: 0.9rem;
-          color: #6c757d;
+          color: $gray-dark;
           font-weight: 600;
         }
-
         .stat-value {
           font-size: 1.1rem;
           font-weight: 900;
-          color: #495057;
+          color: $text-dark;
           font-family: "Courier New", monospace;
         }
       }
@@ -528,85 +511,74 @@
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #e9ecef;
+    border: 2px solid $gray;
 
     .table-header {
       display: grid;
       grid-template-columns: 60px 1fr 150px 180px;
       gap: 1rem;
       padding: 1rem 1.5rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      @include gradient-bg($primary, $primary-dark);
       color: white;
       font-weight: 700;
       font-size: 0.9rem;
       text-transform: uppercase;
     }
-
     .table-row {
       display: grid;
       grid-template-columns: 60px 1fr 150px 180px;
       gap: 1rem;
       padding: 1rem 1.5rem;
       align-items: center;
-      border-bottom: 1px solid #f8f9fa;
+      border-bottom: 1px solid $gray-light;
       transition: all 0.3s ease;
-
       &:hover {
-        background: #f8f9fa;
+        background: $gray-light;
       }
-
       &:last-child {
         border-bottom: none;
       }
 
-      .col-posicion {
-        .posicion-badge {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 35px;
-          height: 35px;
-          border-radius: 50%;
-          font-weight: 900;
-          font-size: 1.1rem;
-          color: white;
+      .col-posicion .posicion-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        font-weight: 900;
+        font-size: 1.1rem;
+        color: white;
 
-          &.pos-1 {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
-          }
-
-          &.pos-2 {
-            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-            box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
-          }
-
-          &.pos-3 {
-            background: linear-gradient(135deg, #cd7f32 0%, #e3a869 100%);
-            box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
-          }
-
-          &.pos-4,
-          &.pos-5 {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-          }
+        &.pos-1 {
+          @include gradient-bg(#ffd700, #ffed4e);
+          box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+        }
+        &.pos-2 {
+          @include gradient-bg(#c0c0c0, #e8e8e8);
+          box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
+        }
+        &.pos-3 {
+          @include gradient-bg(#cd7f32, #e3a869);
+          box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
+        }
+        &.pos-4,
+        &.pos-5 {
+          @include gradient-bg($primary, $primary-dark);
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
         }
       }
-
       .col-producto {
         font-weight: 700;
-        color: #495057;
+        color: $text-dark;
       }
-
       .col-cantidad {
-        color: #6c757d;
+        color: $gray-dark;
         font-weight: 600;
       }
-
       .col-total {
         font-weight: 900;
-        color: #28a745;
+        color: $success;
         font-family: "Courier New", monospace;
         font-size: 1.1rem;
       }
@@ -625,41 +597,33 @@
 // Dialog Styles
 ::ng-deep .cierre-semanal-dialog {
   .p-dialog-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    @include gradient-bg($primary, $primary-dark);
     color: white;
-
     .p-dialog-title {
       font-weight: 700;
       font-size: 1.5rem;
     }
-
     .p-dialog-header-icon {
       color: white;
-
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
       }
     }
   }
-
   .p-dialog-content {
     padding: 2rem;
     max-height: 80vh;
     overflow-y: auto;
-
     &::-webkit-scrollbar {
       width: 8px;
     }
-
     &::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 10px;
     }
-
     &::-webkit-scrollbar-thumb {
-      background: #667eea;
+      background: $primary;
       border-radius: 10px;
-
       &:hover {
         background: #5568d3;
       }
@@ -669,10 +633,8 @@
 
 // Responsive
 @media (max-width: 1200px) {
-  .resumen-financiero {
-    .cards-grid {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    }
+  .resumen-financiero .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -681,321 +643,31 @@
     .semana-title {
       font-size: 1.5rem;
     }
-
     .periodo {
       font-size: 1rem;
     }
   }
-
-  .resumen-financiero {
-    .cards-grid {
-      grid-template-columns: 1fr;
-    }
+  .resumen-financiero .cards-grid,
+  .control-arqueos-section .arqueos-stats-grid,
+  .diferencias-resumen .diferencias-grid,
+  .metodos-pago-section .metodos-grid {
+    grid-template-columns: 1fr;
   }
-
-  .control-arqueos-section {
-    .arqueos-stats-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .diferencias-resumen {
-      .diferencias-grid {
-        grid-template-columns: 1fr;
+  .productos-top-section .productos-table {
+    .table-header,
+    .table-row {
+      grid-template-columns: 50px 1fr;
+      gap: 0.5rem;
+      .col-cantidad,
+      .col-total {
+        display: none;
       }
     }
   }
-
-  .metodos-pago-section {
-    .metodos-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .productos-top-section {
-    .productos-table {
-      .table-header,
-      .table-row {
-        grid-template-columns: 50px 1fr;
-        gap: 0.5rem;
-
-        .col-cantidad,
-        .col-total {
-          display: none;
-        }
-      }
-    }
-  }
-
   .dialog-footer {
     flex-direction: column;
-
     ::ng-deep .p-button {
       width: 100%;
-    }
-  }
-}
-// Control de Inventario
-.control-inventario-section {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  padding: 2rem;
-  border-radius: 12px;
-
-  .section-title {
-    border-bottom-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .inventario-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-
-    .stat-card {
-      background: white;
-      border-radius: 8px;
-      padding: 1.25rem;
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      &.conteos {
-        border-color: #667eea;
-      }
-
-      &.productos {
-        border-color: #28a745;
-      }
-
-      &.diferencias {
-        border-color: #ffc107;
-      }
-
-      &.ajustes {
-        border-color: #17a2b8;
-      }
-
-      .stat-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-
-        i {
-          font-size: 1.5rem;
-          color: #667eea;
-        }
-      }
-
-      .stat-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-
-        .stat-label {
-          font-size: 0.8rem;
-          color: #6c757d;
-          font-weight: 600;
-          text-transform: uppercase;
-        }
-
-        .stat-value {
-          font-size: 1.5rem;
-          font-weight: 900;
-          color: #495057;
-          font-family: "Courier New", monospace;
-        }
-      }
-    }
-  }
-
-  .estado-inventario-resumen {
-    margin-bottom: 1.5rem;
-
-    .estado-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 2px solid #e9ecef;
-
-      .card-title {
-        margin: 0 0 1.5rem 0;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #495057;
-      }
-
-      .estado-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-
-        .estado-item {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          padding: 1.25rem;
-          border-radius: 8px;
-          border: 2px solid;
-
-          &.completados {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border-color: #28a745;
-
-            .estado-header i {
-              color: #28a745;
-            }
-
-            .estado-valor {
-              color: #28a745;
-            }
-          }
-
-          &.proceso {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-            border-color: #ffc107;
-
-            .estado-header i {
-              color: #ffc107;
-            }
-
-            .estado-valor {
-              color: #ffc107;
-            }
-          }
-
-          &.productos-detail {
-            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
-            border-color: #17a2b8;
-
-            .estado-header i {
-              color: #17a2b8;
-            }
-
-            .estado-valor {
-              color: #17a2b8;
-            }
-          }
-
-          .estado-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-
-            i {
-              font-size: 1.25rem;
-            }
-
-            .estado-label {
-              font-size: 0.85rem;
-              font-weight: 600;
-              text-transform: uppercase;
-              color: #495057;
-            }
-          }
-
-          .estado-valor {
-            font-size: 1.75rem;
-            font-weight: 900;
-            font-family: "Courier New", monospace;
-          }
-        }
-      }
-    }
-  }
-
-  .alert-inventario {
-    margin-top: 1rem;
-
-    .alert-content {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-      border-radius: 8px;
-      border-left: 4px solid;
-
-      i {
-        font-size: 1.75rem;
-        flex-shrink: 0;
-      }
-
-      .alert-text {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-
-        strong {
-          font-size: 1rem;
-        }
-
-        span {
-          font-size: 0.95rem;
-          line-height: 1.5;
-        }
-      }
-
-      &.warning {
-        background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-        border-left-color: #ffc107;
-
-        i {
-          color: #ffc107;
-        }
-
-        strong {
-          color: #856404;
-        }
-
-        span {
-          color: #856404;
-        }
-      }
-
-      &.danger {
-        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-        border-left-color: #dc3545;
-
-        i {
-          color: #dc3545;
-        }
-
-        strong {
-          color: #721c24;
-        }
-
-        span {
-          color: #721c24;
-        }
-      }
-
-      &.success {
-        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-        border-left-color: #28a745;
-
-        i {
-          color: #28a745;
-        }
-
-        strong {
-          color: #155724;
-        }
-
-        span {
-          color: #155724;
-        }
-      }
     }
   }
 }

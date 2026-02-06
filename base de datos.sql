@@ -10,6 +10,7 @@ CREATE TABLE usuarios (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
+select * from usuarios
 ALTER TABLE usuarios ADD COLUMN permisos text[] NOT NULL DEFAULT '{}';
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
@@ -267,3 +268,18 @@ CREATE TABLE ajuste_inventario (
     FOREIGN KEY (producto_id) REFERENCES productos(id),
     FOREIGN KEY (conteo_id) REFERENCES conteo_inventario(id)
 );
+
+select * from usuarios
+
+                                    SELECT
+                                        o.id,
+                                        o.nombre AS name,
+                                        o.email AS email,
+                                        r.nombre AS role,
+                                        o.activo as activo,
+                                        COUNT(*) OVER() AS total_rows
+                                    FROM usuarios  o
+                                    LEFT JOIN roles r ON r.id = o.rol_id
+                                    WHERE
+                                        o.deleted_at IS NULL
+                                        AND o.activo = 1

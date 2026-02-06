@@ -23,6 +23,7 @@ import { SidebarService } from '../../services/sidebar.service';
 import { IndexDBService } from '../../../app/core/services/index-db.service';
 import { AuthService } from '../../../app/core/services/auth.service';
 import { PermissionService } from '../../../app/core/services/permission.service';
+import { APP_PERMISSION_OPTIONS, resolveLandingRoute } from '../../constants/permissions';
 
 @Component({
   selector: 'app-sidebar',
@@ -132,33 +133,37 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   private buildMenu(): void {
-    this.items = [
+    const allItems: MenuItem[] = [
       {
         label: 'Dashboard',
         icon: 'pi pi-home',
         route: '/dashboard',
         exact: true,
+        permissions: [AppPermissions.DASHBOARD_ACCESS, AppPermissions.ADMIN_ACCESS],
       },
       // --- OPERACIONES DEL BAR ---
       {
         label: 'Operaciones',
         icon: 'pi pi-cog',
+        permissions: [AppPermissions.MESAS_ACCESS, AppPermissions.SALES_ACCESS, AppPermissions.ADMIN_ACCESS],
         children: [
-          { label: 'Mesas', icon: 'pi pi-table', route: '/mesas' },
-          { label: 'Ventas', icon: 'pi pi-dollar', route: '/sales' },
+          { label: 'Mesas', icon: 'pi pi-table', route: '/mesas', permissions: [AppPermissions.MESAS_ACCESS, AppPermissions.ADMIN_ACCESS] },
+          { label: 'Ventas', icon: 'pi pi-dollar', route: '/sales', permissions: [AppPermissions.SALES_ACCESS, AppPermissions.ADMIN_ACCESS] },
         ],
       },
       // --- GESTIÓN DE PRODUCTOS ---
       {
         label: 'Productos',
         icon: 'pi pi-box',
+        permissions: [AppPermissions.PRODUCTS_ACCESS, AppPermissions.INVENTORY_VIEW, AppPermissions.INVENTORY_COUNT_ACCESS, AppPermissions.ADMIN_ACCESS],
         children: [
-          { label: 'Catálogo', icon: 'pi pi-barcode', route: '/products' },
-          { label: 'Inventario', icon: 'pi pi-list', route: '/inventory' },
+          { label: 'Catálogo', icon: 'pi pi-barcode', route: '/products', permissions: [AppPermissions.PRODUCTS_ACCESS, AppPermissions.ADMIN_ACCESS] },
+          { label: 'Inventario', icon: 'pi pi-list', route: '/inventory', permissions: [AppPermissions.INVENTORY_VIEW, AppPermissions.ADMIN_ACCESS] },
           {
             label: 'Conteo de Inventario',
             icon: 'pi pi-calculator',
             route: '/conteo-inventario',
+            permissions: [AppPermissions.INVENTORY_COUNT_ACCESS, AppPermissions.ADMIN_ACCESS],
           },
         ],
       },
@@ -167,30 +172,55 @@ export class SidebarComponent implements OnInit, OnDestroy {
         label: 'Compras',
         icon: 'pi pi-shopping-cart',
         route: '/shopping',
+        permissions: [AppPermissions.SHOPPING_ACCESS, AppPermissions.ADMIN_ACCESS],
       },
       // --- CAJA Y FINANZAS ---
       {
         label: 'Caja',
         icon: 'pi pi-wallet',
+        permissions: [AppPermissions.CAJA_ACCESS, AppPermissions.FLUJO_CAJA_ACCESS, AppPermissions.ARQUEO_CAJA_ACCESS, AppPermissions.ADMIN_ACCESS],
         children: [
           {
             label: 'Flujo de Caja',
             icon: 'pi pi-chart-line',
             route: '/flujo-caja',
+            permissions: [AppPermissions.FLUJO_CAJA_ACCESS, AppPermissions.CAJA_ACCESS, AppPermissions.ADMIN_ACCESS],
           },
           {
             label: 'Arqueo de Caja',
             icon: 'pi pi-calculator',
             route: '/arqueo-caja',
+            permissions: [AppPermissions.ARQUEO_CAJA_ACCESS, AppPermissions.CAJA_ACCESS, AppPermissions.ADMIN_ACCESS],
           },
         ],
       },
       {
         label: 'Administración',
         icon: 'pi pi-users',
-        children: [{ label: 'Usuarios', icon: 'pi pi-user', route: '/users' }],
+        permissions: [AppPermissions.USERS_ACCESS, AppPermissions.ADMIN_ACCESS],
+        children: [{ label: 'Usuarios', icon: 'pi pi-user', route: '/users', permissions: [AppPermissions.USERS_ACCESS, AppPermissions.ADMIN_ACCESS] }],
       },
     ];
+
+    this.items = this.filterMenuByPermissions(allItems);
+  }
+
+  private filterMenuByPermissions(items: MenuItem[]): MenuItem[] {
+    return items
+      .map((item) => {
+        if (item.children) {
+          const filteredChildren = this.filterMenuByPermissions(item.children);
+          if (filteredChildren.length > 0) {
+            return { ...item, children: filteredChildren };
+          }
+        }
+        if (!item.permissions || this.permissionService.hasAny(item.permissions)) {
+          const { permissions, ...itemWithoutPermissions } = item;
+          return itemWithoutPermissions;
+        }
+        return null;
+      })
+      .filter((item): item is MenuItem => item !== null);
   }
 
   // ... (resto de tu código de permisos y acciones igual)

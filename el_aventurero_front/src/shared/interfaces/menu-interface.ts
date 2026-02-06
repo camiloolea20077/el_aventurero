@@ -4,4 +4,5 @@ export interface MenuItem {
   route?: string;
   exact?: boolean;
   children?: MenuItem[];
+  permissions?: import('./permissions.enum').AppPermissions[];
 }

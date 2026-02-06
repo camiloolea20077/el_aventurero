@@ -16,6 +16,7 @@ import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
 import { AuthService } from '../../services/auth.service';
+import { resolveLandingRoute } from '../../../../shared/constants/permissions';
 
 @Component({
   selector: 'app-login',
@@ -82,7 +83,8 @@ export class LoginComponent implements OnInit {
           detail: `Has iniciado sesión correctamente.`,
           life: 4000,
         });
-        this.router.navigate(['/mesas']);
+        const landingRoute = resolveLandingRoute(res.data.user.permisos);
+        this.router.navigate([landingRoute]);
       },
       error: (err) => {
         if (err.status === 401) {

@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://agrosuite.onrender.com/',
+  apiUrl: 'http://localhost:9001/',
+  // URLs específicas
   productoUrl: 'http://localhost:9001/api/productos',
   inventarioUrl: 'http://localhost:9001/api/inventario',
   mesaUrl: 'http://localhost:9001/api/mesas',
@@ -10,4 +11,8 @@ export const environment = {
   cajaUrl: 'http://localhost:9001/api/flujo-caja',
   arqueoCajaUrl: 'http://localhost:9001/api/arqueo-caja',
   conteoInventarioUrl: 'http://localhost:9001/api/conteo-inventario',
+  rolesUrl: 'http://localhost:9001/api/roles',
+
+  // URLs comunes
+  usersUrl: 'http://localhost:9001/users',
 };

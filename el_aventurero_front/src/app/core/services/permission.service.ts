@@ -14,14 +14,25 @@ export class PermissionService {
     });
   }
 
+  isAdmin(): boolean {
+    return this.permisos.includes(AppPermissions.ADMIN_ACCESS);
+  }
+
   hasPermission(permission: AppPermissions): boolean {
     return this.permisos.includes(permission)
+  }
+
+  hasAny(permissions: AppPermissions[]): boolean {
+    if (!permissions?.length) return true;
+    if (this.isAdmin()) return true;
+    return permissions.some((p) => this.permisos.includes(p));
   }
 
   getAll(): string[] {
     return this.permisos
   }
-    setPermissions(permisos: string[]) {
+
+  setPermissions(permisos: string[]) {
     this.permisos = permisos ?? []
   }
 

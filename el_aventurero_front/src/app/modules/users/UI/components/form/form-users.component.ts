@@ -30,6 +30,7 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { RolesService } from '../../../../../core/services/roles.service';
 import { RolesListDto } from '../../../../../core/models/roles/list-roles.dto';
+import { APP_PERMISSION_OPTIONS, PermissionOption } from '../../../../../../shared/constants/permissions';
 
 @Component({
   selector: 'app-form-users',
@@ -60,14 +61,7 @@ export class FormUsersComponent {
   public frm!: FormGroup;
   id!: number;
   slug: string | null = 'create';
-  permissionOptions = [
-    { label: 'Acceso a Administración', value: 'ADMIN_ACCESS' },
-    { label: 'Acceso a Inventario', value: 'INVENTORY_VIEW' },
-    { label: 'Acceso a Caja', value: 'CAJA_ACCESS' },
-    { label: 'Acceso a ventas', value: 'SALES_ACCESS' },
-    { label: 'Acceso a productos', value: 'PRODUCTS_ACCESS' },
-    // ...otros permisos
-  ];
+  permissionOptions: PermissionOption[] = APP_PERMISSION_OPTIONS;
 
   constructor(
     private readonly usersService: UsersService,

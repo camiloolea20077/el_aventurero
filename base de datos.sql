@@ -179,21 +179,55 @@ CREATE INDEX idx_movimiento_caja_tipo ON movimiento_caja(tipo);
 CREATE INDEX idx_movimiento_caja_categoria ON movimiento_caja(categoria);
 CREATE INDEX idx_movimiento_caja_deleted_at ON movimiento_caja(deleted_at);
 
-CREATE TABLE arqueo_caja (
+-- Crear tabla arqueo_caja
+CREATE TABLE IF NOT EXISTS arqueo_caja (
     id BIGSERIAL PRIMARY KEY,
     fecha DATE NOT NULL,
-    saldo_inicial DECIMAL(15,2) NOT NULL,
-    total_ingresos_sistema DECIMAL(15,2) NOT NULL,
-    total_egresos_sistema DECIMAL(15,2) NOT NULL,
-    saldo_esperado DECIMAL(15,2) NOT NULL,
-    efectivo_real DECIMAL(15,2) NOT NULL,
-    diferencia DECIMAL(15,2) NOT NULL,
-    estado VARCHAR(20) NOT NULL, -- PENDIENTE, CUADRADO, AJUSTADO
+    saldo_inicial DECIMAL(15, 2) NOT NULL,
+    total_ingresos_sistema DECIMAL(15, 2) NOT NULL,
+    total_egresos_sistema DECIMAL(15, 2) NOT NULL,
+    saldo_esperado DECIMAL(15, 2) NOT NULL,
+    efectivo_real DECIMAL(15, 2) NOT NULL,
+    diferencia DECIMAL(15, 2) NOT NULL,
+    estado VARCHAR(20) NOT NULL CHECK (estado IN ('PENDIENTE', 'CUADRADO', 'AJUSTADO')),
     observaciones TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Detalle del conteo de billetes
+    billetes_100000 INTEGER NOT NULL DEFAULT 0,
+    billetes_50000 INTEGER NOT NULL DEFAULT 0,
+    billetes_20000 INTEGER NOT NULL DEFAULT 0,
+    billetes_10000 INTEGER NOT NULL DEFAULT 0,
+    billetes_5000 INTEGER NOT NULL DEFAULT 0,
+    billetes_2000 INTEGER NOT NULL DEFAULT 0,
+    billetes_1000 INTEGER NOT NULL DEFAULT 0,
+    
+    -- Detalle del conteo de monedas
+    monedas_1000 INTEGER NOT NULL DEFAULT 0,
+    monedas_500 INTEGER NOT NULL DEFAULT 0,
+    monedas_200 INTEGER NOT NULL DEFAULT 0,
+    monedas_100 INTEGER NOT NULL DEFAULT 0,
+    monedas_50 INTEGER NOT NULL DEFAULT 0,
+    
+    activo BIGINT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    deleted_at TIMESTAMP
+    deleted_at TIMESTAMP,
+    
+    -- Constraint para evitar duplicados por fecha
+    CONSTRAINT uk_arqueo_caja_fecha UNIQUE (fecha, deleted_at)
 );
+
+-- Crear índices para mejorar rendimiento
+CREATE INDEX idx_arqueo_caja_fecha ON arqueo_caja(fecha);
+CREATE INDEX idx_arqueo_caja_estado ON arqueo_caja(estado);
+CREATE INDEX idx_arqueo_caja_deleted_at ON arqueo_caja(deleted_at);
+
+-- Comentarios de la tabla
+COMMENT ON TABLE arqueo_caja IS 'Tabla para registrar arqueos diarios de caja';
+COMMENT ON COLUMN arqueo_caja.estado IS 'Estado del arqueo: PENDIENTE (diferencia sin resolver), CUADRADO (sin diferencia), AJUSTADO (diferencia justificada)';
+COMMENT ON COLUMN arqueo_caja.diferencia IS 'Diferencia entre efectivo real y saldo esperado (positivo = sobrante, negativo = faltante)';
+COMMENT ON COLUMN arqueo_caja.billetes_100000 IS 'Cantidad de billetes de $100,000';
+COMMENT ON COLUMN arqueo_caja.monedas_50 IS 'Cantidad de monedas de $50';
 
 CREATE TABLE conteo_inventario (
     id BIGSERIAL PRIMARY KEY,
@@ -218,6 +252,7 @@ CREATE TABLE detalle_conteo (
     FOREIGN KEY (conteo_id) REFERENCES conteo_inventario(id),
     FOREIGN KEY (producto_id) REFERENCES productos(id)
 );
+
 CREATE TABLE ajuste_inventario (
     id BIGSERIAL PRIMARY KEY,
     producto_id BIGINT NOT NULL,

@@ -143,23 +143,44 @@ public class ConteoInventarioServiceImpl implements ConteoInventarioService {
             throw new GlobalException(HttpStatus.BAD_REQUEST, "No se pueden agregar detalles a un conteo completado");
         }
 
-        // Obtener stock del sistema desde inventario
-        InventarioEntity inventario = inventarioJPARepository.findById(createDto.getProducto_id())
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "Producto no encontrado en inventario"));
-
         try {
+            // ✅ BUSCAR SI YA EXISTE UN DETALLE PARA ESTE PRODUCTO EN ESTE CONTEO
+            List<DetalleConteoDto> detallesExistentes = detalleQueryRepository.findByConteoId(createDto.getConteo_id());
+            
+            for (DetalleConteoDto detalleExistente : detallesExistentes) {
+                if (detalleExistente.getProducto_id().equals(createDto.getProducto_id())) {
+                    // ✅ SI YA EXISTE: Actualizar solo stock_fisico, MANTENER stock_sistema original
+                    DetalleConteoEntity entityExistente = detalleJPARepository.findById(detalleExistente.getId())
+                            .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "Detalle no encontrado"));
+                    
+                    // MANTENER el stock_sistema que se guardó originalmente
+                    // Solo actualizar stock_fisico y recalcular diferencia
+                    entityExistente.setStock_fisico(createDto.getStock_fisico());
+                    entityExistente.setDiferencia(createDto.getStock_fisico() - entityExistente.getStock_sistema());
+                    
+                    DetalleConteoEntity savedEntity = detalleJPARepository.save(entityExistente);
+                    return detalleQueryRepository.findById(savedEntity.getId());
+                }
+            }
+
+            // ✅ SI NO EXISTE: Crear nuevo con stock_sistema del inventario ACTUAL
+            InventarioEntity inventario = inventarioJPARepository.findById(createDto.getProducto_id())
+                    .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "Producto no encontrado en inventario"));
+
             DetalleConteoEntity entity = detalleMapper.createToEntity(createDto);
             entity.setStock_sistema(inventario.getStock());
             entity.setDiferencia(createDto.getStock_fisico() - inventario.getStock());
 
             DetalleConteoEntity savedEntity = detalleJPARepository.save(entity);
             return detalleQueryRepository.findById(savedEntity.getId());
+            
+        } catch (GlobalException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Error al registrar detalle de conteo: " + e.getMessage(), e);
         }
     }
-
     @Override
     public List<DetalleConteoDto> getDetallesByConteoId(Long conteoId) {
         return detalleQueryRepository.findByConteoId(conteoId);

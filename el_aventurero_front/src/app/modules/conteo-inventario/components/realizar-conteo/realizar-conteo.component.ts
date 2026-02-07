@@ -35,6 +35,7 @@ import { InventarioService } from '../../../../core/services/inventario.service'
 import { InventarioModel } from '../../../../core/models/inventario/inventario.model';
 import { AlertService } from '../../../../../shared/pipes/alert.service';
 import { JustificarDiferenciaComponent } from '../justificar-diferencia/justificar-diferencia.component';
+import { CreateDetalleConteoDto } from '../../../../core/models/conteo-inventario/create-detalle-conteo.dto';
 
 // Servicios y Modelos
 
@@ -252,34 +253,42 @@ export class RealizarConteoComponent implements OnInit {
       productoConteo.stock_fisico - productoConteo.stock_sistema;
   }
 
-  async guardarDetalle(productoConteo: ProductoConteo): Promise<void> {
+  async guardarDetalle(pc: ProductoConteo): Promise<void> {
     if (!this.conteoActual) return;
 
-    if (productoConteo.stock_fisico < 0) {
-      this._alertService.showError(
-        'Error',
-        'El stock físico no puede ser negativo',
-      );
+    // ✅ VALIDAR: Si ya está guardado, no volver a guardar
+    if (pc.guardado && pc.detalle_id) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Información',
+        detail: 'Este producto ya está guardado',
+        life: 3000,
+      });
       return;
     }
 
+    const detalle: CreateDetalleConteoDto = {
+      conteo_id: this.conteoActual.id,
+      producto_id: pc.producto.id,
+      stock_fisico: pc.stock_fisico,
+    };
+
     try {
       const response = await lastValueFrom(
-        this.conteoInventarioService.registrarDetalle({
-          conteo_id: this.conteoActual.id,
-          producto_id: productoConteo.producto.id,
-          stock_fisico: productoConteo.stock_fisico,
-        }),
+        this.conteoInventarioService.registrarDetalle(detalle),
       );
 
-      productoConteo.guardado = true;
-      productoConteo.detalle_id = response.data.id;
+      pc.guardado = true;
+      pc.detalle_id = response.data.id;
+      pc.stock_sistema = response.data.stock_sistema;
+      pc.diferencia = response.data.diferencia;
+      pc.ajustado = response.data.ajustado || false;
 
       this.messageService.add({
         severity: 'success',
-        summary: 'Guardado',
-        detail: `${productoConteo.producto.nombre} registrado`,
-        life: 2000,
+        summary: 'Éxito',
+        detail: 'Producto guardado correctamente',
+        life: 3000,
       });
     } catch (error: any) {
       this._alertService.showError(

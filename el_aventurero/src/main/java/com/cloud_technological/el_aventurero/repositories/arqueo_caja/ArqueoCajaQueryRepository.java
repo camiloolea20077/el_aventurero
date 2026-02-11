@@ -215,9 +215,7 @@ public class ArqueoCajaQueryRepository {
         DatosParaArqueoDto datos = result.get(0);
         
         // Calcular saldo esperado
-        java.math.BigDecimal saldoEsperado = datos.getSaldo_inicial()
-            .add(datos.getTotal_ingresos())
-            .subtract(datos.getTotal_egresos());
+        java.math.BigDecimal saldoEsperado = datos.getTotal_ingresos().subtract(datos.getTotal_egresos());
         datos.setSaldo_esperado(saldoEsperado);
         
         return datos;

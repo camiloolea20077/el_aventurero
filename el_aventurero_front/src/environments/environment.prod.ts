@@ -11,7 +11,7 @@ export const environment = {
   cajaUrl: 'https://elaventurero-production.up.railway.app/api/flujo-caja',
   arqueoCajaUrl: 'https://elaventurero-production.up.railway.app/api/arqueo-caja',
   conteoInventarioUrl: 'https://elaventurero-production.up.railway.app/api/conteo-inventario',
-  rolesUrl: 'https://elaventurero-production.up.railway.app/roles',
+  rolesUrl: 'https://elaventurero-production.up.railway.app/api/roles',
 
   // URLs comunes
   usersUrl: 'https://elaventurero-production.up.railway.app/users',

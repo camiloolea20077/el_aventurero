@@ -1,18 +1,18 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:9001/',
+  apiUrl: 'https://elaventurero-production.up.railway.app/',
   // URLs específicas
-  productoUrl: 'http://localhost:9001/api/productos',
-  inventarioUrl: 'http://localhost:9001/api/inventario',
-  mesaUrl: 'http://localhost:9001/api/mesas',
-  consumoMesaUrl: 'http://localhost:9001/api/consumo-mesa',
-  compraUrl: 'http://localhost:9001/api/compras',
-  ventaUrl: 'http://localhost:9001/api/ventas',
-  cajaUrl: 'http://localhost:9001/api/flujo-caja',
-  arqueoCajaUrl: 'http://localhost:9001/api/arqueo-caja',
-  conteoInventarioUrl: 'http://localhost:9001/api/conteo-inventario',
-  rolesUrl: 'http://localhost:9001/api/roles',
+  productoUrl: 'https://elaventurero-production.up.railway.app/productos',
+  inventarioUrl: 'https://elaventurero-production.up.railway.app/inventario',
+  mesaUrl: 'https://elaventurero-production.up.railway.app/mesas',
+  consumoMesaUrl: 'https://elaventurero-production.up.railway.app/consumo-mesa',
+  compraUrl: 'https://elaventurero-production.up.railway.app/compras',
+  ventaUrl: 'https://elaventurero-production.up.railway.app/ventas',
+  cajaUrl: 'https://elaventurero-production.up.railway.app/flujo-caja',
+  arqueoCajaUrl: 'https://elaventurero-production.up.railway.app/arqueo-caja',
+  conteoInventarioUrl: 'https://elaventurero-production.up.railway.app/conteo-inventario',
+  rolesUrl: 'https://elaventurero-production.up.railway.app/roles',
 
   // URLs comunes
-  usersUrl: 'http://localhost:9001/users',
+  usersUrl: 'https://elaventurero-production.up.railway.app/users',
 };

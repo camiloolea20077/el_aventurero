@@ -1,9 +1,13 @@
 package com.cloud_technological.el_aventurero.services;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.cloud_technological.el_aventurero.dto.ventas.CreateVentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.MetodoPagoStatsDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.VentaSemanalDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaTableDto;
 import com.cloud_technological.el_aventurero.util.PageableDto;
 
@@ -12,4 +16,6 @@ public interface VentaService {
     Boolean delete(Long id);
     VentaDto findById(Long id);
     Page<VentaTableDto> pageVentas(PageableDto<Object> pageableDto);
+    List<VentaSemanalDto> getWeeklySales();
+    List<MetodoPagoStatsDto> getPaymentMethodsStats();
 }

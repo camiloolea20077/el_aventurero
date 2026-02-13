@@ -132,7 +132,7 @@ export class IndexDashboardComponent implements OnInit {
 
       // Calcular valor total del inventario
       this.valorTotalInventario = this.inventarios.reduce(
-        (sum, inv) => sum + inv.stock * inv.precio_venta,
+        (sum, inv) => sum + inv.stock * inv.costo_unitario,
         0,
       );
 
@@ -151,13 +151,18 @@ export class IndexDashboardComponent implements OnInit {
       // Cargar datos reales de ventas para las gráficas
       const [weeklySales, paymentMethods] = await Promise.all([
         lastValueFrom(this.ventaService.getWeeklySales()),
-        lastValueFrom(this.ventaService.getPaymentMethodsStats())
+        lastValueFrom(this.ventaService.getPaymentMethodsStats()),
       ]);
 
-      // Guardar datos para usar en las gráficas
-      this.weeklySalesData = weeklySales.data || [];
-      this.paymentMethodsData = paymentMethods.data || [];
+      // Mapear datos del backend a formato del frontend
+      const rawSalesData = weeklySales.data || [];
+      const rawPaymentData = paymentMethods.data || [];
 
+      // Transformar ventas semanales (backend envía 'dia', frontend espera 'day')
+      this.weeklySalesData = this.mapearVentasSemanales(rawSalesData);
+
+      // Transformar métodos de pago (backend envía diferentes campos)
+      this.paymentMethodsData = this.mapearMetodosPago(rawPaymentData);
     } catch (error) {
       console.error('Error cargando ventas:', error);
       // Si falla la API, usamos datos de ejemplo
@@ -168,16 +173,76 @@ export class IndexDashboardComponent implements OnInit {
         { day: 'Jue', total: 450000 },
         { day: 'Vie', total: 520000 },
         { day: 'Sáb', total: 680000 },
-        { day: 'Dom', total: 590000 }
+        { day: 'Dom', total: 590000 },
       ];
-      
+
       this.paymentMethodsData = [
         { method: 'Efectivo', percentage: 45 },
         { method: 'Tarjeta', percentage: 30 },
         { method: 'Transferencia', percentage: 15 },
-        { method: 'Digital', percentage: 10 }
+        { method: 'Digital', percentage: 10 },
       ];
     }
+  }
+
+  mapearVentasSemanales(rawData: any[]): any[] {
+    if (!rawData || rawData.length === 0) return [];
+
+    // Normalizar nombres de días
+    const normalizarDia = (dia: string): string => {
+      const diaNormalizado = dia?.trim().toLowerCase() || '';
+      const mapaDias: { [key: string]: string } = {
+        'monday': 'Lun',
+        'tuesday': 'Mar',
+        'wednesday': 'Mié',
+        'thursday': 'Jue',
+        'friday': 'Vie',
+        'saturday': 'Sáb',
+        'sunday': 'Dom',
+        'lunes': 'Lun',
+        'martes': 'Mar',
+        'miércoles': 'Mié',
+        'miercoles': 'Mié',
+        'jueves': 'Jue',
+        'viernes': 'Vie',
+        'sábado': 'Sáb',
+        'sabado': 'Sáb',
+        'domingo': 'Dom',
+        'lun': 'Lun',
+        'mar': 'Mar',
+        'mié': 'Mié',
+        'mie': 'Mié',
+        'jue': 'Jue',
+        'vie': 'Vie',
+        'sáb': 'Sáb',
+        'sab': 'Sáb',
+        'dom': 'Dom',
+      };
+      return mapaDias[diaNormalizado] || dia?.trim().substring(0, 3) || 'N/A';
+    };
+
+    return rawData.map(item => ({
+      day: normalizarDia(item.dia || item.day),
+      total: item.total || 0
+    }));
+  }
+
+  mapearMetodosPago(rawData: any[]): any[] {
+    if (!rawData || rawData.length === 0) return [];
+
+    // Calcular total de ventas para calcular porcentajes
+    const totalVentas = rawData.reduce((sum, item) => sum + (item.total || 0), 0);
+
+    return rawData.map(item => {
+      const metodoNombre = item.metodo_pago || item.method || 'Efectivo';
+      const monto = item.total || 0;
+      const porcentaje = totalVentas > 0 ? Math.round((monto * 100 / totalVentas) * 100) / 100 : 0;
+
+      return {
+        method: metodoNombre.charAt(0).toUpperCase() + metodoNombre.slice(1).toLowerCase(),
+        percentage: porcentaje
+      };
+    });
   }
 
   construirEstadisticas(): void {
@@ -225,22 +290,25 @@ export class IndexDashboardComponent implements OnInit {
     const documentStyle = getComputedStyle(document.documentElement);
 
     // Usar datos reales o de ejemplo
-    const salesData = this.weeklySalesData.length > 0 ? this.weeklySalesData : [
-      { day: 'Lun', total: 250000 },
-      { day: 'Mar', total: 320000 },
-      { day: 'Mié', total: 180000 },
-      { day: 'Jue', total: 450000 },
-      { day: 'Vie', total: 520000 },
-      { day: 'Sáb', total: 680000 },
-      { day: 'Dom', total: 590000 }
-    ];
+    const salesData =
+      this.weeklySalesData.length > 0
+        ? this.weeklySalesData
+        : [
+            { day: 'Lun', total: 250000 },
+            { day: 'Mar', total: 320000 },
+            { day: 'Mié', total: 180000 },
+            { day: 'Jue', total: 450000 },
+            { day: 'Vie', total: 520000 },
+            { day: 'Sáb', total: 680000 },
+            { day: 'Dom', total: 590000 },
+          ];
 
     this.ventasChart = {
-      labels: salesData.map(item => item.day),
+      labels: salesData.map((item) => item.day),
       datasets: [
         {
           label: 'Ventas de la Semana',
-          data: salesData.map(item => item.total),
+          data: salesData.map((item) => item.total),
           fill: true,
           borderColor:
             documentStyle.getPropertyValue('--primary-color') || '#667eea',
@@ -294,18 +362,21 @@ export class IndexDashboardComponent implements OnInit {
     const documentStyle = getComputedStyle(document.documentElement);
 
     // Usar datos reales o de ejemplo
-    const paymentData = this.paymentMethodsData.length > 0 ? this.paymentMethodsData : [
-      { method: 'Efectivo', percentage: 45 },
-      { method: 'Tarjeta', percentage: 30 },
-      { method: 'Transferencia', percentage: 15 },
-      { method: 'Digital', percentage: 10 }
-    ];
+    const paymentData =
+      this.paymentMethodsData.length > 0
+        ? this.paymentMethodsData
+        : [
+            { method: 'Efectivo', percentage: 45 },
+            { method: 'Tarjeta', percentage: 30 },
+            { method: 'Transferencia', percentage: 15 },
+            { method: 'Digital', percentage: 10 },
+          ];
 
     this.metodosPagoChart = {
-      labels: paymentData.map(item => item.method),
+      labels: paymentData.map((item) => item.method),
       datasets: [
         {
-          data: paymentData.map(item => item.percentage),
+          data: paymentData.map((item) => item.percentage),
           backgroundColor: ['#28a745', '#007bff', '#ffc107', '#6f42c1'],
           hoverBackgroundColor: ['#218838', '#0056b3', '#e0a800', '#5a32a3'],
         },

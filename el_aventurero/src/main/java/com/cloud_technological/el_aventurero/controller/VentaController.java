@@ -1,5 +1,7 @@
 package com.cloud_technological.el_aventurero.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud_technological.el_aventurero.dto.ventas.CreateVentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.MetodoPagoStatsDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.VentaSemanalDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaTableDto;
 import com.cloud_technological.el_aventurero.services.VentaService;
 import com.cloud_technological.el_aventurero.util.ApiResponse;
@@ -88,6 +92,38 @@ public class VentaController {
             ApiResponse<Object> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    @GetMapping("/weekly-sales")
+    public ResponseEntity<ApiResponse<Object>> getWeeklySales() {
+        try {
+            List<VentaSemanalDto> result = ventaService.getWeeklySales();
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Ventas semanales obtenidas correctamente",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    @GetMapping("/payment-methods-stats")
+    public ResponseEntity<ApiResponse<Object>> getPaymentMethodsStats() {
+        try {
+            List<MetodoPagoStatsDto> result = ventaService.getPaymentMethodsStats();
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Estadísticas de métodos de pago obtenidas correctamente",
                 false,
                 result
             );

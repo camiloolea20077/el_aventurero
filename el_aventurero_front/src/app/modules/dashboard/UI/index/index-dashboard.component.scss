@@ -368,6 +368,406 @@
   }
 }
 
+// Responsive para mesas
+@media (max-width: 768px) {
+  .mesas-grid-mini {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+// Mesas cuadradas tipo bar/restaurante
+.mesa-cuadrada {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.08);
+    z-index: 10;
+
+    .mesa-tooltip {
+      opacity: 1;
+      transform: translateY(-10px);
+    }
+
+    .mesa-contenedor {
+      box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.8),
+        inset 0 0 20px rgba(212, 175, 55, 0.2);
+    }
+  }
+
+  // Sillas alrededor de la mesa
+  .silla {
+    position: absolute;
+    width: 22px;
+    height: 26px;
+    background: linear-gradient(145deg, #4a4a4a 0%, #2a2a2a 100%);
+    border-radius: 4px 4px 3px 3px;
+    border: 2px solid #5a5a5a;
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.5),
+      inset 0 1px 3px rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+
+    // Respaldo de la silla
+    &::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 8px;
+      background: linear-gradient(145deg, #5a5a5a 0%, #3a3a3a 100%);
+      border-radius: 3px;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 1px solid #6a6a6a;
+    }
+
+    &.silla-top {
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.silla-right {
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+    }
+
+    &.silla-bottom {
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%) rotate(180deg);
+    }
+
+    &.silla-left {
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+    }
+  }
+
+  // Contenedor de la mesa cuadrada
+  .mesa-contenedor {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background: linear-gradient(
+      145deg,
+      #1a1a1a 0%,
+      #0d0d0d 50%,
+      #050505 100%
+    );
+    border: 3px solid #3a3a3a;
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.7),
+      inset 0 2px 5px rgba(255, 255, 255, 0.1),
+      0 0 0 3px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+
+    // Borde exterior decorativo
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 16px;
+      border: 2px solid #8b7355;
+      z-index: -1;
+    }
+
+    // Efecto de madera/veteado
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 10px,
+        rgba(139, 115, 85, 0.03) 10px,
+        rgba(139, 115, 85, 0.03) 11px
+      );
+      pointer-events: none;
+    }
+  }
+
+  // Logo de fondo
+  .mesa-logo-fondo {
+    position: absolute;
+    inset: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.4;
+    z-index: 1;
+    border-radius: 8px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: grayscale(100%) brightness(0.6);
+    }
+  }
+
+  // Capa superior con número e indicador
+  .mesa-superior {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .mesa-numero {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.9),
+      0 0 10px rgba(0, 0, 0, 0.8);
+    font-family: 'Georgia', serif;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+  }
+
+  // Indicador LED de estado
+  .mesa-indicador {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+
+    &.mesa-libre {
+      background: #22c55e;
+      color: #22c55e;
+      animation: pulse-green 2s infinite;
+    }
+
+    &.mesa-ocupada {
+      background: #ef4444;
+      color: #ef4444;
+      animation: pulse-red 1.5s infinite;
+    }
+  }
+
+  // Tooltip
+  .mesa-tooltip {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    border: 1px solid var(--border-gold);
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid rgba(0, 0, 0, 0.95);
+    }
+  }
+
+  // Estados de la mesa completa
+  &.mesa-libre {
+    .mesa-contenedor {
+      border-color: #22c55e;
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.7),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1),
+        0 0 25px rgba(34, 197, 94, 0.4);
+
+      &::before {
+        border-color: #22c55e;
+      }
+    }
+
+    .mesa-logo-fondo {
+      opacity: 0.5;
+      
+      img {
+        filter: grayscale(100%) brightness(0.7);
+      }
+    }
+
+    .silla {
+      border-color: #22c55e;
+      box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        inset 0 1px 3px rgba(255, 255, 255, 0.15),
+        0 0 12px rgba(34, 197, 94, 0.3);
+    }
+  }
+
+  &.mesa-ocupada {
+    .mesa-contenedor {
+      border-color: #ef4444;
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.7),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1),
+        0 0 25px rgba(239, 68, 68, 0.4);
+
+      &::before {
+        border-color: #ef4444;
+      }
+    }
+
+    .mesa-logo-fondo {
+      opacity: 0.3;
+      
+      img {
+        filter: grayscale(100%) brightness(0.5);
+      }
+    }
+
+    .silla {
+      border-color: #ef4444;
+      background: linear-gradient(145deg, #4a3a3a 0%, #2a1a1a 100%);
+      box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.5),
+        inset 0 1px 3px rgba(255, 255, 255, 0.1),
+        0 0 12px rgba(239, 68, 68, 0.3);
+
+      &::before {
+        background: linear-gradient(145deg, #5a4a4a 0%, #4a3a3a 100%);
+        border-color: #ef4444;
+      }
+
+      // Mostrar personas sentadas
+      &::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #ef4444;
+        border-radius: 50%;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 0 8px #ef4444;
+      }
+    }
+  }
+}
+
+// Animaciones de pulso
+@keyframes pulse-green {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px #22c55e,
+      0 0 16px #22c55e,
+      inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 0 12px #22c55e,
+      0 0 24px #22c55e,
+      0 0 36px #22c55e,
+      inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+}
+
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 
+      0 0 8px #ef4444,
+      0 0 16px #ef4444,
+      inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 
+      0 0 12px #ef4444,
+      0 0 24px #ef4444,
+      0 0 36px #ef4444,
+      inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  }
+}
+
+// Responsive para mesas
+@media (max-width: 768px) {
+  .mesas-grid-mini {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .mesa-cuadrada {
+    width: 100px;
+    height: 100px;
+
+    .silla {
+      width: 18px;
+      height: 22px;
+
+      &::before {
+        width: 14px;
+        height: 6px;
+      }
+    }
+
+    .mesa-contenedor {
+      width: 65px;
+      height: 65px;
+      border-radius: 10px;
+
+      &::before {
+        border-radius: 14px;
+      }
+    }
+
+    .mesa-numero {
+      font-size: 1.3rem;
+    }
+
+    .mesa-indicador {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
 // Responsive
 @media (max-width: 1200px) {
   .charts-grid,

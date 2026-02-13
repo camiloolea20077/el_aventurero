@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cloud_technological.el_aventurero.dto.consumo_mesa.ConsumoMesaDto;
 import com.cloud_technological.el_aventurero.dto.detalle_venta.DetalleVentaDto;
 import com.cloud_technological.el_aventurero.dto.ventas.CreateVentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.MetodoPagoStatsDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaDto;
+import com.cloud_technological.el_aventurero.dto.ventas.VentaSemanalDto;
 import com.cloud_technological.el_aventurero.dto.ventas.VentaTableDto;
 import com.cloud_technological.el_aventurero.entity.ConsumoMesaEntity;
 import com.cloud_technological.el_aventurero.entity.DetalleVentaEntity;
@@ -172,5 +174,15 @@ public class VentaServiceImpl implements VentaService {
     @Override
     public Page<VentaTableDto> pageVentas(PageableDto<Object> pageableDto) {
         return ventaQueryRepository.listVentas(pageableDto);
+    }
+
+    @Override
+    public List<VentaSemanalDto> getWeeklySales() {
+        return ventaQueryRepository.getWeeklySales();
+    }
+
+    @Override
+    public List<MetodoPagoStatsDto> getPaymentMethodsStats() {
+        return ventaQueryRepository.getPaymentMethodsStats();
     }
 }

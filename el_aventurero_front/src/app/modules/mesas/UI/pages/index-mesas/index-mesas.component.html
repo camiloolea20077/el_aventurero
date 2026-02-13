@@ -16,22 +16,33 @@
       </div>
 
       <!-- Grid de Mesas -->
-      <div *ngIf="!loading" class="mesas-grid flex flex-wrap gap-3">
+      <div *ngIf="!loading" class="mesas-grid flex flex-wrap gap-5">
         <div
           *ngFor="let mesa of mesas"
           class="mesa-card"
           [ngClass]="getMesaClass(mesa)"
           (click)="abrirMesa(mesa)"
         >
-          <div class="mesa-numero">{{ mesa.numero }}</div>
-          <div class="mesa-estado">
-            <i [class]="getMesaIcon(mesa)"></i>
-            {{ mesa.estado }}
+          <!-- Sillas/puestos alrededor de la mesa -->
+          <div class="silla silla-top"></div>
+          <div class="silla silla-right"></div>
+          <div class="silla silla-bottom"></div>
+          <div class="silla silla-left"></div>
+
+          <!-- La mesa cuadrada con logo de fondo -->
+          <div class="mesa-contenedor">
+            <div class="mesa-logo-fondo">
+              <img src="assets/logo.jpeg" alt="Logo" />
+            </div>
+            <div class="mesa-superior">
+              <span class="mesa-numero">{{ mesa.numero }}</span>
+              <div class="mesa-indicador" [ngClass]="getMesaClass(mesa)"></div>
+            </div>
           </div>
-          <div class="mesa-total">
-            ${{
-              mesa.total_acumulado ? mesa.total_acumulado.toLocaleString() : "0"
-            }}
+
+          <!-- Tooltip con estado -->
+          <div class="mesa-tooltip">
+            <span class="tooltip-text">{{ mesa.estado }}</span>
           </div>
         </div>
       </div>

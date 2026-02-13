@@ -25,8 +25,6 @@ import { CreateProductoDto } from '../../../../core/models/producto/create-produ
 import { UpdateProductoDto } from '../../../../core/models/producto/update-producto.dto';
 import { ResponseModel } from '../../../../../shared/models/responde.models';
 
-// Servicios y Modelos
-
 @Component({
   selector: 'app-form-producto',
   standalone: true,
@@ -60,6 +58,38 @@ export class FormProductoComponent implements OnInit {
   tipoVentaOptions = [
     { name: 'Unidad', value: 'UNIDAD' },
     { name: 'Botella', value: 'BOTELLA' },
+  ];
+
+  // ✅ NUEVAS OPCIONES
+  tipoOptions = [
+    { name: 'Producto (Vendible)', value: 'PRODUCTO' },
+    { name: 'Insumo (Consumible)', value: 'INSUMO' },
+  ];
+
+  categoriasProducto = [
+    { name: 'Bebidas Alcohólicas', value: 'BEBIDAS_ALCOHOLICAS' },
+    { name: 'Bebidas Sin Alcohol', value: 'BEBIDAS_SIN_ALCOHOL' },
+    { name: 'Licores', value: 'LICORES' },
+    { name: 'Cervezas', value: 'CERVEZAS' },
+    { name: 'Cócteles', value: 'COCTELES' },
+    { name: 'Otros', value: 'OTROS' },
+  ];
+
+  categoriasInsumo = [
+    { name: 'Descartables', value: 'DESCARTABLES' },
+    { name: 'Frutas', value: 'FRUTAS' },
+    { name: 'Hielo', value: 'HIELO' },
+    { name: 'Guarniciones', value: 'GUARNICIONES' },
+    { name: 'Limpieza', value: 'LIMPIEZA' },
+    { name: 'Otros', value: 'OTROS' },
+  ];
+
+  unidadMedidaOptions = [
+    { name: 'Unidad', value: 'UNIDAD' },
+    { name: 'Gramos', value: 'GRAMOS' },
+    { name: 'Kilos', value: 'KILOS' },
+    { name: 'Litros', value: 'LITROS' },
+    { name: 'Mililitros', value: 'MILILITROS' },
   ];
 
   constructor(
@@ -101,8 +131,14 @@ export class FormProductoComponent implements OnInit {
     this.frmProducto = this.formBuilder.group({
       id: [null],
       nombre: [null, [Validators.required, Validators.minLength(3)]],
-      tipo_venta: ['UNIDAD', Validators.required],
+      tipo_venta: ['UNIDAD'],
+      tipo: ['PRODUCTO', Validators.required],
+      categoria: [null],
+      unidad_medida: [null],
       activo: [true],
+    });
+    this.frmProducto.get('tipo')?.valueChanges.subscribe((tipo) => {
+      this.onTipoChange(tipo);
     });
   }
 
@@ -111,6 +147,9 @@ export class FormProductoComponent implements OnInit {
       id: producto.id,
       nombre: producto.nombre,
       tipo_venta: producto.tipo_venta,
+      tipo: producto.tipo,
+      categoria: producto.categoria,
+      unidad_medida: producto.unidad_medida,
       activo: producto.activo === 1,
     });
   }
@@ -119,7 +158,41 @@ export class FormProductoComponent implements OnInit {
     this.frmProducto.reset({
       activo: true,
       tipo_venta: 'UNIDAD',
+      tipo: 'PRODUCTO',
     });
+  }
+
+  get categoriasDisponibles() {
+    const tipo = this.frmProducto.get('tipo')?.value;
+    return tipo === 'PRODUCTO'
+      ? this.categoriasProducto
+      : this.categoriasInsumo;
+  }
+
+  get mostrarUnidadMedida() {
+    return this.frmProducto.get('tipo')?.value === 'INSUMO';
+  }
+
+  onTipoChange(tipo: string) {
+    const tipoVentaControl = this.frmProducto.get('tipo_venta');
+    const unidadMedidaControl = this.frmProducto.get('unidad_medida');
+
+    this.frmProducto.patchValue({
+      categoria: null,
+    });
+
+    if (tipo === 'PRODUCTO') {
+      // Si es PRODUCTO: tipo_venta es requerido, unidad_medida se limpia
+      tipoVentaControl?.setValidators([Validators.required]);
+      tipoVentaControl?.patchValue('UNIDAD');
+      unidadMedidaControl?.patchValue(null);
+    } else {
+      // Si es INSUMO: tipo_venta se limpia y no es requerido
+      tipoVentaControl?.clearValidators();
+      tipoVentaControl?.patchValue(null);
+    }
+
+    tipoVentaControl?.updateValueAndValidity();
   }
 
   async buildDataProducto(): Promise<CreateProductoDto | UpdateProductoDto> {
@@ -129,6 +202,11 @@ export class FormProductoComponent implements OnInit {
       id: formValue.id,
       nombre: formValue.nombre,
       tipo_venta: formValue.tipo_venta,
+      // ✅ NUEVOS CAMPOS
+      tipo: formValue.tipo,
+      categoria: formValue.categoria,
+      unidad_medida: formValue.unidad_medida,
+      // FIN NUEVOS CAMPOS
       activo: formValue.activo ? 1 : 2,
     };
   }
@@ -190,7 +268,9 @@ export class FormProductoComponent implements OnInit {
       this.closeModal();
     }
   }
-
+  get mostrarTipoVenta() {
+    return this.frmProducto.get('tipo')?.value === 'PRODUCTO';
+  }
   private async saveProducto(
     data: CreateProductoDto | UpdateProductoDto,
   ): Promise<ResponseModel<boolean | ProductoModel> | void> {

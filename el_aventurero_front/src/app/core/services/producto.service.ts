@@ -59,4 +59,45 @@ export class ProductoService {
       `${this.apiUrl}/list`,
     );
   }
+  /**
+   * Obtener solo productos vendibles (para menú de ventas)
+   */
+  getProductosVendibles(): Observable<ResponseModel<ProductoListDto[]>> {
+    return this.http.get<ResponseModel<ProductoListDto[]>>(
+      `${this.apiUrl}/vendibles`,
+    );
+  }
+
+  /**
+   * Obtener solo insumos
+   */
+  getInsumos(): Observable<ResponseModel<ProductoListDto[]>> {
+    return this.http.get<ResponseModel<ProductoListDto[]>>(
+      `${this.apiUrl}/insumos`,
+    );
+  }
+
+  /**
+   * Obtener por tipo (PRODUCTO o INSUMO)
+   */
+  getByTipo(
+    tipo: 'PRODUCTO' | 'INSUMO',
+  ): Observable<ResponseModel<ProductoListDto[]>> {
+    return this.http.get<ResponseModel<ProductoListDto[]>>(
+      `${this.apiUrl}/tipo/${tipo}`,
+    );
+  }
+
+  /**
+   * Paginación con filtro de tipo
+   */
+  pageProductoPorTipo(
+    iFilterTable: IFilterTable<any>,
+    tipo: string,
+  ): Observable<ResponseTableModel<ProductoTableModel>> {
+    return this.http.post<ResponseTableModel<ProductoTableModel>>(
+      `${this.apiUrl}/page/${tipo}`,
+      iFilterTable,
+    );
+  }
 }

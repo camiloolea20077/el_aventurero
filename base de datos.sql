@@ -32,30 +32,14 @@ CREATE TABLE mesas (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
-            SELECT
-                dc.id,
-                dc.compra_id,
-                dc.producto_id,
-                p.nombre AS producto_nombre,
-                dc.cajas,
-                dc.unidades_por_caja,
-                dc.total_unidades,
-                dc.costo_total AS costo_total,
-                dc.costo_unitario AS costo_unitario,
-                dc.precio_sugerido AS precio_sugerido,
-                dc.precio_venta AS precio_venta,
-                dc.activo
-            FROM detalle_compra dc
-            INNER JOIN productos p ON p.id = 2
-            WHERE dc.compra_id = 1
-            AND dc.deleted_at IS NULL
-            ORDER BY dc.id ASC
-			
 CREATE TABLE productos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     tipo_venta VARCHAR(20) NOT NULL CHECK (tipo_venta IN ('UNIDAD','BOTELLA')),
     activo INT DEFAULT 1 CHECK (activo IN (1,2)),
+	tipo VARCHAR(20) DEFAULT 'PRODUCTO',
+	categoria VARCHAR(50),
+	unidad_medida VARCHAR(20) DEFAULT 'UNIDAD',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
@@ -72,12 +56,6 @@ CREATE TABLE inventario (
     deleted_at TIMESTAMP
 );
 
-SELECT column_name
-FROM information_schema.columns
-WHERE table_name = 'productos'
-ORDER BY column_name;
-select * from mesas
-
 CREATE TABLE compras (
     id SERIAL PRIMARY KEY,
     total_compra NUMERIC(12,2) NOT NULL,
@@ -91,36 +69,19 @@ CREATE TABLE detalle_compra (
     id SERIAL PRIMARY KEY,
     compra_id INT NOT NULL REFERENCES compras(id),
     producto_id INT NOT NULL REFERENCES productos(id),
-    cajas INT DEFAULT 0,
-    unidades_por_caja INT DEFAULT 0,
-    total_unidades INT NOT NULL,
+    cajas INT,
+    unidades_por_caja INT,
+    cantidad INT NOT NULL,
     costo_total NUMERIC(12,2) NOT NULL,
     costo_unitario NUMERIC(12,2) NOT NULL,
     precio_sugerido NUMERIC(12,2),
     precio_venta NUMERIC(12,2),
+    tipo VARCHAR(20),
     activo INT DEFAULT 1 CHECK (activo IN (1,2)),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP
 );
-            SELECT
-                i.id,
-                i.producto_id,
-                p.nombre AS producto_nombre,
-                p.tipo_venta,
-                i.stock,
-                i.costo_unitario AS costo_unitario,
-                i.precio_venta AS precio_venta,
-                i.activo,
-                i.created_at,
-                i.updated_at
-            FROM inventario i
-            INNER JOIN productos p ON p.id = i.producto_id
-            WHERE i.producto_id = 2
-            AND i.deleted_at IS NULL
-            AND i.activo = 1
-            LIMIT 1
-			select * from usuarios
 CREATE TABLE consumo_mesa (
     id SERIAL PRIMARY KEY,
     mesa_id INT NOT NULL REFERENCES mesas(id),
@@ -269,17 +230,21 @@ CREATE TABLE ajuste_inventario (
     FOREIGN KEY (conteo_id) REFERENCES conteo_inventario(id)
 );
 
-select * from usuarios
+ALTER TABLE detalle_compra 
+ALTER COLUMN cajas DROP NOT NULL,
+ALTER COLUMN cajas DROP DEFAULT;
 
-                                    SELECT
-                                        o.id,
-                                        o.nombre AS name,
-                                        o.email AS email,
-                                        r.nombre AS role,
-                                        o.activo as activo,
-                                        COUNT(*) OVER() AS total_rows
-                                    FROM usuarios  o
-                                    LEFT JOIN roles r ON r.id = o.rol_id
-                                    WHERE
-                                        o.deleted_at IS NULL
-                                        AND o.activo = 1
+ALTER TABLE detalle_compra 
+ALTER COLUMN unidades_por_caja DROP NOT NULL,
+ALTER COLUMN unidades_por_caja DROP DEFAULT;
+
+ALTER TABLE detalle_compra 
+ALTER COLUMN precio_venta DROP NOT NULL;
+
+-- 2. Renombrar total_unidades a cantidad (más genérico)
+ALTER TABLE detalle_compra 
+RENAME COLUMN total_unidades TO cantidad;
+
+-- 3. Agregar campo tipo para diferenciar productos de insumos
+ALTER TABLE detalle_compra 
+ADD COLUMN tipo VARCHAR(20);

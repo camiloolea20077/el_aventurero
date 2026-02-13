@@ -8,10 +8,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateDetalleCompraDto {
+    
     private Long producto_id;
+
     private Integer cajas;
+
     private Integer unidades_por_caja;
+
+    private Integer cantidad;
+
     private BigDecimal costo_total;
+
+    private BigDecimal costo_unitario;
+    
     private BigDecimal precio_sugerido;
+
     private BigDecimal precio_venta;
+
+    private String tipo;
 }

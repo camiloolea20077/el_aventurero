@@ -9,5 +9,8 @@ public class ProductoDto {
     private Long id;
     private String nombre;
     private String tipo_venta;
+    private String tipo;
+    private String categoria;
+    private String unidad_medida;
     private Long activo;
 }

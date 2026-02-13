@@ -1,8 +1,6 @@
 package com.cloud_technological.el_aventurero.services.implementations;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -41,10 +39,6 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     @Transactional
     public ProductoDto create(CreateProductoDto createDto) {
-
-        if (!createDto.getTipo_venta().equals("UNIDAD") && !createDto.getTipo_venta().equals("BOTELLA")) {
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "Tipo de venta debe ser UNIDAD o BOTELLA");
-        }
 
         Boolean exists = productoQueryRepository.existsByNombre(createDto.getNombre());
         if (exists) {
@@ -104,5 +98,27 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public PageImpl<ProductoTableDto> pageProductos(PageableDto<Object> pageableDto) {
         return productoQueryRepository.listProductos(pageableDto);
+    }
+    @Override
+    public List<ProductoDto> getProductosVendibles() {
+        return productoQueryRepository.findProductosVendibles();
+    }
+
+    @Override
+    public List<ProductoDto> getInsumos() {
+        return productoQueryRepository.findInsumos();
+    }
+
+    @Override
+    public List<ProductoDto> getByTipo(String tipo) {
+        if (!tipo.equals("PRODUCTO") && !tipo.equals("INSUMO")) {
+            throw new GlobalException(HttpStatus.BAD_REQUEST, "Tipo inválido. Use PRODUCTO o INSUMO");
+        }
+        return productoQueryRepository.findByTipo(tipo);
+    }
+
+    @Override
+    public PageImpl<ProductoTableDto> pageProductosPorTipo(PageableDto<Object> pageableDto, String tipo) {
+        return productoQueryRepository.listProductosPorTipo(pageableDto, tipo);
     }
 }

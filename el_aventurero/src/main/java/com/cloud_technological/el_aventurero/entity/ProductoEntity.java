@@ -26,11 +26,20 @@ public class ProductoEntity {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String tipo_venta; // UNIDAD o BOTELLA
 
     @Column(nullable = false)
     private Long activo;
+
+    @Column(name = "tipo", nullable = false, length = 20)
+    private String tipo = "PRODUCTO"; // PRODUCTO o INSUMO (qué es)
+
+    @Column(name = "categoria", length = 50)
+    private String categoria; // Clasificación: BEBIDAS, LICORES, DESCARTABLES, etc.
+
+    @Column(name = "unidad_medida", length = 20)
+    private String unidad_medida; // UNIDAD, GRAMOS, KILOS, LITROS (opcional)
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime created_at;

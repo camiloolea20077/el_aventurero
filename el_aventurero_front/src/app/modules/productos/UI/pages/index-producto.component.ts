@@ -56,12 +56,28 @@ export class IndexProductoComponent {
   productos: ProductoTableModel[] = [];
   filtersTable!: IFilterTable<any>;
 
+  // ✅ NUEVO: Filtro de tipo
+  tipoFiltro: 'TODOS' | 'PRODUCTO' | 'INSUMO' = 'TODOS';
+
+  // ✅ ACTUALIZADO: Columnas con tipo y categoría
   cols: ColsModel[] = [
     {
       field: 'nombre',
       header: 'Nombre',
       type: 'string',
       nameClass: 'text-left',
+    },
+    {
+      field: 'tipo',
+      header: 'Tipo',
+      type: 'string',
+      nameClass: 'text-center',
+    },
+    {
+      field: 'categoria',
+      header: 'Categoría',
+      type: 'string',
+      nameClass: 'text-center',
     },
     {
       field: 'tipo_venta',
@@ -94,22 +110,42 @@ export class IndexProductoComponent {
     this.loadColumnActions();
   }
 
+  // ✅ ACTUALIZADO: Cargar tabla según filtro de tipo
   async loadTable(lazyTable: TableLazyLoadEvent): Promise<void> {
     this.loadingTable = true;
     this.filtersTable = this.prepareTableParams(lazyTable);
 
     try {
-      const response = await lastValueFrom(
-        this.productoService.pageProducto(this.filtersTable),
-      );
+      let response;
+
+      if (this.tipoFiltro === 'TODOS') {
+        response = await lastValueFrom(
+          this.productoService.pageProducto(this.filtersTable),
+        );
+      } else {
+        response = await lastValueFrom(
+          this.productoService.pageProductoPorTipo(
+            this.filtersTable,
+            this.tipoFiltro,
+          ),
+        );
+      }
+
       this.productos = response.data?.content ?? [];
       this.totalRecords = response.data?.totalElements ?? 0;
       this.loadingTable = false;
     } catch (error) {
+      console.error('Error cargando productos:', error);
       this.productos = [];
       this.totalRecords = 0;
       this.loadingTable = false;
     }
+  }
+
+  // ✅ NUEVO: Cambiar filtro de tipo
+  onTipoFiltroChange(tipo: 'TODOS' | 'PRODUCTO' | 'INSUMO') {
+    this.tipoFiltro = tipo;
+    this.loadTable({ first: 0, rows: this.rowSize });
   }
 
   private prepareTableParams(lazyTable: TableLazyLoadEvent): IFilterTable<any> {
@@ -135,9 +171,11 @@ export class IndexProductoComponent {
 
   async deleteProducto(id: number): Promise<void> {
     this._confirmationService.confirm({
-      message: '¿Estás seguro de eliminar este producto?',
-      header: 'Eliminar Registro',
+      message: '¿Estás seguro de eliminar este registro?',
+      header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
       accept: async () => {
         try {
           const response = await lastValueFrom(
@@ -147,15 +185,16 @@ export class IndexProductoComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Producto eliminado correctamente',
+              detail: 'Registro eliminado correctamente',
             });
             this.loadTable({ first: 0, rows: this.rowSize });
           }
         } catch (error) {
+          console.error('Error eliminando:', error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo eliminar el producto',
+            detail: 'No se pudo eliminar el registro',
           });
         }
       },
@@ -177,9 +216,12 @@ export class IndexProductoComponent {
     this.loadTable({ first: 0, rows: this.rowSize });
   }
 
+  // ✅ ACTUALIZADO: Iconos con tipo y categoría
   getColumnIcon(field: string): string {
     const iconMap: { [key: string]: string } = {
       nombre: 'pi pi-tag',
+      tipo: 'pi pi-box',
+      categoria: 'pi pi-th-large',
       tipo_venta: 'pi pi-shopping-cart',
       activo: 'pi pi-power-off',
     };
@@ -192,6 +234,11 @@ export class IndexProductoComponent {
 
   getEstadoSeverity(activo: number): 'success' | 'danger' {
     return activo === 1 ? 'success' : 'danger';
+  }
+
+  // ✅ NUEVO: Severidad del tipo
+  getTipoSeverity(tipo: string): 'success' | 'info' {
+    return tipo === 'PRODUCTO' ? 'success' : 'info';
   }
 
   getTipoVentaSeverity(tipoVenta: string): 'info' | 'warn' {

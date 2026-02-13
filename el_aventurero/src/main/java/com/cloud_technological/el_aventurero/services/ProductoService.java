@@ -17,4 +17,9 @@ public interface ProductoService {
     ProductoDto findById(Long id);
     List<ProductoDto> findAllActive();
     PageImpl<ProductoTableDto> pageProductos(PageableDto<Object> pageableDto);
+     // ✅ NUEVOS MÉTODOS
+    List<ProductoDto> getProductosVendibles();
+    List<ProductoDto> getInsumos();
+    List<ProductoDto> getByTipo(String tipo);
+    PageImpl<ProductoTableDto> pageProductosPorTipo(PageableDto<Object> pageableDto, String tipo);
 }

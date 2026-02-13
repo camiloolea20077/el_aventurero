@@ -164,7 +164,7 @@
 
 // Filtros de Fecha
 .filtros-fecha {
-  background: #f8f9fa;
+  background: #424344;
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 2rem;
@@ -186,7 +186,7 @@
 
       label {
         font-weight: 600;
-        color: #495057;
+        color: white;
         font-size: 0.9rem;
       }
     }
@@ -432,6 +432,7 @@
 }
 // Paginador
 ::ng-deep .p-paginator {
+  background: black !important;
   background: rgba(15, 16, 18, 0.7);
   border: 1px solid var(--border-gold);
   color: var(--text);
@@ -441,6 +442,7 @@
   }
 
   .p-paginator-pages .p-paginator-page {
+    background: black !important;
     color: var(--text);
     border: 1px solid transparent;
 

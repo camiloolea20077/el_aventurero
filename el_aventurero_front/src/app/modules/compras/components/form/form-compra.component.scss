@@ -83,7 +83,7 @@
 .detalles-table-container {
   border: 1px solid var(--border-gold);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   background: var(--bg-1);
 }
 
@@ -182,15 +182,15 @@
   flex-direction: column;
   gap: 0.25rem;
 
-  span {
-    font-weight: 700;
-    color: var(--text);
-  }
+  // span {
+  //   font-weight: 700;
+  //   color: var(--text);
+  // }
 
-  small {
-    color: var(--muted);
-    font-size: 0.75rem;
-  }
+  // small {
+  //   color: var(--muted);
+  //   font-size: 0.75rem;
+  // }
 }
 
 .help-text {

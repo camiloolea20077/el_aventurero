@@ -134,4 +134,89 @@ public class ProductoController {
             throw ex;
         }
     }
+    
+    /**
+     * Obtener solo productos vendibles (para menú de ventas)
+     * GET /api/productos/vendibles
+     */
+    @GetMapping("/vendibles")
+    public ResponseEntity<ApiResponse<Object>> getProductosVendibles() {
+        try {
+            List<ProductoDto> result = productoService.getProductosVendibles();
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Productos vendibles obtenidos correctamente",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    /**
+     * Obtener solo insumos
+     * GET /api/productos/insumos
+     */
+    @GetMapping("/insumos")
+    public ResponseEntity<ApiResponse<Object>> getInsumos() {
+        try {
+            List<ProductoDto> result = productoService.getInsumos();
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Insumos obtenidos correctamente",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    /**
+     * Obtener por tipo (PRODUCTO o INSUMO)
+     * GET /api/productos/tipo/{tipo}
+     */
+    @GetMapping("/tipo/{tipo}")
+    public ResponseEntity<ApiResponse<Object>> getByTipo(@PathVariable String tipo) {
+        try {
+            List<ProductoDto> result = productoService.getByTipo(tipo);
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Items obtenidos correctamente",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+
+    /**
+     * Paginación con filtro de tipo
+     * POST /api/productos/page/{tipo}
+     */
+    @PostMapping("/page/{tipo}")
+    public ResponseEntity<ApiResponse<Object>> pageByTipo(
+            @PathVariable String tipo,
+            @Valid @RequestBody PageableDto<Object> pageableDto) {
+        try {
+            Page<ProductoTableDto> result = productoService.pageProductosPorTipo(pageableDto, tipo);
+            if (result.isEmpty()) {
+                throw new GlobalException(HttpStatus.PARTIAL_CONTENT, "No se encontraron registros");
+            }
+            ApiResponse<Object> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "",
+                false,
+                result
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
 }

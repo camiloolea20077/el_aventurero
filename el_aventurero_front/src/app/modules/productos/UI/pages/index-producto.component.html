@@ -2,17 +2,44 @@
   <div class="card">
     <!-- Header de la tarjeta -->
     <div class="card-header">
-      <h4>Gestión de Productos</h4>
+      <h4>Gestión de Productos e Insumos</h4>
     </div>
 
     <div class="card-content">
+      <!-- ✅ NUEVO: Filtros de tipo -->
+      <div class="filter-buttons mb-4">
+        <p-button
+          label="Todos"
+          icon="pi pi-list"
+          [outlined]="tipoFiltro !== 'TODOS'"
+          severity="secondary"
+          (click)="onTipoFiltroChange('TODOS')"
+          class="mr-2"
+        ></p-button>
+        <p-button
+          label="Productos"
+          icon="pi pi-shopping-bag"
+          [outlined]="tipoFiltro !== 'PRODUCTO'"
+          severity="success"
+          (click)="onTipoFiltroChange('PRODUCTO')"
+          class="mr-2"
+        ></p-button>
+        <p-button
+          label="Insumos"
+          icon="pi pi-box"
+          [outlined]="tipoFiltro !== 'INSUMO'"
+          severity="success"
+          (click)="onTipoFiltroChange('INSUMO')"
+        ></p-button>
+      </div>
+
       <!-- Toolbar -->
       <div class="p-toolbar mb-4">
         <div class="toolbar-left"></div>
         <div class="toolbar-right">
           <p-button
             severity="warn"
-            label="Agregar Producto"
+            label="Agregar Producto/Insumo"
             icon="pi pi-plus"
             (click)="openCreateModal()"
             class="create-button"
@@ -54,7 +81,7 @@
                     type="text"
                     [(ngModel)]="globalFilter"
                     (input)="filterGlobal($event)"
-                    placeholder="Buscar productos..."
+                    placeholder="Buscar productos e insumos..."
                     class="search-input"
                   />
                 </p-iconfield>
@@ -103,7 +130,7 @@
               [class]="col.nameClass + ' table-cell'"
               [attr.data-field]="col.field"
             >
-              <!-- Nombre del producto -->
+              <!-- Nombre -->
               <div *ngIf="col.field === 'nombre'" class="text-cell">
                 <div class="text-info">
                   <i class="pi pi-tag product-icon"></i>
@@ -113,14 +140,40 @@
                 </div>
               </div>
 
-              <!-- Tipo de Venta -->
+              <!-- ✅ Tipo (Producto o Insumo) -->
+              <div *ngIf="col.field === 'tipo'" class="text-cell">
+                <p-tag
+                  [value]="item.tipo === 'PRODUCTO' ? 'Producto' : 'Insumo'"
+                  [severity]="getTipoSeverity(item.tipo)"
+                  [icon]="
+                    item.tipo === 'PRODUCTO'
+                      ? 'pi pi-shopping-bag'
+                      : 'pi pi-box'
+                  "
+                  class="tipo-tag"
+                ></p-tag>
+              </div>
+
+              <!-- ✅ Categoría -->
+              <div *ngIf="col.field === 'categoria'" class="text-cell">
+                <span *ngIf="item.categoria" class="text-value">
+                  {{ item.categoria }}
+                </span>
+                <span *ngIf="!item.categoria" class="text-muted">
+                  Sin categoría
+                </span>
+              </div>
+
+              <!-- ✅ Tipo de Venta (solo para productos) -->
               <div *ngIf="col.field === 'tipo_venta'" class="text-cell">
                 <p-tag
+                  *ngIf="item.tipo_venta"
                   [value]="item.tipo_venta"
                   [severity]="getTipoVentaSeverity(item.tipo_venta)"
                   [icon]="getTipoVentaIcon(item.tipo_venta)"
                   class="tipo-venta-tag"
                 ></p-tag>
+                <span *ngIf="!item.tipo_venta" class="text-muted"> N/A </span>
               </div>
 
               <!-- Estado -->
@@ -139,7 +192,7 @@
                   severity="info"
                   size="small"
                   (click)="openEditModal(item)"
-                  pTooltip="Editar producto"
+                  pTooltip="Editar"
                   tooltipPosition="top"
                   class="edit-button"
                 ></p-button>
@@ -148,7 +201,7 @@
                   severity="danger"
                   size="small"
                   (onClick)="deleteProducto(item.id)"
-                  pTooltip="Eliminar producto"
+                  pTooltip="Eliminar"
                   tooltipPosition="top"
                   class="delete-button"
                 ></p-button>
@@ -163,10 +216,8 @@
             <td [attr.colspan]="cols.length" class="empty-message">
               <div class="empty-state">
                 <i class="pi pi-inbox empty-icon"></i>
-                <h3>No hay productos registrados</h3>
-                <p>
-                  No se encontraron productos que coincidan con tu búsqueda.
-                </p>
+                <h3>No hay registros</h3>
+                <p>No se encontraron productos o insumos.</p>
                 <p-button
                   label="Agregar el primero"
                   icon="pi pi-plus"
@@ -184,7 +235,7 @@
             <td [attr.colspan]="cols.length">
               <div class="loading-state">
                 <i class="pi pi-spin pi-spinner loading-spinner"></i>
-                <span>Cargando productos...</span>
+                <span>Cargando datos...</span>
               </div>
             </td>
           </tr>

@@ -293,6 +293,7 @@
 
 // Paginador
 ::ng-deep .p-paginator {
+  background: black !important;
   background: rgba(15, 16, 18, 0.7);
   border: 1px solid var(--border-gold);
   color: var(--text);
@@ -302,6 +303,7 @@
   }
 
   .p-paginator-pages .p-paginator-page {
+    background: black !important;
     color: var(--text);
     border: 1px solid transparent;
 
@@ -366,4 +368,30 @@
   .action-buttons {
     flex-wrap: wrap;
   }
+}
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  ::ng-deep {
+    .p-button {
+      transition: all 0.3s ease;
+
+      &:not([outlined]) {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+.text-muted {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.tipo-tag {
+  font-weight: 600;
 }

@@ -30,14 +30,14 @@ public class DetalleCompraEntity {
     @Column(nullable = false)
     private Long producto_id;
 
-    @Column(nullable = false)
+    @Column
     private Integer cajas;
 
-    @Column(nullable = false)
+    @Column
     private Integer unidades_por_caja;
 
     @Column(nullable = false)
-    private Integer total_unidades;
+    private Integer cantidad;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal costo_total;
@@ -50,6 +50,9 @@ public class DetalleCompraEntity {
 
     @Column(precision = 12, scale = 2)
     private BigDecimal precio_venta;
+
+    @Column(length = 20)
+    private String tipo;
 
     @Column(nullable = false)
     private Long activo;
@@ -68,12 +71,6 @@ public class DetalleCompraEntity {
         created_at = LocalDateTime.now();
         if (activo == null) {
             activo = 1L;
-        }
-        if (cajas == null) {
-            cajas = 0;
-        }
-        if (unidades_por_caja == null) {
-            unidades_por_caja = 0;
         }
     }
 

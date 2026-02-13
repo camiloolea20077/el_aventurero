@@ -308,6 +308,7 @@
 
 // Paginador
 ::ng-deep .p-paginator {
+  background: black !important;
   background: rgba(15, 16, 18, 0.7);
   border: 1px solid var(--border-gold);
   color: var(--text);
@@ -317,6 +318,7 @@
   }
 
   .p-paginator-pages .p-paginator-page {
+    background: black !important;
     color: var(--text);
     border: 1px solid transparent;
 

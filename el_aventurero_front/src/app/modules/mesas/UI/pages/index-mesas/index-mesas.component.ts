@@ -95,7 +95,7 @@ export class IndexMesasComponent implements OnInit {
   async cargarProductos(): Promise<void> {
     try {
       const response = await lastValueFrom(
-        this.productoService.getAllProductos(),
+        this.productoService.getProductosVendibles(),
       );
       this.productos = response.data || [];
     } catch (error) {

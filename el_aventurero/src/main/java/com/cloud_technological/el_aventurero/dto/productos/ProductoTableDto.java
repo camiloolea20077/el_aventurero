@@ -9,5 +9,8 @@ public class ProductoTableDto {
     private Long id;
     private String nombre;
     private String tipo_venta;
+    private String tipo;          // PRODUCTO | INSUMO
+    private String categoria;     // Clasificación
+    private String unidad_medida; // Opcional
     private Long activo;
 }

@@ -9,5 +9,8 @@ public class UpdateProductoDto {
     private Long id;
     private String nombre;
     private String tipo_venta;
+    private String tipo;          // PRODUCTO | INSUMO
+    private String categoria;
+    private String unidad_medida;
     private Long activo;
 }

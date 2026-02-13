@@ -2,7 +2,7 @@
   [header]="isEditMode ? 'Editar Producto' : 'Crear Producto'"
   [(visible)]="displayModal"
   [modal]="true"
-  [style]="{ width: '600px' }"
+  [style]="{ width: '700px' }"
   [draggable]="false"
   [resizable]="false"
   (onHide)="onModalHide()"
@@ -40,14 +40,107 @@
 
     <p-divider></p-divider>
 
-    <!-- Tipo de Venta -->
+    <!-- ✅ NUEVO: Tipo (Producto o Insumo) -->
     <div class="form-field">
+      <label for="tipo" class="form-label required">
+        <i class="pi pi-box mr-2"></i>
+        Tipo
+      </label>
+      <p-dropdown
+        id="tipo"
+        [options]="tipoOptions"
+        formControlName="tipo"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Seleccione el tipo"
+        styleClass="form-dropdown"
+        [showClear]="false"
+      >
+        <ng-template pTemplate="selectedItem" let-option>
+          <div class="flex align-items-center" *ngIf="option">
+            <i
+              [class]="
+                option.value === 'PRODUCTO'
+                  ? 'pi pi-shopping-bag mr-2'
+                  : 'pi pi-box mr-2'
+              "
+            ></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center">
+            <i
+              [class]="
+                option.value === 'PRODUCTO'
+                  ? 'pi pi-shopping-bag mr-2'
+                  : 'pi pi-box mr-2'
+              "
+            ></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small class="help-text">
+        <i class="pi pi-info-circle mr-1"></i>
+        <span *ngIf="frmProducto.get('tipo')?.value === 'PRODUCTO'">
+          Producto vendible (aparecerá en el menú de ventas)
+        </span>
+        <span *ngIf="frmProducto.get('tipo')?.value === 'INSUMO'">
+          Insumo consumible (vasos, limón, servilletas, etc.)
+        </span>
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- ✅ NUEVO: Categoría -->
+    <div class="form-field">
+      <label for="categoria" class="form-label">
+        <i class="pi pi-th-large mr-2"></i>
+        Categoría
+      </label>
+      <p-dropdown
+        appendTo="body"
+        id="categoria"
+        [options]="categoriasDisponibles"
+        formControlName="categoria"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Seleccione una categoría (opcional)"
+        styleClass="form-dropdown"
+        [showClear]="true"
+      >
+        <ng-template pTemplate="selectedItem" let-option>
+          <div class="flex align-items-center" *ngIf="option">
+            <i class="pi pi-folder mr-2"></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center">
+            <i class="pi pi-folder mr-2"></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small class="help-text">
+        <i class="pi pi-info-circle mr-1"></i>
+        Ayuda a organizar y filtrar productos/insumos
+      </small>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Tipo de Venta -->
+    <div class="form-field" *ngIf="mostrarTipoVenta">
       <label for="tipo_venta" class="form-label required">
         <i class="pi pi-shopping-cart mr-2"></i>
         Tipo de Venta
       </label>
       <p-dropdown
         id="tipo_venta"
+        appendTo="body"
         [options]="tipoVentaOptions"
         formControlName="tipo_venta"
         optionLabel="name"
@@ -84,11 +177,49 @@
       <small class="help-text">
         <i class="pi pi-info-circle mr-1"></i>
         <span *ngIf="frmProducto.get('tipo_venta')?.value === 'UNIDAD'">
-          Se vende por unidades (latas, vasos, etc.)
+          Se compra/vende por unidades (latas, vasos, etc.)
         </span>
         <span *ngIf="frmProducto.get('tipo_venta')?.value === 'BOTELLA'">
-          Se vende por botellas completas
+          Se compra/vende por botellas completas
         </span>
+      </small>
+    </div>
+
+    <!-- ✅ NUEVO: Unidad de Medida (solo para insumos) -->
+    <div class="form-field" *ngIf="mostrarUnidadMedida">
+      <p-divider></p-divider>
+
+      <label for="unidad_medida" class="form-label">
+        <i class="pi pi-calculator mr-2"></i>
+        Unidad de Medida
+      </label>
+      <p-dropdown
+        appendTo="body"
+        id="unidad_medida"
+        [options]="unidadMedidaOptions"
+        formControlName="unidad_medida"
+        optionLabel="name"
+        optionValue="value"
+        placeholder="Seleccione unidad de medida (opcional)"
+        styleClass="form-dropdown"
+        [showClear]="true"
+      >
+        <ng-template pTemplate="selectedItem" let-option>
+          <div class="flex align-items-center" *ngIf="option">
+            <i class="pi pi-chart-line mr-2"></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center">
+            <i class="pi pi-chart-line mr-2"></i>
+            <span>{{ option.name }}</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <small class="help-text">
+        <i class="pi pi-info-circle mr-1"></i>
+        Para insumos: limón en kilos, hielo en kilos, vasos en unidades, etc.
       </small>
     </div>
 

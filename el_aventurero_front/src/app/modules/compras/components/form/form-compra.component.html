@@ -2,7 +2,7 @@
   header="Registrar Compra"
   [(visible)]="displayModal"
   [modal]="true"
-  [style]="{ width: '95vw', maxWidth: '1200px' }"
+  [style]="{ width: '95vw', maxWidth: '1400px' }"
   [draggable]="false"
   [resizable]="false"
   (onHide)="onModalHide()"
@@ -39,10 +39,10 @@
       <div class="section-header">
         <h5>
           <i class="pi pi-list mr-2"></i>
-          Productos de la Compra
+          Items de la Compra
         </h5>
         <p-button
-          label="Agregar Producto"
+          label="Agregar Item"
           icon="pi pi-plus"
           (onClick)="agregarDetalle()"
           severity="success"
@@ -59,13 +59,15 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 250px">Producto *</th>
-              <th style="width: 100px">Cajas *</th>
-              <th style="width: 120px">Unid/Caja *</th>
-              <th style="width: 120px">Total Unid.</th>
+              <th style="width: 280px">Producto/Insumo *</th>
+              <th style="width: 130px">Tipo</th>
+              <th style="width: 120px">Por Cajas</th>
+              <th style="width: 100px">Cajas</th>
+              <th style="width: 100px">Unid/Caja</th>
+              <th style="width: 120px">Cantidad *</th>
               <th style="width: 150px">Costo Total *</th>
               <th style="width: 120px">Costo Unit.</th>
-              <th style="width: 150px">Precio Venta *</th>
+              <th style="width: 150px">Precio Venta</th>
               <th style="width: 80px">Acciones</th>
             </tr>
           </ng-template>
@@ -89,16 +91,66 @@
                 >
                   <ng-template let-producto pTemplate="item">
                     <div class="producto-option">
-                      <span>{{ producto.nombre }}</span>
-                      <small>{{ producto.tipo_venta }}</small>
+                      <span class="font-semibold">{{ producto.nombre }}</span>
+                      <small class="text-muted ml-2">
+                        <i
+                          [class]="
+                            producto.tipo === 'PRODUCTO'
+                              ? 'pi pi-shopping-bag'
+                              : 'pi pi-box'
+                          "
+                          class="mr-1"
+                        ></i>
+                        {{
+                          producto.tipo === "PRODUCTO" ? "Producto" : "Insumo"
+                        }}
+                      </small>
                     </div>
                   </ng-template>
                 </p-dropdown>
               </td>
 
-              <!-- Cajas (digitado, compacto, sin spinner) -->
+              <!-- Tipo (readonly) -->
+              <td>
+                <div
+                  *ngIf="detalle.get('producto_tipo')?.value"
+                  class="tipo-badge"
+                >
+                  <p-tag
+                    [value]="
+                      detalle.get('producto_tipo')?.value === 'PRODUCTO'
+                        ? 'Producto'
+                        : 'Insumo'
+                    "
+                    [severity]="
+                      detalle.get('producto_tipo')?.value === 'PRODUCTO'
+                        ? 'success'
+                        : 'info'
+                    "
+                    [icon]="
+                      detalle.get('producto_tipo')?.value === 'PRODUCTO'
+                        ? 'pi pi-shopping-bag'
+                        : 'pi pi-box'
+                    "
+                  ></p-tag>
+                </div>
+              </td>
+
+              <!-- ✅ Toggle: Comprar por cajas (solo para productos) -->
+              <td class="text-center">
+                <p-checkbox
+                  *ngIf="esProducto(detalle)"
+                  formControlName="comprar_por_cajas"
+                  [binary]="true"
+                  inputId="comprar_por_cajas_{{ i }}"
+                ></p-checkbox>
+                <span *ngIf="esInsumo(detalle)" class="text-muted">N/A</span>
+              </td>
+
+              <!-- ✅ Cajas (solo si compra por cajas) -->
               <td class="td-qty">
                 <p-inputNumber
+                  *ngIf="detalle.get('comprar_por_cajas')?.value"
                   formControlName="cajas"
                   [min]="1"
                   [showButtons]="false"
@@ -106,11 +158,17 @@
                   styleClass="qty-field w-full"
                   inputStyleClass="qty-input text-center"
                 ></p-inputNumber>
+                <span
+                  *ngIf="!detalle.get('comprar_por_cajas')?.value"
+                  class="text-muted"
+                  >-</span
+                >
               </td>
 
-              <!-- Unidades por Caja (digitado, compacto, sin spinner) -->
+              <!-- ✅ Unidades por Caja (solo si compra por cajas) -->
               <td class="td-qty">
                 <p-inputNumber
+                  *ngIf="detalle.get('comprar_por_cajas')?.value"
                   formControlName="unidades_por_caja"
                   [min]="1"
                   [showButtons]="false"
@@ -118,16 +176,46 @@
                   styleClass="qty-field w-full"
                   inputStyleClass="qty-input text-center"
                 ></p-inputNumber>
+                <span
+                  *ngIf="!detalle.get('comprar_por_cajas')?.value"
+                  class="text-muted"
+                  >-</span
+                >
               </td>
 
-              <!-- Total Unidades (calculado) -->
+              <!-- ✅ Cantidad (readonly si compra por cajas, editable si directo) -->
               <td>
-                <input
-                  pInputText
-                  formControlName="total_unidades"
-                  class="readonly-input text-center"
-                  readonly
-                />
+                <div
+                  *ngIf="
+                    detalle.get('comprar_por_cajas')?.value;
+                    else cantidadEditable
+                  "
+                >
+                  <input
+                    pInputText
+                    formControlName="cantidad"
+                    class="readonly-input text-center"
+                    readonly
+                  />
+                </div>
+                <ng-template #cantidadEditable>
+                  <div class="cantidad-directa">
+                    <p-inputNumber
+                      formControlName="cantidad"
+                      [min]="1"
+                      [showButtons]="false"
+                      inputmode="numeric"
+                      styleClass="qty-field w-full"
+                      inputStyleClass="qty-input text-center"
+                    ></p-inputNumber>
+                    <small
+                      *ngIf="detalle.get('producto_unidad_medida')?.value"
+                      class="unidad-text"
+                    >
+                      {{ detalle.get("producto_unidad_medida")?.value }}
+                    </small>
+                  </div>
+                </ng-template>
               </td>
 
               <!-- Costo Total -->
@@ -154,16 +242,29 @@
                 ></p-inputNumber>
               </td>
 
-              <!-- Precio Venta -->
+              <!-- ✅ Precio Venta (solo para productos) -->
               <td>
                 <p-inputNumber
+                  *ngIf="esProducto(detalle)"
                   formControlName="precio_venta"
                   mode="currency"
                   currency="COP"
                   locale="es-CO"
                   [min]="0"
                   styleClass="w-full"
+                  [class.invalid]="
+                    detalle.get('precio_venta')?.invalid &&
+                    detalle.get('precio_venta')?.touched
+                  "
                 ></p-inputNumber>
+                <div *ngIf="esInsumo(detalle)" class="text-center">
+                  <span class="text-muted">N/A</span>
+                  <br />
+                  <small class="text-info">
+                    <i class="pi pi-info-circle"></i>
+                    No se vende
+                  </small>
+                </div>
               </td>
 
               <!-- Acciones -->
@@ -182,19 +283,30 @@
 
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="8" class="text-center">
-                No hay productos agregados
+              <td colspan="10" class="text-center">
+                <div class="empty-state py-4">
+                  <i class="pi pi-inbox text-4xl text-muted mb-2"></i>
+                  <p>No hay items agregados</p>
+                </div>
               </td>
             </tr>
           </ng-template>
         </p-table>
       </div>
 
-      <small class="help-text mt-2">
-        <i class="pi pi-info-circle mr-1"></i>
-        Los campos marcados con (*) son obligatorios. El Total de Unidades y
-        Costo Unitario se calculan automáticamente.
-      </small>
+      <div class="mt-3">
+        <small class="help-text">
+          <i class="pi pi-info-circle mr-1"></i>
+          <strong>Productos:</strong> Pueden comprarse por cajas o directo.
+          Requieren precio de venta.
+        </small>
+        <br />
+        <small class="help-text">
+          <i class="pi pi-info-circle mr-1"></i>
+          <strong>Insumos:</strong> Se compran directamente por cantidad. NO
+          tienen precio de venta.
+        </small>
+      </div>
     </div>
   </form>
 

@@ -26,7 +26,7 @@ public class DetalleCompraQueryRepository {
                       p.nombre AS producto_nombre,
                       dc.cajas,
                       dc.unidades_por_caja,
-                      dc.total_unidades,
+                      dc.cantidad AS total_unidades,
                       dc.costo_total,
                       dc.costo_unitario,
                       dc.precio_sugerido,

@@ -58,8 +58,131 @@
 
     <p-divider></p-divider>
 
-    <!-- Stock -->
+    <!-- Modo de Ingreso -->
     <div class="form-field">
+      <label class="form-label">
+        <i class="pi pi-calculator mr-2"></i>
+        Modo de Ingreso
+      </label>
+      <div class="modo-ingreso-container">
+        <div class="tipo-ingreso-buttons">
+          <button
+            type="button"
+            class="tipo-btn"
+            [class.active]="!modoAutomatico"
+            (click)="cambiarTipoIngreso('unidad')"
+          >
+            <i class="pi pi-box"></i>
+            <span>Manual</span>
+          </button>
+          <button
+            type="button"
+            class="tipo-btn"
+            [class.active]="modoAutomatico"
+            (click)="toggleModoAutomatico()"
+          >
+            <i class="pi pi-table"></i>
+            <span>Calculadora de Cajas</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculadora de Cajas (visible solo en modo automático) -->
+    <div *ngIf="modoAutomatico" class="calculadora-cajas">
+      <div class="calculadora-header">
+        <i class="pi pi-info-circle"></i>
+        <span>Ingresa los datos de tu compra y el sistema calculará automáticamente</span>
+      </div>
+
+      <div class="form-row two-columns">
+        <!-- Cantidad de Cajas -->
+        <div class="form-field">
+          <label for="cantidad_cajas" class="form-label required">
+            <i class="pi pi-table mr-2"></i>
+            Cantidad de Cajas
+          </label>
+          <p-inputNumber
+            id="cantidad_cajas"
+            formControlName="cantidad_cajas"
+            [min]="1"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <!-- Unidades por Caja -->
+        <div class="form-field">
+          <label for="unidades_por_caja" class="form-label required">
+            <i class="pi pi-th-large mr-2"></i>
+            Unidades por Caja
+          </label>
+          <p-inputNumber
+            id="unidades_por_caja"
+            formControlName="unidades_por_caja"
+            [min]="1"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <!-- Costo Total de la Compra -->
+      <div class="form-field">
+        <label for="costo_total_compra" class="form-label required">
+          <i class="pi pi-money-bill mr-2"></i>
+          Costo Total de la Compra (todas las cajas)
+        </label>
+        <p-inputNumber
+          id="costo_total_compra"
+          formControlName="costo_total_compra"
+          mode="currency"
+          currency="COP"
+          locale="es-CO"
+          [min]="0"
+          styleClass="w-full"
+        ></p-inputNumber>
+        <small class="help-text">
+          <i class="pi pi-calculator mr-1"></i>
+          Ejemplo: Si compraste 2 cajas a $50,000 cada una, ingresa $100,000
+        </small>
+      </div>
+
+      <p-divider></p-divider>
+
+      <!-- Resultados Calculados -->
+      <div class="resultados-calculados">
+        <div class="resultado-header">
+          <i class="pi pi-check-circle"></i>
+          <span>Valores calculados automáticamente:</span>
+        </div>
+        <div class="resultado-items">
+          <div class="resultado-item">
+            <span class="resultado-label">Stock Total:</span>
+            <span class="resultado-value">{{ frmInventario.get('stock')?.value || 0 }} unidades</span>
+          </div>
+          <div class="resultado-item">
+            <span class="resultado-label">Costo Unitario:</span>
+            <span class="resultado-value">${{ (frmInventario.get('costo_unitario')?.value || 0) | number:'1.0-0':'es-CO' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+    </div>
+
+    <!-- Stock (visible en modo manual, deshabilitado en modo automático) -->
+    <div class="form-field" *ngIf="!modoAutomatico">
       <label for="stock" class="form-label required">
         <i class="pi pi-box mr-2"></i>
         Stock Inicial
@@ -87,10 +210,8 @@
       </small>
     </div>
 
-    <p-divider></p-divider>
-
-    <!-- Costo Unitario -->
-    <div class="form-field">
+    <!-- Costo Unitario (visible en modo manual, deshabilitado en modo automático) -->
+    <div class="form-field" *ngIf="!modoAutomatico">
       <label for="costo_unitario" class="form-label required">
         <i class="pi pi-dollar mr-2"></i>
         Costo Unitario

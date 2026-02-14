@@ -59,6 +59,13 @@ export class FormInventarioComponent implements OnInit {
   public isEditMode: boolean = false;
   public isSubmitting: boolean = false;
   public productos: ProductoListDto[] = [];
+  public modoAutomatico: boolean = false;
+  public tipoIngreso: 'unidad' | 'caja' = 'unidad';
+
+  public tiposIngreso = [
+    { label: 'Por Unidad', value: 'unidad', icon: 'pi pi-box' },
+    { label: 'Por Caja', value: 'caja', icon: 'pi pi-table' }
+  ];
 
   constructor(
     private readonly inventarioService: InventarioService,
@@ -116,7 +123,64 @@ export class FormInventarioComponent implements OnInit {
       costo_unitario: [0, [Validators.required, Validators.min(0)]],
       precio_venta: [0, [Validators.required, Validators.min(0)]],
       activo: [true],
+      // Campos auxiliares para calculadora (no se guardan)
+      cantidad_cajas: [1, [Validators.min(1)]],
+      unidades_por_caja: [1, [Validators.min(1)]],
+      costo_total_compra: [0, [Validators.min(0)]],
     });
+
+    // Suscribirse a cambios para cálculos automáticos
+    this.setupCalculadoraSubscriptions();
+  }
+
+  setupCalculadoraSubscriptions() {
+    // Calcular automáticamente cuando cambien los valores en modo automático
+    const camposCalculadora = ['cantidad_cajas', 'unidades_por_caja', 'costo_total_compra'];
+
+    camposCalculadora.forEach(campo => {
+      this.frmInventario.get(campo)?.valueChanges.subscribe(() => {
+        if (this.modoAutomatico && this.tipoIngreso === 'caja') {
+          this.calcularValoresAutomaticos();
+        }
+      });
+    });
+  }
+
+  calcularValoresAutomaticos() {
+    const cantidadCajas = this.frmInventario.get('cantidad_cajas')?.value || 0;
+    const unidadesPorCaja = this.frmInventario.get('unidades_por_caja')?.value || 0;
+    const costoTotal = this.frmInventario.get('costo_total_compra')?.value || 0;
+
+    if (cantidadCajas > 0 && unidadesPorCaja > 0) {
+      // Calcular stock total
+      const stockTotal = cantidadCajas * unidadesPorCaja;
+      this.frmInventario.get('stock')?.setValue(stockTotal, { emitEvent: false });
+
+      // Calcular costo unitario
+      if (costoTotal > 0 && stockTotal > 0) {
+        const costoUnitario = costoTotal / stockTotal;
+        this.frmInventario.get('costo_unitario')?.setValue(Math.round(costoUnitario), { emitEvent: false });
+      }
+    }
+  }
+
+  toggleModoAutomatico() {
+    this.modoAutomatico = !this.modoAutomatico;
+    if (this.modoAutomatico) {
+      this.tipoIngreso = 'caja';
+      // Resetear valores de calculadora
+      this.frmInventario.get('cantidad_cajas')?.setValue(1);
+      this.frmInventario.get('unidades_por_caja')?.setValue(1);
+      this.frmInventario.get('costo_total_compra')?.setValue(0);
+    }
+  }
+
+  cambiarTipoIngreso(tipo: 'unidad' | 'caja') {
+    this.tipoIngreso = tipo;
+    if (tipo === 'unidad') {
+      // En modo unidad, desactivar modo automático
+      this.modoAutomatico = false;
+    }
   }
 
   loadInventarioData(inventario: InventarioModel) {
